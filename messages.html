@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Vexora — Messages</title>
+
+<link
+    rel="stylesheet"
+    href="messages.css"
+>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+```
+
+</head>
+
+<body>
+
+<div class="app-shell">
+
+```
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <img
+            src="images/logo.png"
+            alt="Vexora"
+        >
+
+        <span>Vexora</span>
+
+    </div>
+
+
+    <nav>
+
+        <a href="dashboard.html">
+            <span>⌂</span>
+            <label>Home</label>
+        </a>
+
+        <a href="dashboard.html">
+            <span>⌕</span>
+            <label>Search</label>
+        </a>
+
+        <a href="#">
+            <span>♡</span>
+            <label>Notifications</label>
+        </a>
+
+        <a
+            href="messages.html"
+            class="active"
+        >
+            <span>✉</span>
+            <label>Messages</label>
+
+            <b
+                class="nav-unread"
+                id="navUnread"
+            >
+                0
+            </b>
+        </a>
+
+        <a href="profile.html">
+            <span>♙</span>
+            <label>Profile</label>
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <a href="#">
+            <span>⚙</span>
+            <label>Settings</label>
+        </a>
+
+        <a
+            href="index.html"
+            id="logoutButton"
+        >
+            <span>⇥</span>
+            <label>Log out</label>
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="main">
+
+
+    <header class="topbar">
+
+        <div>
+
+            <div class="title-row">
+
+                <button
+                    class="mobile-title-back"
+                    id="backButton"
+                    type="button"
+                >
+                    ←
+                </button>
+
+                <div>
+
+                    <h1>Messages</h1>
+
+                    <p>Stay connected with your people.</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         MESSAGES APP
+    ========================= -->
+
+    <section
+        class="messages-app"
+        id="messagesApp"
+    >
+
+
+        <!-- =========================
+             CONVERSATIONS
+        ========================= -->
+
+        <aside
+            class="conversation-panel"
+            id="conversationPanel"
+        >
+
+            <div class="conversation-header">
+
+                <div>
+
+                    <div class="conversation-heading">
+
+                        <h2>Chats</h2>
+
+                        <span
+                            class="online-dot"
+                            title="Vexora"
+                        ></span>
+
+                    </div>
+
+                    <span id="chatCount">
+                        0 conversations
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="new-chat-button"
+                    id="newChatButton"
+                    type="button"
+                    title="New message"
+                >
+                    <span>＋</span>
+                </button>
+
+            </div>
+
+
+
+            <div class="conversation-search">
+
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    id="conversationSearch"
+                    placeholder="Search chats"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+
+            <div
+                class="conversation-list"
+                id="conversationList"
+            >
+
+                <div class="empty-conversations">
+
+                    <div class="empty-icon">
+                        ✉
+                    </div>
+
+                    <strong>
+                        No conversations yet
+                    </strong>
+
+                    <span>
+                        Start a new chat with someone.
+                    </span>
+
+                    <button
+                        id="emptyNewChat"
+                        type="button"
+                    >
+                        New message
+                    </button>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =========================
+             CHAT PANEL
+        ========================= -->
+
+        <section
+            class="chat-panel"
+            id="chatPanel"
+        >
+
+
+            <!-- BACKGROUND DECORATION -->
+
+            <div class="chat-glow"></div>
+
+            <div class="chat-noise"></div>
+
+
+
+            <!-- EMPTY CHAT -->
+
+            <div
+                class="chat-empty"
+                id="chatEmpty"
+            >
+
+                <div class="empty-chat-logo">
+                    <div>✦</div>
+                </div>
+
+                <h2>Your messages</h2>
+
+                <p>
+                    Choose a conversation or start a new one.
+                </p>
+
+                <button
+                    id="chatEmptyNewButton"
+                    type="button"
+                >
+                    <span>＋</span>
+                    New message
+                </button>
+
+            </div>
+
+
+
+            <!-- ACTIVE CHAT -->
+
+            <div
+                class="active-chat"
+                id="activeChat"
+                hidden
+            >
+
+
+                <!-- CHAT HEADER -->
+
+                <header class="chat-header">
+
+                    <button
+                        class="mobile-back"
+                        id="mobileBack"
+                        type="button"
+                        aria-label="Back to chats"
+                    >
+                        ←
+                    </button>
+
+
+                    <div
+                        class="chat-user-avatar"
+                        id="chatUserAvatar"
+                    >
+                        U
+                    </div>
+
+
+                    <div class="chat-user-info">
+
+                        <strong id="chatUsername">
+                            User
+                        </strong>
+
+                        <span id="chatStatus">
+                            @user
+                        </span>
+
+                    </div>
+
+
+                    <div class="chat-header-actions">
+
+                        <button
+                            class="chat-header-button"
+                            id="chatSearchButton"
+                            type="button"
+                            title="Search"
+                        >
+                            ⌕
+                        </button>
+
+                        <button
+                            class="chat-header-button"
+                            id="chatThemeButton"
+                            type="button"
+                            title="Chat appearance"
+                        >
+                            ✦
+                        </button>
+
+                        <button
+                            class="chat-header-button"
+                            id="chatMoreButton"
+                            type="button"
+                            title="More"
+                        >
+                            ⋯
+                        </button>
+
+                    </div>
+
+                </header>
+
+
+
+                <!-- CHAT SEARCH -->
+
+                <div
+                    class="chat-search-bar"
+                    id="chatSearchBar"
+                    hidden
+                >
+
+                    <span>⌕</span>
+
+                    <input
+                        id="messageSearchInput"
+                        type="text"
+                        placeholder="Search messages..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        id="closeMessageSearch"
+                        type="button"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+
+                <!-- MESSAGES -->
+
+                <div
+                    class="messages-list"
+                    id="messagesList"
+                >
+
+                    <div class="messages-loading">
+                        Loading messages...
+                    </div>
+
+                </div>
+
+
+
+                <!-- QUICK EMOJI -->
+
+                <div
+                    class="emoji-panel"
+                    id="emojiPanel"
+                    hidden
+                >
+
+                    <div class="emoji-panel-header">
+
+                        <strong>Emojis</strong>
+
+                        <span>Pick one</span>
+
+                    </div>
+
+                    <div class="emoji-grid">
+
+                        <button type="button">😀</button>
+                        <button type="button">😂</button>
+                        <button type="button">😍</button>
+                        <button type="button">🥹</button>
+                        <button type="button">😎</button>
+                        <button type="button">😭</button>
+                        <button type="button">😮</button>
+                        <button type="button">😡</button>
+                        <button type="button">🤍</button>
+                        <button type="button">❤️</button>
+                        <button type="button">🔥</button>
+                        <button type="button">✨</button>
+                        <button type="button">💀</button>
+                        <button type="button">🙏</button>
+                        <button type="button">🫡</button>
+                        <button type="button">😂</button>
+                        <button type="button">🎉</button>
+                        <button type="button">💯</button>
+                        <button type="button">👀</button>
+                        <button type="button">👍</button>
+                        <button type="button">👎</button>
+                        <button type="button">🥶</button>
+                        <button type="button">🤝</button>
+                        <button type="button">🚀</button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ATTACHMENT PANEL -->
+
+                <div
+                    class="attachment-panel"
+                    id="attachmentPanel"
+                    hidden
+                >
+
+                    <button type="button" class="attachment-item">
+
+                        <span class="attachment-icon photo">
+                            ▧
+                        </span>
+
+                        <span>
+                            <strong>Photo</strong>
+                            <small>Share a photo</small>
+                        </span>
+
+                    </button>
+
+
+                    <button type="button" class="attachment-item">
+
+                        <span class="attachment-icon file">
+                            ↗
+                        </span>
+
+                        <span>
+                            <strong>File</strong>
+                            <small>Send a document</small>
+                        </span>
+
+                    </button>
+
+
+                    <button type="button" class="attachment-item">
+
+                        <span class="attachment-icon gift">
+                            ✦
+                        </span>
+
+                        <span>
+                            <strong>Sticker</strong>
+                            <small>Send something fun</small>
+                        </span>
+
+                    </button>
+
+                </div>
+
+
+
+                <!-- CHAT THEME PANEL -->
+
+                <div
+                    class="theme-panel"
+                    id="themePanel"
+                    hidden
+                >
+
+                    <div class="theme-panel-title">
+
+                        <strong>Chat appearance</strong>
+
+                        <button
+                            id="closeThemePanel"
+                            type="button"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                    <p>Choose a background</p>
+
+                    <div class="theme-grid">
+
+                        <button
+                            class="theme-option theme-purple"
+                            data-theme="purple"
+                            type="button"
+                        >
+                            <span></span>
+                            Aurora
+                        </button>
+
+                        <button
+                            class="theme-option theme-blue"
+                            data-theme="blue"
+                            type="button"
+                        >
+                            <span></span>
+                            Ocean
+                        </button>
+
+                        <button
+                            class="theme-option theme-pink"
+                            data-theme="pink"
+                            type="button"
+                        >
+                            <span></span>
+                            Neon
+                        </button>
+
+                        <button
+                            class="theme-option theme-green"
+                            data-theme="green"
+                            type="button"
+                        >
+                            <span></span>
+                            Mint
+                        </button>
+
+                        <button
+                            class="theme-option theme-sunset"
+                            data-theme="sunset"
+                            type="button"
+                        >
+                            <span></span>
+                            Sunset
+                        </button>
+
+                        <button
+                            class="theme-option theme-dark"
+                            data-theme="dark"
+                            type="button"
+                        >
+                            <span></span>
+                            Midnight
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- MORE MENU -->
+
+                <div
+                    class="chat-more-menu"
+                    id="chatMoreMenu"
+                    hidden
+                >
+
+                    <button type="button">
+                        👤 View profile
+                    </button>
+
+                    <button type="button">
+                        🔔 Notifications
+                    </button>
+
+                    <button
+                        type="button"
+                        id="moreThemeButton"
+                    >
+                        ✦ Change appearance
+                    </button>
+
+                </div>
+
+
+
+                <!-- COMPOSER -->
+
+                <div class="message-composer">
+
+                    <div class="composer-shell">
+
+                        <button
+                            class="composer-icon"
+                            id="attachmentButton"
+                            type="button"
+                            title="Add"
+                            aria-label="Add attachment"
+                        >
+                            ＋
+                        </button>
+
+
+                        <textarea
+                            id="messageInput"
+                            maxlength="2000"
+                            placeholder="Message..."
+                            rows="1"
+                            aria-label="Write a message"
+                        ></textarea>
+
+
+                        <button
+                            class="composer-icon emoji-button"
+                            id="emojiButton"
+                            type="button"
+                            title="Emoji"
+                            aria-label="Emoji"
+                        >
+                            ☺
+                        </button>
+
+
+                        <button
+                            id="sendMessageButton"
+                            type="button"
+                            aria-label="Send message"
+                        >
+                            <span>➤</span>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+```
+
+</div>
+
+<!-- =========================
+     NEW CHAT MODAL
+========================= -->
+
+<div
+    class="new-chat-modal"
+    id="newChatModal"
+    hidden
+>
+
+```
+<div class="new-chat-box">
+
+    <button
+        class="close-modal"
+        id="closeNewChat"
+        type="button"
+    >
+        ×
+    </button>
+
+
+    <div class="new-chat-title">
+
+        <div class="new-chat-title-icon">
+            ✉
+        </div>
+
+        <div>
+
+            <h2>New message</h2>
+
+            <p>
+                Find someone to start a conversation.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="user-search-box">
+
+        <span>⌕</span>
+
+        <input
+            type="text"
+            id="userSearchInput"
+            placeholder="Search username..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+
+    <div
+        class="user-search-results"
+        id="userSearchResults"
+    >
+
+        <div class="search-hint">
+            Type a username to search.
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<script src="messages.js"></script>
+
+</body>
+
+</html>
