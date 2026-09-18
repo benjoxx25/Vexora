@@ -7,48 +7,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedUser =
         localStorage.getItem("vexoraUser");
 
-
     if (!savedUser) {
-
         window.location.href = "index.html";
-
         return;
-
     }
-
 
     let user;
 
-
     try {
-
         user = JSON.parse(savedUser);
-
     } catch (error) {
-
         localStorage.removeItem("vexoraUser");
-
         window.location.href = "index.html";
-
         return;
-
     }
-
 
     if (!user || !user.id || !user.username) {
-
         localStorage.removeItem("vexoraUser");
-
         window.location.href = "index.html";
-
         return;
-
     }
 
-
-    const currentUserId =
-        Number(user.id);
-
+    const currentUserId = Number(user.id);
 
 
     /* =========================
@@ -58,94 +38,68 @@ document.addEventListener("DOMContentLoaded", function () {
     const messagesApp =
         document.getElementById("messagesApp");
 
-
     const conversationList =
         document.getElementById("conversationList");
-
 
     const conversationSearch =
         document.getElementById("conversationSearch");
 
-
     const chatEmpty =
         document.getElementById("chatEmpty");
-
 
     const activeChat =
         document.getElementById("activeChat");
 
-
     const messagesList =
         document.getElementById("messagesList");
-
 
     const chatUserAvatar =
         document.getElementById("chatUserAvatar");
 
-
     const chatUsername =
         document.getElementById("chatUsername");
-
 
     const chatStatus =
         document.getElementById("chatStatus");
 
-
     const messageInput =
         document.getElementById("messageInput");
-
 
     const sendMessageButton =
         document.getElementById("sendMessageButton");
 
-
-    const messageCount =
-        document.getElementById("messageCount");
-
-
     const newChatModal =
         document.getElementById("newChatModal");
-
 
     const newChatButton =
         document.getElementById("newChatButton");
 
-
     const emptyNewChat =
         document.getElementById("emptyNewChat");
-
 
     const chatEmptyNewButton =
         document.getElementById("chatEmptyNewButton");
 
-
     const closeNewChat =
         document.getElementById("closeNewChat");
-
 
     const userSearchInput =
         document.getElementById("userSearchInput");
 
-
     const userSearchResults =
         document.getElementById("userSearchResults");
-
 
     const mobileBack =
         document.getElementById("mobileBack");
 
-
     const backButton =
         document.getElementById("backButton");
-
 
     const navUnread =
         document.getElementById("navUnread");
 
-
     const chatCount =
         document.getElementById("chatCount");
-
 
 
     /* =========================
@@ -165,7 +119,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let searchTimer = null;
 
 
-
     /* =========================
        HELPERS
     ========================= */
@@ -182,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     function getInitial(username) {
 
         return (username || "U")
@@ -192,13 +144,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     function setAvatar(element, avatar, username) {
 
         if (!element) {
             return;
         }
-
 
         if (avatar) {
 
@@ -234,68 +184,54 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     function formatTime(dateString) {
 
         if (!dateString) {
             return "";
         }
 
-
         const date =
             new Date(
                 dateString.replace(" ", "T") + "Z"
             );
 
-
         if (Number.isNaN(date.getTime())) {
             return "";
         }
 
-
         const now =
             new Date();
-
 
         const difference =
             now - date;
 
-
         const seconds =
             Math.floor(difference / 1000);
-
 
         if (seconds < 60) {
             return "now";
         }
 
-
         const minutes =
             Math.floor(seconds / 60);
-
 
         if (minutes < 60) {
             return minutes + "m";
         }
 
-
         const hours =
             Math.floor(minutes / 60);
-
 
         if (hours < 24) {
             return hours + "h";
         }
 
-
         const days =
             Math.floor(hours / 24);
-
 
         if (days < 7) {
             return days + "d";
         }
-
 
         return date.toLocaleDateString(
             undefined,
@@ -308,24 +244,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     function formatMessageTime(dateString) {
 
         if (!dateString) {
             return "";
         }
 
-
         const date =
             new Date(
                 dateString.replace(" ", "T") + "Z"
             );
 
-
         if (Number.isNaN(date.getTime())) {
             return "";
         }
-
 
         return date.toLocaleTimeString(
             undefined,
@@ -338,25 +270,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     function showMobileChat() {
 
-        document
-            .querySelector(".messages-app")
-            ?.classList.add("mobile-chat");
+        if (messagesApp) {
+            messagesApp.classList.add("mobile-chat");
+        }
+
+        document.body.classList.add("chat-open");
 
     }
-
 
 
     function hideMobileChat() {
 
-        document
-            .querySelector(".messages-app")
-            ?.classList.remove("mobile-chat");
+        if (messagesApp) {
+            messagesApp.classList.remove("mobile-chat");
+        }
+
+        document.body.classList.remove("chat-open");
 
     }
-
 
 
     /* =========================
@@ -373,24 +306,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     encodeURIComponent(currentUserId)
                 );
 
-
             const data =
                 await response.json();
-
 
             if (!response.ok) {
                 return;
             }
 
-
             const unread =
                 Number(data.unread) || 0;
-
 
             if (!navUnread) {
                 return;
             }
-
 
             if (unread > 0) {
 
@@ -421,7 +349,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     /* =========================
        CONVERSATIONS
     ========================= */
@@ -438,10 +365,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     encodeURIComponent(currentUserId)
                 );
 
-
             const data =
                 await response.json();
-
 
             if (!response.ok) {
 
@@ -452,15 +377,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             conversations =
                 Array.isArray(data.conversations)
                     ? data.conversations
                     : [];
 
-
             renderConversations();
-
 
             if (
                 preserveActive &&
@@ -480,7 +402,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     );
 
-
                 if (active) {
 
                     activeOtherUser = {
@@ -493,9 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             loadUnreadCount();
-
 
         } catch (error) {
 
@@ -504,20 +423,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
+            if (conversationList) {
 
-            conversationList.innerHTML = `
-                <div class="search-hint">
-                    Could not load conversations.
-                </div>
-            `;
+                conversationList.innerHTML = `
+                    <div class="search-hint">
+                        Could not load conversations.
+                    </div>
+                `;
+
+            }
 
         }
 
     }
 
 
-
     function renderConversations() {
+
+        if (!conversationList) {
+            return;
+        }
 
         const query =
             conversationSearch
@@ -526,10 +451,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     .toLowerCase()
                 : "";
 
-
         let filtered =
             conversations;
-
 
         if (query) {
 
@@ -548,7 +471,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-
         if (chatCount) {
 
             chatCount.textContent =
@@ -557,7 +479,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     : `${conversations.length} conversations`;
 
         }
-
 
         if (filtered.length === 0) {
 
@@ -596,12 +517,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 `;
 
-
                 const button =
                     document.getElementById(
                         "emptyNewChatDynamic"
                     );
-
 
                 if (button) {
 
@@ -627,22 +546,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         Number(conversation.id) ===
                         Number(activeConversationId);
 
-
                     const unread =
                         Number(
                             conversation.unread_count
                         ) || 0;
 
-
                     const username =
                         conversation.other_username ||
                         "User";
 
-
                     const lastMessage =
                         conversation.last_message ||
                         "No messages yet";
-
 
                     return `
                         <button
@@ -658,7 +573,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             >
                                 ${escapeHTML(getInitial(username))}
                             </div>
-
 
                             <div class="conversation-info">
 
@@ -678,13 +592,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                 </div>
 
-
                                 <div class="last-message">
                                     ${escapeHTML(lastMessage)}
                                 </div>
 
                             </div>
-
 
                             ${
                                 unread > 0
@@ -714,7 +626,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             button.dataset.conversationId
                         );
 
-
                     button.addEventListener(
                         "click",
                         function () {
@@ -731,17 +642,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         document
-            .querySelectorAll(".conversation-item .user-avatar")
+            .querySelectorAll(
+                ".conversation-item .user-avatar"
+            )
             .forEach(
                 function (avatar) {
 
                     const image =
                         avatar.dataset.avatar;
 
-
                     const username =
                         avatar.dataset.username;
-
 
                     setAvatar(
                         avatar,
@@ -755,7 +666,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     /* =========================
        OPEN CONVERSATION
     ========================= */
@@ -767,7 +677,6 @@ document.addEventListener("DOMContentLoaded", function () {
         activeConversationId =
             Number(conversationId);
 
-
         const conversation =
             conversations.find(
                 function (item) {
@@ -777,7 +686,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 }
             );
-
 
         if (conversation) {
 
@@ -789,26 +697,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
+        if (chatEmpty) {
+            chatEmpty.hidden = true;
+        }
 
-        chatEmpty.hidden = true;
-
-        activeChat.hidden = false;
-
+        if (activeChat) {
+            activeChat.hidden = false;
+        }
 
         if (activeOtherUser) {
 
-            chatUsername.textContent =
-                activeOtherUser.username ||
-                "User";
+            if (chatUsername) {
 
-
-            chatStatus.textContent =
-                "@" +
-                (
+                chatUsername.textContent =
                     activeOtherUser.username ||
-                    "user"
-                );
+                    "User";
 
+            }
+
+            if (chatStatus) {
+
+                chatStatus.textContent =
+                    "@" +
+                    (
+                        activeOtherUser.username ||
+                        "user"
+                    );
+
+            }
 
             setAvatar(
                 chatUserAvatar,
@@ -818,26 +734,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-
         showMobileChat();
-
 
         renderConversations();
 
-
         await loadMessages();
-
 
         await markAsRead();
 
-
         await loadConversations();
 
-
-        messageInput.focus();
+        if (messageInput) {
+            messageInput.focus();
+        }
 
     }
-
 
 
     /* =========================
@@ -850,7 +761,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-
         try {
 
             const response =
@@ -858,10 +768,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     `/api/messages/${activeConversationId}?userId=${encodeURIComponent(currentUserId)}`
                 );
 
-
             const data =
                 await response.json();
-
 
             if (!response.ok) {
 
@@ -872,25 +780,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             if (data.conversation?.otherUser) {
 
                 activeOtherUser =
                     data.conversation.otherUser;
 
+                if (chatUsername) {
 
-                chatUsername.textContent =
-                    activeOtherUser.username ||
-                    "User";
-
-
-                chatStatus.textContent =
-                    "@" +
-                    (
+                    chatUsername.textContent =
                         activeOtherUser.username ||
-                        "user"
-                    );
+                        "User";
 
+                }
+
+                if (chatStatus) {
+
+                    chatStatus.textContent =
+                        "@" +
+                        (
+                            activeOtherUser.username ||
+                            "user"
+                        );
+
+                }
 
                 setAvatar(
                     chatUserAvatar,
@@ -900,13 +812,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             renderMessages(
                 Array.isArray(data.messages)
                     ? data.messages
                     : []
             );
-
 
         } catch (error) {
 
@@ -915,20 +825,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
+            if (messagesList) {
 
-            messagesList.innerHTML = `
-                <div class="messages-empty">
-                    Could not load messages.
-                </div>
-            `;
+                messagesList.innerHTML = `
+                    <div class="messages-empty">
+                        Could not load messages.
+                    </div>
+                `;
+
+            }
 
         }
 
     }
 
 
-
     function renderMessages(messages) {
+
+        if (!messagesList) {
+            return;
+        }
 
         if (!messages.length) {
 
@@ -943,7 +859,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-
         messagesList.innerHTML =
             messages.map(
                 function (message) {
@@ -951,7 +866,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     const mine =
                         Number(message.sender_id) ===
                         currentUserId;
-
 
                     return `
                         <div
@@ -989,12 +903,10 @@ document.addEventListener("DOMContentLoaded", function () {
             )
             .join("");
 
-
         messagesList.scrollTop =
             messagesList.scrollHeight;
 
     }
-
 
 
     /* =========================
@@ -1010,15 +922,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        if (!messageInput) {
+            return;
+        }
 
         const content =
             messageInput.value.trim();
 
-
         if (!content) {
             return;
         }
-
 
         if (content.length > 2000) {
 
@@ -1030,10 +943,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-
-        sendMessageButton.disabled =
-            true;
-
+        if (sendMessageButton) {
+            sendMessageButton.disabled = true;
+        }
 
         try {
 
@@ -1063,10 +975,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 );
 
-
             const data =
                 await response.json();
-
 
             if (!response.ok) {
 
@@ -1077,13 +987,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             messageInput.value = "";
 
-            updateMessageCount();
-
             autoResizeTextarea();
-
 
             if (data.conversationId) {
 
@@ -1094,14 +1000,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             await loadMessages();
 
             await loadConversations();
 
-
             messageInput.focus();
-
 
         } catch (error) {
 
@@ -1110,7 +1013,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
-
             alert(
                 error.message ||
                 "Could not send message."
@@ -1118,13 +1020,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } finally {
 
-            sendMessageButton.disabled =
-                false;
+            if (sendMessageButton) {
+                sendMessageButton.disabled = false;
+            }
 
         }
 
     }
-
 
 
     /* =========================
@@ -1136,7 +1038,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!activeConversationId) {
             return;
         }
-
 
         try {
 
@@ -1157,7 +1058,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             );
 
-
             loadUnreadCount();
 
         } catch (error) {
@@ -1172,31 +1072,39 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     /* =========================
        NEW CHAT
     ========================= */
 
     function openNewChat() {
 
+        if (!newChatModal) {
+            return;
+        }
+
         newChatModal.hidden =
             false;
 
+        if (userSearchInput) {
+            userSearchInput.value = "";
+        }
 
-        userSearchInput.value = "";
+        if (userSearchResults) {
 
+            userSearchResults.innerHTML = `
+                <div class="search-hint">
+                    Type a username to search.
+                </div>
+            `;
 
-        userSearchResults.innerHTML = `
-            <div class="search-hint">
-                Type a username to search.
-            </div>
-        `;
-
+        }
 
         setTimeout(
             function () {
 
-                userSearchInput.focus();
+                if (userSearchInput) {
+                    userSearchInput.focus();
+                }
 
             },
             50
@@ -1205,14 +1113,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     function closeNewChatModal() {
 
-        newChatModal.hidden =
-            true;
+        if (newChatModal) {
+            newChatModal.hidden =
+                true;
+        }
 
     }
-
 
 
     /* =========================
@@ -1221,9 +1129,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function searchUsers() {
 
+        if (!userSearchInput || !userSearchResults) {
+            return;
+        }
+
         const query =
             userSearchInput.value.trim();
-
 
         if (!query) {
 
@@ -1237,13 +1148,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-
         userSearchResults.innerHTML = `
             <div class="search-hint">
                 Searching...
             </div>
         `;
-
 
         try {
 
@@ -1253,10 +1162,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     encodeURIComponent(query)
                 );
 
-
             const data =
                 await response.json();
-
 
             if (
                 !response.ok &&
@@ -1270,9 +1177,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             let users = [];
-
 
             if (Array.isArray(data)) {
 
@@ -1290,7 +1195,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             users =
                 users.filter(
                     function (foundUser) {
@@ -1301,7 +1205,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     }
                 );
-
 
             if (!users.length) {
 
@@ -1315,7 +1218,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             userSearchResults.innerHTML =
                 users.map(
                     function (foundUser) {
@@ -1323,7 +1225,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         const username =
                             foundUser.username ||
                             "User";
-
 
                         return `
                             <button
@@ -1341,7 +1242,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                         getInitial(username)
                                     )}
                                 </div>
-
 
                                 <div class="user-result-info">
 
@@ -1362,7 +1262,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 )
                 .join("");
 
-
             document
                 .querySelectorAll(".user-result")
                 .forEach(
@@ -1372,7 +1271,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             Number(
                                 button.dataset.userId
                             );
-
 
                         button.addEventListener(
                             "click",
@@ -1388,9 +1286,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 );
 
-
             document
-                .querySelectorAll(".user-result .user-avatar")
+                .querySelectorAll(
+                    ".user-result .user-avatar"
+                )
                 .forEach(
                     function (avatar) {
 
@@ -1410,7 +1309,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
-
             userSearchResults.innerHTML = `
                 <div class="search-hint">
                     Search failed. Try again.
@@ -1420,7 +1318,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     }
-
 
 
     /* =========================
@@ -1456,10 +1353,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 );
 
-
             const data =
                 await response.json();
-
 
             if (!response.ok) {
 
@@ -1470,24 +1365,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
             closeNewChatModal();
-
 
             activeConversationId =
                 Number(
                     data.conversation.id
                 );
 
-
             activeOtherUser =
                 data.conversation.otherUser;
-
 
             await loadConversations(
                 false
             );
-
 
             await openConversation(
                 activeConversationId
@@ -1500,7 +1390,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
-
             alert(
                 error.message ||
                 "Could not start conversation."
@@ -1511,29 +1400,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     /* =========================
        TEXTAREA
     ========================= */
 
-    function updateMessageCount() {
-
-        const length =
-            messageInput.value.length;
-
-
-        messageCount.textContent =
-            `${length} / 2000`;
-
-    }
-
-
-
     function autoResizeTextarea() {
+
+        if (!messageInput) {
+            return;
+        }
 
         messageInput.style.height =
             "auto";
-
 
         messageInput.style.height =
             Math.min(
@@ -1544,146 +1422,183 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    if (messageInput) {
 
-    messageInput.addEventListener(
-        "input",
-        function () {
+        messageInput.addEventListener(
+            "input",
+            function () {
 
-            updateMessageCount();
-
-            autoResizeTextarea();
-
-        }
-    );
-
-
-    messageInput.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Enter" &&
-                !event.shiftKey
-            ) {
-
-                event.preventDefault();
-
-                sendMessage();
+                autoResizeTextarea();
 
             }
-
-        }
-    );
+        );
 
 
-    sendMessageButton.addEventListener(
-        "click",
-        sendMessage
-    );
+        messageInput.addEventListener(
+            "keydown",
+            function (event) {
 
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    sendMessage();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (sendMessageButton) {
+
+        sendMessageButton.addEventListener(
+            "click",
+            sendMessage
+        );
+
+    }
 
 
     /* =========================
        SEARCH CHATS
     ========================= */
 
-    conversationSearch.addEventListener(
-        "input",
-        function () {
+    if (conversationSearch) {
 
-            renderConversations();
+        conversationSearch.addEventListener(
+            "input",
+            function () {
 
-        }
-    );
+                renderConversations();
 
+            }
+        );
+
+    }
 
 
     /* =========================
        USER SEARCH INPUT
     ========================= */
 
-    userSearchInput.addEventListener(
-        "input",
-        function () {
+    if (userSearchInput) {
 
-            clearTimeout(searchTimer);
+        userSearchInput.addEventListener(
+            "input",
+            function () {
 
+                clearTimeout(searchTimer);
 
-            searchTimer =
-                setTimeout(
-                    searchUsers,
-                    300
-                );
+                searchTimer =
+                    setTimeout(
+                        searchUsers,
+                        300
+                    );
 
-        }
-    );
+            }
+        );
 
+    }
 
 
     /* =========================
        BUTTONS
     ========================= */
 
-    newChatButton.addEventListener(
-        "click",
-        openNewChat
-    );
+    if (newChatButton) {
+
+        newChatButton.addEventListener(
+            "click",
+            openNewChat
+        );
+
+    }
 
 
-    emptyNewChat.addEventListener(
-        "click",
-        openNewChat
-    );
+    if (emptyNewChat) {
+
+        emptyNewChat.addEventListener(
+            "click",
+            openNewChat
+        );
+
+    }
 
 
-    chatEmptyNewButton.addEventListener(
-        "click",
-        openNewChat
-    );
+    if (chatEmptyNewButton) {
+
+        chatEmptyNewButton.addEventListener(
+            "click",
+            openNewChat
+        );
+
+    }
 
 
-    closeNewChat.addEventListener(
-        "click",
-        closeNewChatModal
-    );
+    if (closeNewChat) {
+
+        closeNewChat.addEventListener(
+            "click",
+            closeNewChatModal
+        );
+
+    }
 
 
-    newChatModal.addEventListener(
-        "click",
-        function (event) {
+    if (newChatModal) {
 
-            if (
-                event.target ===
-                newChatModal
-            ) {
+        newChatModal.addEventListener(
+            "click",
+            function (event) {
 
-                closeNewChatModal();
+                if (
+                    event.target ===
+                    newChatModal
+                ) {
+
+                    closeNewChatModal();
+
+                }
 
             }
+        );
 
-        }
-    );
-
-
-    mobileBack.addEventListener(
-        "click",
-        function () {
-
-            hideMobileChat();
-
-        }
-    );
+    }
 
 
-    backButton.addEventListener(
-        "click",
-        function () {
+    if (mobileBack) {
 
-            window.location.href =
-                "dashboard.html";
+        mobileBack.addEventListener(
+            "click",
+            function () {
 
-        }
-    );
+                hideMobileChat();
+
+            }
+        );
+
+    }
+
+
+    if (backButton) {
+
+        backButton.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+        );
+
+    }
 
 
     const logoutButton =
@@ -1708,7 +1623,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     /* =========================
        ESC MODAL
     ========================= */
@@ -1719,6 +1633,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (
                 event.key === "Escape" &&
+                newChatModal &&
                 !newChatModal.hidden
             ) {
 
@@ -1728,7 +1643,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
     );
-
 
 
     /* =========================
@@ -1763,7 +1677,6 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             2000
         );
-
 
 
     /* =========================
