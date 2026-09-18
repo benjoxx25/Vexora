@@ -103,6 +103,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
+       MESSAGE / ATTACHMENT ELEMENTS
+    ========================= */
+
+    const attachmentButton =
+        document.getElementById("attachmentButton");
+
+    const attachmentPanel =
+        document.getElementById("attachmentPanel");
+
+
+    /*
+       File input is created by JavaScript.
+       We do not need to modify messages.html.
+    */
+
+    const imageInput =
+        document.createElement("input");
+
+    imageInput.type = "file";
+    imageInput.accept = "image/jpeg,image/png,image/webp,image/gif";
+    imageInput.style.display = "none";
+
+    document.body.appendChild(imageInput);
+
+
+    /* =========================
        STATE
     ========================= */
 
@@ -288,6 +314,110 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         document.body.classList.remove("chat-open");
+
+    }
+
+
+    /* =========================
+       IMAGE HELPERS
+    ========================= */
+
+    const IMAGE_PREFIX =
+        "__VEXORA_IMAGE__";
+
+
+    function isImageMessage(content) {
+
+        return typeof content === "string" &&
+            content.startsWith(IMAGE_PREFIX);
+
+    }
+
+
+    function getImageData(content) {
+
+        if (!isImageMessage(content)) {
+            return "";
+        }
+
+        return content.substring(
+            IMAGE_PREFIX.length
+        );
+
+    }
+
+
+    function createImageElement(imageData) {
+
+        const image =
+            document.createElement("img");
+
+        image.src = imageData;
+
+        image.alt = "Image";
+
+        image.loading = "lazy";
+
+        image.style.display = "block";
+        image.style.width = "auto";
+        image.style.height = "auto";
+        image.style.maxWidth = "260px";
+        image.style.maxHeight = "340px";
+        image.style.objectFit = "cover";
+        image.style.borderRadius = "8px";
+        image.style.cursor = "pointer";
+
+        image.addEventListener(
+            "click",
+            function () {
+
+                const viewer =
+                    document.createElement("div");
+
+                viewer.style.position = "fixed";
+                viewer.style.inset = "0";
+                viewer.style.zIndex = "99999";
+                viewer.style.display = "flex";
+                viewer.style.alignItems = "center";
+                viewer.style.justifyContent = "center";
+                viewer.style.padding = "25px";
+                viewer.style.background =
+                    "rgba(0,0,0,.88)";
+                viewer.style.cursor = "zoom-out";
+
+                const largeImage =
+                    document.createElement("img");
+
+                largeImage.src = imageData;
+
+                largeImage.alt = "Image";
+
+                largeImage.style.maxWidth = "95vw";
+                largeImage.style.maxHeight = "90vh";
+                largeImage.style.objectFit = "contain";
+                largeImage.style.borderRadius = "12px";
+                largeImage.style.boxShadow =
+                    "0 25px 80px rgba(0,0,0,.6)";
+
+                viewer.appendChild(
+                    largeImage
+                );
+
+                viewer.addEventListener(
+                    "click",
+                    function () {
+                        viewer.remove();
+                    }
+                );
+
+                document.body.appendChild(
+                    viewer
+                );
+
+            }
+        );
+
+        return image;
 
     }
 
@@ -555,9 +685,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         conversation.other_username ||
                         "User";
 
-                    const lastMessage =
+                    let lastMessage =
                         conversation.last_message ||
                         "No messages yet";
+
+                    if (
+                        isImageMessage(
+                            lastMessage
+                        )
+                    ) {
+                        lastMessage =
+                            "📷 Photo";
+                    }
 
                     return `
                         <button
@@ -840,6 +979,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    /* =========================
+       RENDER MESSAGES
+    ========================= */
+
     function renderMessages(messages) {
 
         if (!messagesList) {
@@ -859,49 +1002,101 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-        messagesList.innerHTML =
-            messages.map(
-                function (message) {
+        messagesList.innerHTML = "";
 
-                    const mine =
-                        Number(message.sender_id) ===
-                        currentUserId;
+        messages.forEach(
+            function (message) {
 
-                    return `
-                        <div
-                            class="message-row ${mine ? "mine" : "theirs"}"
-                        >
+                const mine =
+                    Number(message.sender_id) ===
+                    currentUserId;
 
-                            <div class="message-content">
+                const row =
+                    document.createElement("div");
 
-                                <div class="message-bubble">
-                                    ${escapeHTML(
-                                        message.content
-                                    )}
-                                </div>
+                row.className =
+                    `message-row ${mine ? "mine" : "theirs"}`;
 
-                                <div class="message-meta">
-                                    ${escapeHTML(
-                                        formatMessageTime(
-                                            message.created_at
-                                        )
-                                    )}
-                                    ${
-                                        mine &&
-                                        Number(message.is_read) === 1
-                                            ? " · Seen"
-                                            : ""
-                                    }
-                                </div>
+                const content =
+                    document.createElement("div");
 
-                            </div>
+                content.className =
+                    "message-content";
 
-                        </div>
-                    `;
+                const bubble =
+                    document.createElement("div");
+
+                bubble.className =
+                    "message-bubble";
+
+                if (
+                    isImageMessage(
+                        message.content
+                    )
+                ) {
+
+                    const imageData =
+                        getImageData(
+                            message.content
+                        );
+
+                    const image =
+                        createImageElement(
+                            imageData
+                        );
+
+                    bubble.appendChild(
+                        image
+                    );
+
+                    bubble.style.padding =
+                        "3px";
+
+                    bubble.style.overflow =
+                        "hidden";
+
+                } else {
+
+                    bubble.textContent =
+                        message.content || "";
 
                 }
-            )
-            .join("");
+
+                const meta =
+                    document.createElement("div");
+
+                meta.className =
+                    "message-meta";
+
+                meta.textContent =
+                    formatMessageTime(
+                        message.created_at
+                    ) +
+                    (
+                        mine &&
+                        Number(message.is_read) === 1
+                            ? " · Seen"
+                            : ""
+                    );
+
+                content.appendChild(
+                    bubble
+                );
+
+                content.appendChild(
+                    meta
+                );
+
+                row.appendChild(
+                    content
+                );
+
+                messagesList.appendChild(
+                    row
+                );
+
+            }
+        );
 
         messagesList.scrollTop =
             messagesList.scrollHeight;
@@ -910,7 +1105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       SEND MESSAGE
+       SEND TEXT MESSAGE
     ========================= */
 
     async function sendMessage() {
@@ -961,6 +1156,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
 
                         body: JSON.stringify({
+
                             userId:
                                 currentUserId,
 
@@ -971,6 +1167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             content:
                                 content
+
                         })
                     }
                 );
@@ -1025,6 +1222,173 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
         }
+
+    }
+
+
+    /* =========================
+       SEND IMAGE
+    ========================= */
+
+    async function sendImage(file) {
+
+        if (
+            !activeOtherUser ||
+            !activeOtherUser.id
+        ) {
+            alert(
+                "Open a conversation first."
+            );
+            return;
+        }
+
+        if (!file) {
+            return;
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif"
+        ];
+
+        if (
+            !allowedTypes.includes(
+                file.type
+            )
+        ) {
+
+            alert(
+                "Please choose a JPG, PNG, WEBP or GIF image."
+            );
+
+            return;
+
+        }
+
+        if (file.size > 3 * 1024 * 1024) {
+
+            alert(
+                "Image cannot be larger than 3 MB."
+            );
+
+            return;
+
+        }
+
+        try {
+
+            const imageData =
+                await readFileAsDataURL(
+                    file
+                );
+
+            const response =
+                await fetch(
+                    "/api/messages",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            userId:
+                                currentUserId,
+
+                            recipientId:
+                                Number(
+                                    activeOtherUser.id
+                                ),
+
+                            content:
+                                IMAGE_PREFIX +
+                                imageData
+
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Could not send image."
+                );
+
+            }
+
+            if (data.conversationId) {
+
+                activeConversationId =
+                    Number(
+                        data.conversationId
+                    );
+
+            }
+
+            await loadMessages();
+
+            await loadConversations();
+
+        } catch (error) {
+
+            console.error(
+                "Send image error:",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Could not send image."
+            );
+
+        } finally {
+
+            imageInput.value = "";
+
+        }
+
+    }
+
+
+    function readFileAsDataURL(file) {
+
+        return new Promise(
+            function (resolve, reject) {
+
+                const reader =
+                    new FileReader();
+
+                reader.onload =
+                    function () {
+                        resolve(
+                            reader.result
+                        );
+                    };
+
+                reader.onerror =
+                    function () {
+                        reject(
+                            new Error(
+                                "Could not read image."
+                            )
+                        );
+                    };
+
+                reader.readAsDataURL(
+                    file
+                );
+
+            }
+        );
 
     }
 
@@ -1342,6 +1706,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
 
                         body: JSON.stringify({
+
                             userId:
                                 currentUserId,
 
@@ -1349,6 +1714,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 Number(
                                     otherUserId
                                 )
+
                         })
                     }
                 );
@@ -1463,6 +1829,76 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
     }
+
+
+    /* =========================
+       ATTACHMENTS
+    ========================= */
+
+    if (attachmentButton) {
+
+        attachmentButton.addEventListener(
+            "click",
+            function () {
+
+                if (!attachmentPanel) {
+                    imageInput.click();
+                    return;
+                }
+
+                attachmentPanel.hidden =
+                    !attachmentPanel.hidden;
+
+            }
+        );
+
+    }
+
+
+    /*
+       Photo button is the first attachment item.
+    */
+
+    if (attachmentPanel) {
+
+        const attachmentItems =
+            attachmentPanel.querySelectorAll(
+                ".attachment-item"
+            );
+
+        if (attachmentItems.length > 0) {
+
+            attachmentItems[0].addEventListener(
+                "click",
+                function () {
+
+                    attachmentPanel.hidden =
+                        true;
+
+                    imageInput.click();
+
+                }
+            );
+
+        }
+
+    }
+
+
+    imageInput.addEventListener(
+        "change",
+        function () {
+
+            const file =
+                imageInput.files &&
+                imageInput.files[0];
+
+            if (file) {
+                sendImage(file);
+            }
+
+        }
+    );
 
 
     /* =========================
@@ -1624,7 +2060,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       ESC MODAL
+       ESC
     ========================= */
 
     document.addEventListener(
