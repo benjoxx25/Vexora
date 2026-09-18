@@ -2471,3 +2471,14 @@ a:focus-visible {
         scroll-behavior: auto !important;
     }
 }
+
+.message-row {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    min-height: 0;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    animation: none !important;
+}
