@@ -1,12 +1,134 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
 const db = require("./database");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: "5mb" }));
+
+// ==========================
+// UPLOADS
+// ==========================
+
+const messageUploadsDir = path.join(
+    __dirname,
+    "uploads",
+    "messages"
+);
+
+fs.mkdirSync(messageUploadsDir, {
+    recursive: true
+});
+
+
+// ==========================
+// MIDDLEWARE
+// ==========================
+
+app.use(express.json({
+    limit: "12mb"
+}));
+
 app.use(express.static(__dirname));
+
+
+// ==========================
+// POMOĆNE FUNKCIJE ZA SLIKE
+// ==========================
+
+function parseImageData(imageData) {
+
+    if (typeof imageData !== "string") {
+        return null;
+    }
+
+    const match = imageData.match(
+        /^data:image\/(jpeg|jpg|png|webp|gif);base64,(.+)$/i
+    );
+
+    if (!match) {
+        return null;
+    }
+
+    const extension =
+        match[1].toLowerCase() === "jpeg" ||
+        match[1].toLowerCase() === "jpg"
+            ? "jpg"
+            : match[1].toLowerCase();
+
+    let buffer;
+
+    try {
+
+        buffer = Buffer.from(
+            match[2],
+            "base64"
+        );
+
+    } catch (error) {
+
+        return null;
+
+    }
+
+    if (!buffer || !buffer.length) {
+        return null;
+    }
+
+    return {
+        extension: extension,
+        buffer: buffer
+    };
+
+}
+
+
+function createConversation(userId, recipientId) {
+
+    const user1 = Math.min(
+        Number(userId),
+        Number(recipientId)
+    );
+
+    const user2 = Math.max(
+        Number(userId),
+        Number(recipientId)
+    );
+
+    let conversation = db.prepare(`
+        SELECT id
+        FROM conversations
+        WHERE user1_id = ?
+        AND user2_id = ?
+    `).get(
+        user1,
+        user2
+    );
+
+    if (!conversation) {
+
+        const result = db.prepare(`
+            INSERT INTO conversations (
+                user1_id,
+                user2_id
+            )
+            VALUES (?, ?)
+        `).run(
+            user1,
+            user2
+        );
+
+        conversation = {
+            id: result.lastInsertRowid
+        };
+
+    }
+
+    return conversation;
+
+}
 
 
 // ==========================
@@ -14,7 +136,14 @@ app.use(express.static(__dirname));
 // ==========================
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
+
+    res.sendFile(
+        path.join(
+            __dirname,
+            "index.html"
+        )
+    );
+
 });
 
 
@@ -24,20 +153,28 @@ app.get("/", (req, res) => {
 
 app.post("/api/register", (req, res) => {
 
-    const { username, email, password } = req.body;
+    const {
+        username,
+        email,
+        password
+    } = req.body;
 
     if (!username || !email || !password) {
+
         return res.status(400).json({
             success: false,
             message: "Please fill in all fields."
         });
+
     }
 
     if (password.length < 6) {
+
         return res.status(400).json({
             success: false,
             message: "Password must be at least 6 characters."
         });
+
     }
 
     try {
@@ -46,13 +183,18 @@ app.post("/api/register", (req, res) => {
             SELECT id
             FROM users
             WHERE username = ? OR email = ?
-        `).get(username.trim(), email.trim());
+        `).get(
+            username.trim(),
+            email.trim()
+        );
 
         if (existingUser) {
+
             return res.status(400).json({
                 success: false,
                 message: "Username or email already exists."
             });
+
         }
 
         const result = db.prepare(`
@@ -99,13 +241,18 @@ app.post("/api/register", (req, res) => {
 
 app.post("/api/login", (req, res) => {
 
-    const { email, password } = req.body;
+    const {
+        email,
+        password
+    } = req.body;
 
     if (!email || !password) {
+
         return res.status(400).json({
             success: false,
             message: "Please enter your email and password."
         });
+
     }
 
     try {
@@ -120,20 +267,26 @@ app.post("/api/login", (req, res) => {
                 avatar
             FROM users
             WHERE email = ?
-        `).get(email.trim());
+        `).get(
+            email.trim()
+        );
 
         if (!user) {
+
             return res.status(401).json({
                 success: false,
                 message: "Incorrect email or password."
             });
+
         }
 
         if (user.password !== password) {
+
             return res.status(401).json({
                 success: false,
                 message: "Incorrect email or password."
             });
+
         }
 
         res.json({
@@ -169,12 +322,9 @@ app.post("/api/login", (req, res) => {
 app.get("/api/users", (req, res) => {
 
     const username = req.query.username;
-    const currentUserId = Number(req.query.currentUserId);
+    const currentUserId =
+        Number(req.query.currentUserId);
 
-
-    // ==========================
-    // JEDAN KORISNIK
-    // ==========================
 
     if (username) {
 
@@ -191,10 +341,12 @@ app.get("/api/users", (req, res) => {
             `).get(username);
 
             if (!user) {
+
                 return res.status(404).json({
                     success: false,
                     message: "User not found."
                 });
+
             }
 
             return res.json({
@@ -216,15 +368,13 @@ app.get("/api/users", (req, res) => {
     }
 
 
-    // ==========================
-    // LISTA KORISNIKA
-    // ==========================
-
     if (!currentUserId) {
+
         return res.status(400).json({
             success: false,
             message: "Current user ID is required."
         });
+
     }
 
     try {
@@ -286,13 +436,16 @@ app.get("/api/users", (req, res) => {
 
 app.get("/api/users/:userId/profile", (req, res) => {
 
-    const userId = Number(req.params.userId);
+    const userId =
+        Number(req.params.userId);
 
     if (!userId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid user."
         });
+
     }
 
     try {
@@ -310,12 +463,13 @@ app.get("/api/users/:userId/profile", (req, res) => {
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const posts = db.prepare(`
             SELECT COUNT(*) AS count
@@ -323,20 +477,17 @@ app.get("/api/users/:userId/profile", (req, res) => {
             WHERE user_id = ?
         `).get(userId);
 
-
         const followers = db.prepare(`
             SELECT COUNT(*) AS count
             FROM follows
             WHERE following_id = ?
         `).get(userId);
 
-
         const following = db.prepare(`
             SELECT COUNT(*) AS count
             FROM follows
             WHERE follower_id = ?
         `).get(userId);
-
 
         res.json({
             success: true,
@@ -374,7 +525,8 @@ app.get("/api/users/:userId/profile", (req, res) => {
 
 app.put("/api/users/:userId/profile", (req, res) => {
 
-    const userId = Number(req.params.userId);
+    const userId =
+        Number(req.params.userId);
 
     const username =
         typeof req.body.username === "string"
@@ -391,57 +543,62 @@ app.put("/api/users/:userId/profile", (req, res) => {
             ? req.body.avatar.trim()
             : "";
 
-
     if (!userId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid user."
         });
+
     }
 
-
     if (!username) {
+
         return res.status(400).json({
             success: false,
             message: "Username cannot be empty."
         });
+
     }
 
-
     if (username.length > 30) {
+
         return res.status(400).json({
             success: false,
             message: "Username cannot be longer than 30 characters."
         });
+
     }
 
-
     if (bio.length > 160) {
+
         return res.status(400).json({
             success: false,
             message: "Bio cannot be longer than 160 characters."
         });
-    }
 
+    }
 
     if (
         avatar &&
         !avatar.startsWith("data:image/")
     ) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid profile picture."
         });
+
     }
 
-
     if (avatar.length > 4000000) {
+
         return res.status(400).json({
             success: false,
             message: "Profile picture is too large."
         });
-    }
 
+    }
 
     try {
 
@@ -451,14 +608,14 @@ app.put("/api/users/:userId/profile", (req, res) => {
             WHERE id = ?
         `).get(userId);
 
-
         if (!existingUser) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const usernameTaken = db.prepare(`
             SELECT id
@@ -470,14 +627,14 @@ app.put("/api/users/:userId/profile", (req, res) => {
             userId
         );
 
-
         if (usernameTaken) {
+
             return res.status(400).json({
                 success: false,
                 message: "That username is already taken."
             });
-        }
 
+        }
 
         db.prepare(`
             UPDATE users
@@ -493,7 +650,6 @@ app.put("/api/users/:userId/profile", (req, res) => {
             userId
         );
 
-
         const updatedUser = db.prepare(`
             SELECT
                 id,
@@ -504,7 +660,6 @@ app.put("/api/users/:userId/profile", (req, res) => {
             FROM users
             WHERE id = ?
         `).get(userId);
-
 
         res.json({
             success: true,
@@ -532,22 +687,34 @@ app.put("/api/users/:userId/profile", (req, res) => {
 
 app.post("/api/posts", (req, res) => {
 
-    const { userId, content } = req.body;
+    const {
+        userId,
+        content
+    } = req.body;
 
-    if (!userId || !content || content.trim() === "") {
+    if (
+        !userId ||
+        !content ||
+        content.trim() === ""
+    ) {
+
         return res.status(400).json({
             success: false,
             message: "Post cannot be empty."
         });
+
     }
 
-    const cleanContent = content.trim();
+    const cleanContent =
+        content.trim();
 
     if (cleanContent.length > 500) {
+
         return res.status(400).json({
             success: false,
             message: "Post cannot be longer than 500 characters."
         });
+
     }
 
     try {
@@ -559,12 +726,13 @@ app.post("/api/posts", (req, res) => {
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const result = db.prepare(`
             INSERT INTO posts (
@@ -576,7 +744,6 @@ app.post("/api/posts", (req, res) => {
             userId,
             cleanContent
         );
-
 
         res.json({
             success: true,
@@ -604,7 +771,8 @@ app.post("/api/posts", (req, res) => {
 
 app.get("/api/posts", (req, res) => {
 
-    const userId = Number(req.query.userId);
+    const userId =
+        Number(req.query.userId);
 
     try {
 
@@ -651,7 +819,6 @@ app.get("/api/posts", (req, res) => {
 
         `).all(userId || 0);
 
-
         res.json({
             success: true,
             posts: posts
@@ -677,14 +844,20 @@ app.get("/api/posts", (req, res) => {
 
 app.post("/api/posts/:postId/like", (req, res) => {
 
-    const postId = Number(req.params.postId);
-    const { userId } = req.body;
+    const postId =
+        Number(req.params.postId);
+
+    const {
+        userId
+    } = req.body;
 
     if (!postId || !userId) {
+
         return res.status(400).json({
             success: false,
             message: "Missing post or user."
         });
+
     }
 
     try {
@@ -696,12 +869,13 @@ app.post("/api/posts/:postId/like", (req, res) => {
         `).get(postId);
 
         if (!post) {
+
             return res.status(404).json({
                 success: false,
                 message: "Post not found."
             });
-        }
 
+        }
 
         const user = db.prepare(`
             SELECT id
@@ -710,12 +884,13 @@ app.post("/api/posts/:postId/like", (req, res) => {
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const existingLike = db.prepare(`
             SELECT id
@@ -726,7 +901,6 @@ app.post("/api/posts/:postId/like", (req, res) => {
             userId,
             postId
         );
-
 
         if (existingLike) {
 
@@ -754,13 +928,11 @@ app.post("/api/posts/:postId/like", (req, res) => {
 
         }
 
-
         const result = db.prepare(`
             SELECT COUNT(*) AS count
             FROM likes
             WHERE post_id = ?
         `).get(postId);
-
 
         res.json({
             success: true,
@@ -788,14 +960,19 @@ app.post("/api/posts/:postId/like", (req, res) => {
 
 app.delete("/api/posts/:postId", (req, res) => {
 
-    const postId = Number(req.params.postId);
-    const userId = Number(req.body.userId);
+    const postId =
+        Number(req.params.postId);
+
+    const userId =
+        Number(req.body.userId);
 
     if (!postId || !userId) {
+
         return res.status(400).json({
             success: false,
             message: "Missing post or user."
         });
+
     }
 
     try {
@@ -809,55 +986,56 @@ app.delete("/api/posts/:postId", (req, res) => {
         `).get(postId);
 
         if (!post) {
+
             return res.status(404).json({
                 success: false,
                 message: "Post not found."
             });
+
         }
 
+        if (
+            Number(post.user_id) !==
+            Number(userId)
+        ) {
 
-        if (Number(post.user_id) !== Number(userId)) {
             return res.status(403).json({
                 success: false,
                 message: "You can only delete your own posts."
             });
+
         }
 
+        const deletePost =
+            db.transaction(() => {
 
-        const deletePost = db.transaction(() => {
-
-            db.prepare(`
-                DELETE FROM likes
-                WHERE post_id = ?
-            `).run(postId);
-
-
-            db.prepare(`
-                DELETE FROM comment_likes
-                WHERE comment_id IN (
-                    SELECT id
-                    FROM comments
+                db.prepare(`
+                    DELETE FROM likes
                     WHERE post_id = ?
-                )
-            `).run(postId);
+                `).run(postId);
 
+                db.prepare(`
+                    DELETE FROM comment_likes
+                    WHERE comment_id IN (
+                        SELECT id
+                        FROM comments
+                        WHERE post_id = ?
+                    )
+                `).run(postId);
 
-            db.prepare(`
-                DELETE FROM comments
-                WHERE post_id = ?
-            `).run(postId);
+                db.prepare(`
+                    DELETE FROM comments
+                    WHERE post_id = ?
+                `).run(postId);
 
+                db.prepare(`
+                    DELETE FROM posts
+                    WHERE id = ?
+                `).run(postId);
 
-            db.prepare(`
-                DELETE FROM posts
-                WHERE id = ?
-            `).run(postId);
-
-        });
-
+            });
 
         deletePost();
-
 
         res.json({
             success: true,
@@ -884,13 +1062,16 @@ app.delete("/api/posts/:postId", (req, res) => {
 
 app.get("/api/posts/:postId/comments", (req, res) => {
 
-    const postId = Number(req.params.postId);
+    const postId =
+        Number(req.params.postId);
 
     if (!postId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid post."
         });
+
     }
 
     try {
@@ -938,7 +1119,6 @@ app.get("/api/posts/:postId/comments", (req, res) => {
             postId
         );
 
-
         res.json({
             success: true,
             comments: comments
@@ -960,8 +1140,13 @@ app.get("/api/posts/:postId/comments", (req, res) => {
 
 app.post("/api/posts/:postId/comments", (req, res) => {
 
-    const postId = Number(req.params.postId);
-    const { userId, content } = req.body;
+    const postId =
+        Number(req.params.postId);
+
+    const {
+        userId,
+        content
+    } = req.body;
 
     if (
         !postId ||
@@ -969,19 +1154,24 @@ app.post("/api/posts/:postId/comments", (req, res) => {
         !content ||
         content.trim() === ""
     ) {
+
         return res.status(400).json({
             success: false,
             message: "Comment cannot be empty."
         });
+
     }
 
-    const cleanContent = content.trim();
+    const cleanContent =
+        content.trim();
 
     if (cleanContent.length > 300) {
+
         return res.status(400).json({
             success: false,
             message: "Comment cannot be longer than 300 characters."
         });
+
     }
 
     try {
@@ -993,12 +1183,13 @@ app.post("/api/posts/:postId/comments", (req, res) => {
         `).get(postId);
 
         if (!post) {
+
             return res.status(404).json({
                 success: false,
                 message: "Post not found."
             });
-        }
 
+        }
 
         const user = db.prepare(`
             SELECT id
@@ -1007,12 +1198,13 @@ app.post("/api/posts/:postId/comments", (req, res) => {
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const result = db.prepare(`
             INSERT INTO comments (
@@ -1026,7 +1218,6 @@ app.post("/api/posts/:postId/comments", (req, res) => {
             postId,
             cleanContent
         );
-
 
         const comment = db.prepare(`
             SELECT
@@ -1047,8 +1238,9 @@ app.post("/api/posts/:postId/comments", (req, res) => {
 
             WHERE comments.id = ?
 
-        `).get(result.lastInsertRowid);
-
+        `).get(
+            result.lastInsertRowid
+        );
 
         res.json({
             success: true,
@@ -1075,14 +1267,20 @@ app.post("/api/posts/:postId/comments", (req, res) => {
 
 app.post("/api/comments/:commentId/like", (req, res) => {
 
-    const commentId = Number(req.params.commentId);
-    const { userId } = req.body;
+    const commentId =
+        Number(req.params.commentId);
+
+    const {
+        userId
+    } = req.body;
 
     if (!commentId || !userId) {
+
         return res.status(400).json({
             success: false,
             message: "Missing comment or user."
         });
+
     }
 
     try {
@@ -1096,12 +1294,13 @@ app.post("/api/comments/:commentId/like", (req, res) => {
         `).get(commentId);
 
         if (!comment) {
+
             return res.status(404).json({
                 success: false,
                 message: "Comment not found."
             });
-        }
 
+        }
 
         const user = db.prepare(`
             SELECT id
@@ -1110,12 +1309,13 @@ app.post("/api/comments/:commentId/like", (req, res) => {
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const existingLike = db.prepare(`
             SELECT id
@@ -1126,7 +1326,6 @@ app.post("/api/comments/:commentId/like", (req, res) => {
             userId,
             commentId
         );
-
 
         if (existingLike) {
 
@@ -1154,13 +1353,11 @@ app.post("/api/comments/:commentId/like", (req, res) => {
 
         }
 
-
         const result = db.prepare(`
             SELECT COUNT(*) AS count
             FROM comment_likes
             WHERE comment_id = ?
         `).get(commentId);
-
 
         res.json({
             success: true,
@@ -1194,22 +1391,23 @@ app.post("/api/users/:userId/follow", (req, res) => {
     const followerId =
         Number(req.body.followerId);
 
-
     if (!followingId || !followerId) {
+
         return res.status(400).json({
             success: false,
             message: "Missing user information."
         });
+
     }
 
-
     if (followingId === followerId) {
+
         return res.status(400).json({
             success: false,
             message: "You cannot follow yourself."
         });
-    }
 
+    }
 
     try {
 
@@ -1219,14 +1417,14 @@ app.post("/api/users/:userId/follow", (req, res) => {
             WHERE id = ?
         `).get(followingId);
 
-
         if (!targetUser) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const followerUser = db.prepare(`
             SELECT id
@@ -1234,14 +1432,14 @@ app.post("/api/users/:userId/follow", (req, res) => {
             WHERE id = ?
         `).get(followerId);
 
-
         if (!followerUser) {
+
             return res.status(404).json({
                 success: false,
                 message: "Follower user not found."
             });
-        }
 
+        }
 
         const existingFollow = db.prepare(`
             SELECT id
@@ -1252,7 +1450,6 @@ app.post("/api/users/:userId/follow", (req, res) => {
             followerId,
             followingId
         );
-
 
         if (existingFollow) {
 
@@ -1280,20 +1477,17 @@ app.post("/api/users/:userId/follow", (req, res) => {
 
         }
 
-
         const followers = db.prepare(`
             SELECT COUNT(*) AS count
             FROM follows
             WHERE following_id = ?
         `).get(followingId);
 
-
         const following = db.prepare(`
             SELECT COUNT(*) AS count
             FROM follows
             WHERE follower_id = ?
         `).get(followingId);
-
 
         res.json({
             success: true,
@@ -1325,14 +1519,14 @@ app.get("/api/users/:userId/stats", (req, res) => {
     const userId =
         Number(req.params.userId);
 
-
     if (!userId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid user."
         });
-    }
 
+    }
 
     try {
 
@@ -1346,14 +1540,14 @@ app.get("/api/users/:userId/stats", (req, res) => {
             WHERE id = ?
         `).get(userId);
 
-
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const followers = db.prepare(`
             SELECT COUNT(*) AS count
@@ -1361,20 +1555,17 @@ app.get("/api/users/:userId/stats", (req, res) => {
             WHERE following_id = ?
         `).get(userId);
 
-
         const following = db.prepare(`
             SELECT COUNT(*) AS count
             FROM follows
             WHERE follower_id = ?
         `).get(userId);
 
-
         const posts = db.prepare(`
             SELECT COUNT(*) AS count
             FROM posts
             WHERE user_id = ?
         `).get(userId);
-
 
         res.json({
             success: true,
@@ -1409,13 +1600,16 @@ app.get("/api/users/:userId/stats", (req, res) => {
 
 app.get("/api/messages/unread-count", (req, res) => {
 
-    const userId = Number(req.query.userId);
+    const userId =
+        Number(req.query.userId);
 
     if (!userId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid user."
         });
+
     }
 
     try {
@@ -1427,10 +1621,12 @@ app.get("/api/messages/unread-count", (req, res) => {
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
+
         }
 
         const result = db.prepare(`
@@ -1475,87 +1671,73 @@ app.get("/api/messages/unread-count", (req, res) => {
 
 app.post("/api/messages/conversations", (req, res) => {
 
-    const userId = Number(req.body.userId);
-    const otherUserId = Number(req.body.otherUserId);
+    const userId =
+        Number(req.body.userId);
+
+    const otherUserId =
+        Number(req.body.otherUserId);
 
     if (!userId || !otherUserId) {
+
         return res.status(400).json({
             success: false,
             message: "Missing user information."
         });
+
     }
 
     if (userId === otherUserId) {
+
         return res.status(400).json({
             success: false,
             message: "You cannot message yourself."
         });
+
     }
 
     try {
 
         const user = db.prepare(`
-            SELECT id, username, avatar
+            SELECT
+                id,
+                username,
+                avatar
             FROM users
             WHERE id = ?
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
+
         }
 
-
         const otherUser = db.prepare(`
-            SELECT id, username, avatar
+            SELECT
+                id,
+                username,
+                avatar
             FROM users
             WHERE id = ?
         `).get(otherUserId);
 
         if (!otherUser) {
+
             return res.status(404).json({
                 success: false,
                 message: "Other user not found."
             });
+
         }
 
-
-        const user1 = Math.min(userId, otherUserId);
-        const user2 = Math.max(userId, otherUserId);
-
-
-        let conversation = db.prepare(`
-            SELECT id
-            FROM conversations
-            WHERE user1_id = ?
-            AND user2_id = ?
-        `).get(
-            user1,
-            user2
-        );
-
-
-        if (!conversation) {
-
-            const result = db.prepare(`
-                INSERT INTO conversations (
-                    user1_id,
-                    user2_id
-                )
-                VALUES (?, ?)
-            `).run(
-                user1,
-                user2
+        const conversation =
+            createConversation(
+                userId,
+                otherUserId
             );
-
-            conversation = {
-                id: result.lastInsertRowid
-            };
-
-        }
-
 
         res.json({
             success: true,
@@ -1585,13 +1767,16 @@ app.post("/api/messages/conversations", (req, res) => {
 
 app.get("/api/messages/conversations", (req, res) => {
 
-    const userId = Number(req.query.userId);
+    const userId =
+        Number(req.query.userId);
 
     if (!userId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid user."
         });
+
     }
 
     try {
@@ -1603,12 +1788,13 @@ app.get("/api/messages/conversations", (req, res) => {
         `).get(userId);
 
         if (!user) {
+
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             });
-        }
 
+        }
 
         const conversations = db.prepare(`
             SELECT
@@ -1623,7 +1809,13 @@ app.get("/api/messages/conversations", (req, res) => {
                 other_user.username AS other_username,
                 other_user.avatar AS other_avatar,
 
-                last_message.content AS last_message,
+                CASE
+                    WHEN last_message.image_url IS NOT NULL
+                    AND last_message.image_url != ''
+                    THEN '📷 Photo'
+                    ELSE last_message.content
+                END AS last_message,
+
                 last_message.created_at AS last_message_time,
 
                 (
@@ -1657,7 +1849,10 @@ app.get("/api/messages/conversations", (req, res) => {
                OR conversations.user2_id = ?
 
             ORDER BY
-                COALESCE(last_message.created_at, conversations.created_at) DESC
+                COALESCE(
+                    last_message.created_at,
+                    conversations.created_at
+                ) DESC
 
         `).all(
             userId,
@@ -1666,7 +1861,6 @@ app.get("/api/messages/conversations", (req, res) => {
             userId,
             userId
         );
-
 
         res.json({
             success: true,
@@ -1699,14 +1893,14 @@ app.get("/api/messages/:conversationId", (req, res) => {
     const userId =
         Number(req.query.userId);
 
-
     if (!conversationId || !userId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid conversation or user."
         });
-    }
 
+    }
 
     try {
 
@@ -1719,31 +1913,31 @@ app.get("/api/messages/:conversationId", (req, res) => {
             WHERE id = ?
         `).get(conversationId);
 
-
         if (!conversation) {
+
             return res.status(404).json({
                 success: false,
                 message: "Conversation not found."
             });
-        }
 
+        }
 
         if (
             Number(conversation.user1_id) !== userId &&
             Number(conversation.user2_id) !== userId
         ) {
+
             return res.status(403).json({
                 success: false,
                 message: "You do not have access to this conversation."
             });
-        }
 
+        }
 
         const otherUserId =
             Number(conversation.user1_id) === userId
                 ? Number(conversation.user2_id)
                 : Number(conversation.user1_id);
-
 
         const otherUser = db.prepare(`
             SELECT
@@ -1755,13 +1949,13 @@ app.get("/api/messages/:conversationId", (req, res) => {
             WHERE id = ?
         `).get(otherUserId);
 
-
         const messages = db.prepare(`
             SELECT
                 messages.id,
                 messages.conversation_id,
                 messages.sender_id,
                 messages.content,
+                messages.image_url,
                 messages.is_read,
                 messages.created_at,
 
@@ -1778,7 +1972,6 @@ app.get("/api/messages/:conversationId", (req, res) => {
             ORDER BY messages.id ASC
 
         `).all(conversationId);
-
 
         res.json({
             success: true,
@@ -1804,43 +1997,52 @@ app.get("/api/messages/:conversationId", (req, res) => {
 
 
 // ==========================
-// SLANJE PORUKE
+// SLANJE TEKSTUALNE PORUKE
 // ==========================
 
 app.post("/api/messages", (req, res) => {
 
-    const userId = Number(req.body.userId);
-    const recipientId = Number(req.body.recipientId);
+    const userId =
+        Number(req.body.userId);
+
+    const recipientId =
+        Number(req.body.recipientId);
 
     const content =
         typeof req.body.content === "string"
             ? req.body.content.trim()
             : "";
 
+    if (
+        !userId ||
+        !recipientId ||
+        !content
+    ) {
 
-    if (!userId || !recipientId || !content) {
         return res.status(400).json({
             success: false,
             message: "Message cannot be empty."
         });
+
     }
 
-
     if (userId === recipientId) {
+
         return res.status(400).json({
             success: false,
             message: "You cannot message yourself."
         });
+
     }
 
-
     if (content.length > 2000) {
+
         return res.status(400).json({
             success: false,
             message: "Message cannot be longer than 2000 characters."
         });
-    }
 
+    }
 
     try {
 
@@ -1853,14 +2055,14 @@ app.post("/api/messages", (req, res) => {
             WHERE id = ?
         `).get(userId);
 
-
         if (!sender) {
+
             return res.status(404).json({
                 success: false,
                 message: "Sender not found."
             });
-        }
 
+        }
 
         const recipient = db.prepare(`
             SELECT
@@ -1871,65 +2073,35 @@ app.post("/api/messages", (req, res) => {
             WHERE id = ?
         `).get(recipientId);
 
-
         if (!recipient) {
+
             return res.status(404).json({
                 success: false,
                 message: "Recipient not found."
             });
+
         }
 
-
-        const user1 = Math.min(userId, recipientId);
-        const user2 = Math.max(userId, recipientId);
-
-
-        let conversation = db.prepare(`
-            SELECT
-                id
-            FROM conversations
-            WHERE user1_id = ?
-            AND user2_id = ?
-        `).get(
-            user1,
-            user2
-        );
-
-
-        if (!conversation) {
-
-            const result = db.prepare(`
-                INSERT INTO conversations (
-                    user1_id,
-                    user2_id
-                )
-                VALUES (?, ?)
-            `).run(
-                user1,
-                user2
+        const conversation =
+            createConversation(
+                userId,
+                recipientId
             );
-
-            conversation = {
-                id: result.lastInsertRowid
-            };
-
-        }
-
 
         const result = db.prepare(`
             INSERT INTO messages (
                 conversation_id,
                 sender_id,
                 content,
+                image_url,
                 is_read
             )
-            VALUES (?, ?, ?, 0)
+            VALUES (?, ?, ?, '', 0)
         `).run(
             conversation.id,
             userId,
             content
         );
-
 
         const message = db.prepare(`
             SELECT
@@ -1937,6 +2109,7 @@ app.post("/api/messages", (req, res) => {
                 messages.conversation_id,
                 messages.sender_id,
                 messages.content,
+                messages.image_url,
                 messages.is_read,
                 messages.created_at,
 
@@ -1950,8 +2123,9 @@ app.post("/api/messages", (req, res) => {
 
             WHERE messages.id = ?
 
-        `).get(result.lastInsertRowid);
-
+        `).get(
+            result.lastInsertRowid
+        );
 
         res.json({
             success: true,
@@ -1974,6 +2148,214 @@ app.post("/api/messages", (req, res) => {
 
 
 // ==========================
+// SLANJE SLIKE
+// ==========================
+
+app.post("/api/messages/image", (req, res) => {
+
+    const userId =
+        Number(req.body.userId);
+
+    const recipientId =
+        Number(req.body.recipientId);
+
+    const imageData =
+        req.body.imageData;
+
+
+    if (!userId || !recipientId || !imageData) {
+
+        return res.status(400).json({
+            success: false,
+            message: "Image data is missing."
+        });
+
+    }
+
+
+    if (userId === recipientId) {
+
+        return res.status(400).json({
+            success: false,
+            message: "You cannot message yourself."
+        });
+
+    }
+
+
+    const parsedImage =
+        parseImageData(imageData);
+
+
+    if (!parsedImage) {
+
+        return res.status(400).json({
+            success: false,
+            message: "Invalid image format."
+        });
+
+    }
+
+
+    const maxImageSize =
+        8 * 1024 * 1024;
+
+
+    if (
+        parsedImage.buffer.length >
+        maxImageSize
+    ) {
+
+        return res.status(400).json({
+            success: false,
+            message: "Image cannot be larger than 8 MB."
+        });
+
+    }
+
+
+    try {
+
+        const sender = db.prepare(`
+            SELECT
+                id,
+                username,
+                avatar
+            FROM users
+            WHERE id = ?
+        `).get(userId);
+
+
+        if (!sender) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Sender not found."
+            });
+
+        }
+
+
+        const recipient = db.prepare(`
+            SELECT
+                id,
+                username,
+                avatar
+            FROM users
+            WHERE id = ?
+        `).get(recipientId);
+
+
+        if (!recipient) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Recipient not found."
+            });
+
+        }
+
+
+        const conversation =
+            createConversation(
+                userId,
+                recipientId
+            );
+
+
+        const filename =
+            Date.now() +
+            "-" +
+            crypto.randomBytes(8).toString("hex") +
+            "." +
+            parsedImage.extension;
+
+
+        const filePath =
+            path.join(
+                messageUploadsDir,
+                filename
+            );
+
+
+        fs.writeFileSync(
+            filePath,
+            parsedImage.buffer
+        );
+
+
+        const imageUrl =
+            "/uploads/messages/" +
+            filename;
+
+
+        const result = db.prepare(`
+            INSERT INTO messages (
+                conversation_id,
+                sender_id,
+                content,
+                image_url,
+                is_read
+            )
+            VALUES (?, ?, '', ?, 0)
+        `).run(
+            conversation.id,
+            userId,
+            imageUrl
+        );
+
+
+        const message = db.prepare(`
+            SELECT
+                messages.id,
+                messages.conversation_id,
+                messages.sender_id,
+                messages.content,
+                messages.image_url,
+                messages.is_read,
+                messages.created_at,
+
+                users.username AS sender_username,
+                users.avatar AS sender_avatar
+
+            FROM messages
+
+            JOIN users
+                ON users.id = messages.sender_id
+
+            WHERE messages.id = ?
+
+        `).get(
+            result.lastInsertRowid
+        );
+
+
+        res.json({
+            success: true,
+            conversationId: conversation.id,
+            message: message
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Image message error:",
+            error
+        );
+
+
+        res.status(500).json({
+            success: false,
+            message: "Could not send image."
+        });
+
+    }
+
+});
+
+
+// ==========================
 // OZNAČI PORUKE KAO PROČITANE
 // ==========================
 
@@ -1985,14 +2367,14 @@ app.post("/api/messages/:conversationId/read", (req, res) => {
     const userId =
         Number(req.body.userId);
 
-
     if (!conversationId || !userId) {
+
         return res.status(400).json({
             success: false,
             message: "Invalid conversation or user."
         });
-    }
 
+    }
 
     try {
 
@@ -2005,25 +2387,26 @@ app.post("/api/messages/:conversationId/read", (req, res) => {
             WHERE id = ?
         `).get(conversationId);
 
-
         if (!conversation) {
+
             return res.status(404).json({
                 success: false,
                 message: "Conversation not found."
             });
-        }
 
+        }
 
         if (
             Number(conversation.user1_id) !== userId &&
             Number(conversation.user2_id) !== userId
         ) {
+
             return res.status(403).json({
                 success: false,
                 message: "You do not have access to this conversation."
             });
-        }
 
+        }
 
         db.prepare(`
             UPDATE messages
@@ -2035,7 +2418,6 @@ app.post("/api/messages/:conversationId/read", (req, res) => {
             conversationId,
             userId
         );
-
 
         res.json({
             success: true
@@ -2059,10 +2441,14 @@ app.post("/api/messages/:conversationId/read", (req, res) => {
 // SERVER
 // ==========================
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(
+    PORT,
+    "0.0.0.0",
+    () => {
 
-    console.log(
-        `Vexora server is running on port ${PORT}`
-    );
+        console.log(
+            `Vexora server is running on port ${PORT}`
+        );
 
-});
+    }
+);
