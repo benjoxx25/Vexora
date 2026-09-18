@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    const currentUserId = Number(user.id);
+    const currentUserId =
+        Number(user.id);
 
 
     /* =========================
@@ -101,31 +102,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatCount =
         document.getElementById("chatCount");
 
-
-    /* =========================
-       MESSAGE / ATTACHMENT ELEMENTS
-    ========================= */
-
     const attachmentButton =
         document.getElementById("attachmentButton");
 
     const attachmentPanel =
         document.getElementById("attachmentPanel");
 
+    const attachmentItems =
+        document.querySelectorAll(".attachment-item");
 
-    /*
-       File input is created by JavaScript.
-       We do not need to modify messages.html.
-    */
+    const emojiButton =
+        document.getElementById("emojiButton");
 
-    const imageInput =
-        document.createElement("input");
-
-    imageInput.type = "file";
-    imageInput.accept = "image/jpeg,image/png,image/webp,image/gif";
-    imageInput.style.display = "none";
-
-    document.body.appendChild(imageInput);
+    const emojiPanel =
+        document.getElementById("emojiPanel");
 
 
     /* =========================
@@ -143,6 +133,20 @@ document.addEventListener("DOMContentLoaded", function () {
     let conversationRefreshTimer = null;
 
     let searchTimer = null;
+
+
+    /* =========================
+       IMAGE INPUT
+    ========================= */
+
+    const imageInput =
+        document.createElement("input");
+
+    imageInput.type = "file";
+    imageInput.accept = "image/jpeg,image/png,image/webp,image/gif";
+    imageInput.hidden = true;
+
+    document.body.appendChild(imageInput);
 
 
     /* =========================
@@ -170,7 +174,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function setAvatar(element, avatar, username) {
+    function setAvatar(
+        element,
+        avatar,
+        username
+    ) {
 
         if (!element) {
             return;
@@ -299,10 +307,14 @@ document.addEventListener("DOMContentLoaded", function () {
     function showMobileChat() {
 
         if (messagesApp) {
-            messagesApp.classList.add("mobile-chat");
+            messagesApp.classList.add(
+                "mobile-chat"
+            );
         }
 
-        document.body.classList.add("chat-open");
+        document.body.classList.add(
+            "chat-open"
+        );
 
     }
 
@@ -310,114 +322,31 @@ document.addEventListener("DOMContentLoaded", function () {
     function hideMobileChat() {
 
         if (messagesApp) {
-            messagesApp.classList.remove("mobile-chat");
+            messagesApp.classList.remove(
+                "mobile-chat"
+            );
         }
 
-        document.body.classList.remove("chat-open");
+        document.body.classList.remove(
+            "chat-open"
+        );
 
     }
 
 
     /* =========================
-       IMAGE HELPERS
+       PANELS
     ========================= */
 
-    const IMAGE_PREFIX =
-        "__VEXORA_IMAGE__";
+    function closePanels() {
 
-
-    function isImageMessage(content) {
-
-        return typeof content === "string" &&
-            content.startsWith(IMAGE_PREFIX);
-
-    }
-
-
-    function getImageData(content) {
-
-        if (!isImageMessage(content)) {
-            return "";
+        if (emojiPanel) {
+            emojiPanel.hidden = true;
         }
 
-        return content.substring(
-            IMAGE_PREFIX.length
-        );
-
-    }
-
-
-    function createImageElement(imageData) {
-
-        const image =
-            document.createElement("img");
-
-        image.src = imageData;
-
-        image.alt = "Image";
-
-        image.loading = "lazy";
-
-        image.style.display = "block";
-        image.style.width = "auto";
-        image.style.height = "auto";
-        image.style.maxWidth = "260px";
-        image.style.maxHeight = "340px";
-        image.style.objectFit = "cover";
-        image.style.borderRadius = "8px";
-        image.style.cursor = "pointer";
-
-        image.addEventListener(
-            "click",
-            function () {
-
-                const viewer =
-                    document.createElement("div");
-
-                viewer.style.position = "fixed";
-                viewer.style.inset = "0";
-                viewer.style.zIndex = "99999";
-                viewer.style.display = "flex";
-                viewer.style.alignItems = "center";
-                viewer.style.justifyContent = "center";
-                viewer.style.padding = "25px";
-                viewer.style.background =
-                    "rgba(0,0,0,.88)";
-                viewer.style.cursor = "zoom-out";
-
-                const largeImage =
-                    document.createElement("img");
-
-                largeImage.src = imageData;
-
-                largeImage.alt = "Image";
-
-                largeImage.style.maxWidth = "95vw";
-                largeImage.style.maxHeight = "90vh";
-                largeImage.style.objectFit = "contain";
-                largeImage.style.borderRadius = "12px";
-                largeImage.style.boxShadow =
-                    "0 25px 80px rgba(0,0,0,.6)";
-
-                viewer.appendChild(
-                    largeImage
-                );
-
-                viewer.addEventListener(
-                    "click",
-                    function () {
-                        viewer.remove();
-                    }
-                );
-
-                document.body.appendChild(
-                    viewer
-                );
-
-            }
-        );
-
-        return image;
+        if (attachmentPanel) {
+            attachmentPanel.hidden = true;
+        }
 
     }
 
@@ -433,7 +362,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const response =
                 await fetch(
                     "/api/messages/unread-count?userId=" +
-                    encodeURIComponent(currentUserId)
+                    encodeURIComponent(
+                        currentUserId
+                    )
                 );
 
             const data =
@@ -492,7 +423,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const response =
                 await fetch(
                     "/api/messages/conversations?userId=" +
-                    encodeURIComponent(currentUserId)
+                    encodeURIComponent(
+                        currentUserId
+                    )
                 );
 
             const data =
@@ -508,7 +441,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             conversations =
-                Array.isArray(data.conversations)
+                Array.isArray(
+                    data.conversations
+                )
                     ? data.conversations
                     : [];
 
@@ -591,7 +526,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     function (conversation) {
 
                         return (
-                            conversation.other_username || ""
+                            conversation.other_username ||
+                            ""
                         )
                             .toLowerCase()
                             .includes(query);
@@ -685,18 +621,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         conversation.other_username ||
                         "User";
 
-                    let lastMessage =
+                    const lastMessage =
                         conversation.last_message ||
                         "No messages yet";
-
-                    if (
-                        isImageMessage(
-                            lastMessage
-                        )
-                    ) {
-                        lastMessage =
-                            "📷 Photo";
-                    }
 
                     return `
                         <button
@@ -710,7 +637,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 data-avatar="${escapeHTML(conversation.other_avatar || "")}"
                                 data-username="${escapeHTML(username)}"
                             >
-                                ${escapeHTML(getInitial(username))}
+                                ${escapeHTML(
+                                    getInitial(username)
+                                )}
                             </div>
 
                             <div class="conversation-info">
@@ -979,10 +908,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================
-       RENDER MESSAGES
-    ========================= */
-
     function renderMessages(messages) {
 
         if (!messagesList) {
@@ -1002,101 +927,91 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-        messagesList.innerHTML = "";
 
-        messages.forEach(
-            function (message) {
+        messagesList.innerHTML =
+            messages.map(
+                function (message) {
 
-                const mine =
-                    Number(message.sender_id) ===
-                    currentUserId;
+                    const mine =
+                        Number(message.sender_id) ===
+                        currentUserId;
 
-                const row =
-                    document.createElement("div");
-
-                row.className =
-                    `message-row ${mine ? "mine" : "theirs"}`;
-
-                const content =
-                    document.createElement("div");
-
-                content.className =
-                    "message-content";
-
-                const bubble =
-                    document.createElement("div");
-
-                bubble.className =
-                    "message-bubble";
-
-                if (
-                    isImageMessage(
-                        message.content
-                    )
-                ) {
-
-                    const imageData =
-                        getImageData(
-                            message.content
+                    const hasImage =
+                        Boolean(
+                            message.image_url
                         );
 
-                    const image =
-                        createImageElement(
-                            imageData
+                    const hasText =
+                        Boolean(
+                            message.content &&
+                            message.content.trim()
                         );
 
-                    bubble.appendChild(
-                        image
-                    );
+                    let messageBody = "";
 
-                    bubble.style.padding =
-                        "3px";
 
-                    bubble.style.overflow =
-                        "hidden";
+                    if (hasImage) {
 
-                } else {
+                        messageBody += `
+                            <div class="message-image-bubble">
+                                <img
+                                    class="message-image"
+                                    src="${escapeHTML(message.image_url)}"
+                                    alt="Photo"
+                                    loading="lazy"
+                                >
+                            </div>
+                        `;
 
-                    bubble.textContent =
-                        message.content || "";
+                    }
+
+
+                    if (hasText) {
+
+                        messageBody += `
+                            <div class="message-bubble">
+                                ${escapeHTML(
+                                    message.content
+                                )}
+                            </div>
+                        `;
+
+                    }
+
+
+                    return `
+                        <div
+                            class="message-row ${mine ? "mine" : "theirs"}"
+                        >
+
+                            <div class="message-content">
+
+                                ${messageBody}
+
+                                <div class="message-meta">
+                                    ${escapeHTML(
+                                        formatMessageTime(
+                                            message.created_at
+                                        )
+                                    )}
+
+                                    ${
+                                        mine &&
+                                        Number(message.is_read) === 1
+                                            ? " · Seen"
+                                            : ""
+                                    }
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
 
                 }
+            )
+            .join("");
 
-                const meta =
-                    document.createElement("div");
-
-                meta.className =
-                    "message-meta";
-
-                meta.textContent =
-                    formatMessageTime(
-                        message.created_at
-                    ) +
-                    (
-                        mine &&
-                        Number(message.is_read) === 1
-                            ? " · Seen"
-                            : ""
-                    );
-
-                content.appendChild(
-                    bubble
-                );
-
-                content.appendChild(
-                    meta
-                );
-
-                row.appendChild(
-                    content
-                );
-
-                messagesList.appendChild(
-                    row
-                );
-
-            }
-        );
 
         messagesList.scrollTop =
             messagesList.scrollHeight;
@@ -1169,6 +1084,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 content
 
                         })
+
                     }
                 );
 
@@ -1227,10 +1143,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       SEND IMAGE
+       SEND IMAGE MESSAGE
     ========================= */
 
-    async function sendImage(file) {
+    async function sendImageMessage(file) {
 
         if (
             !activeOtherUser ||
@@ -1246,47 +1162,75 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const allowedTypes = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-            "image/gif"
-        ];
+        const maxFileSize =
+            8 * 1024 * 1024;
 
-        if (
-            !allowedTypes.includes(
-                file.type
-            )
-        ) {
+        if (file.size > maxFileSize) {
 
             alert(
-                "Please choose a JPG, PNG, WEBP or GIF image."
+                "Image cannot be larger than 8 MB."
             );
 
+            imageInput.value = "";
             return;
 
         }
 
-        if (file.size > 3 * 1024 * 1024) {
+        if (!file.type.startsWith("image/")) {
 
             alert(
-                "Image cannot be larger than 3 MB."
+                "Please select an image."
             );
 
+            imageInput.value = "";
             return;
 
         }
+
+
+        if (attachmentButton) {
+            attachmentButton.disabled = true;
+        }
+
+        if (sendMessageButton) {
+            sendMessageButton.disabled = true;
+        }
+
 
         try {
 
             const imageData =
-                await readFileAsDataURL(
-                    file
+                await new Promise(
+                    function (resolve, reject) {
+
+                        const reader =
+                            new FileReader();
+
+                        reader.onload =
+                            function () {
+                                resolve(
+                                    reader.result
+                                );
+                            };
+
+                        reader.onerror =
+                            function () {
+                                reject(
+                                    new Error(
+                                        "Could not read image."
+                                    )
+                                );
+                            };
+
+                        reader.readAsDataURL(file);
+
+                    }
                 );
+
 
             const response =
                 await fetch(
-                    "/api/messages",
+                    "/api/messages/image",
                     {
                         method: "POST",
 
@@ -1305,16 +1249,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                     activeOtherUser.id
                                 ),
 
-                            content:
-                                IMAGE_PREFIX +
+                            imageData:
                                 imageData
 
                         })
+
                     }
                 );
 
+
             const data =
                 await response.json();
+
 
             if (!response.ok) {
 
@@ -1325,6 +1271,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
+
             if (data.conversationId) {
 
                 activeConversationId =
@@ -1334,9 +1281,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
+
+            imageInput.value = "";
+
+            closePanels();
+
             await loadMessages();
 
             await loadConversations();
+
 
         } catch (error) {
 
@@ -1352,43 +1305,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } finally {
 
-            imageInput.value = "";
+            if (attachmentButton) {
+                attachmentButton.disabled = false;
+            }
+
+            if (sendMessageButton) {
+                sendMessageButton.disabled = false;
+            }
 
         }
-
-    }
-
-
-    function readFileAsDataURL(file) {
-
-        return new Promise(
-            function (resolve, reject) {
-
-                const reader =
-                    new FileReader();
-
-                reader.onload =
-                    function () {
-                        resolve(
-                            reader.result
-                        );
-                    };
-
-                reader.onerror =
-                    function () {
-                        reject(
-                            new Error(
-                                "Could not read image."
-                            )
-                        );
-                    };
-
-                reader.readAsDataURL(
-                    file
-                );
-
-            }
-        );
 
     }
 
@@ -1442,6 +1367,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function openNewChat() {
 
+        closePanels();
+
         if (!newChatModal) {
             return;
         }
@@ -1493,7 +1420,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function searchUsers() {
 
-        if (!userSearchInput || !userSearchResults) {
+        if (
+            !userSearchInput ||
+            !userSearchResults
+        ) {
             return;
         }
 
@@ -1555,7 +1485,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             } else if (data.user) {
 
-                users = [data.user];
+                users = [
+                    data.user
+                ];
 
             }
 
@@ -1716,6 +1648,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 )
 
                         })
+
                     }
                 );
 
@@ -1832,7 +1765,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================
-       ATTACHMENTS
+       ATTACHMENT BUTTON
     ========================= */
 
     if (attachmentButton) {
@@ -1842,12 +1775,24 @@ document.addEventListener("DOMContentLoaded", function () {
             function () {
 
                 if (!attachmentPanel) {
-                    imageInput.click();
                     return;
                 }
 
-                attachmentPanel.hidden =
-                    !attachmentPanel.hidden;
+                if (attachmentPanel.hidden) {
+
+                    if (emojiPanel) {
+                        emojiPanel.hidden = true;
+                    }
+
+                    attachmentPanel.hidden =
+                        false;
+
+                } else {
+
+                    attachmentPanel.hidden =
+                        true;
+
+                }
 
             }
         );
@@ -1855,35 +1800,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-       Photo button is the first attachment item.
-    */
+    /* =========================
+       PHOTO BUTTON
+    ========================= */
 
-    if (attachmentPanel) {
+    if (attachmentItems.length > 0) {
 
-        const attachmentItems =
-            attachmentPanel.querySelectorAll(
-                ".attachment-item"
-            );
+        attachmentItems[0].addEventListener(
+            "click",
+            function () {
 
-        if (attachmentItems.length > 0) {
+                closePanels();
 
-            attachmentItems[0].addEventListener(
-                "click",
-                function () {
+                imageInput.click();
 
-                    attachmentPanel.hidden =
-                        true;
-
-                    imageInput.click();
-
-                }
-            );
-
-        }
+            }
+        );
 
     }
 
+
+    /* =========================
+       IMAGE SELECTED
+    ========================= */
 
     imageInput.addEventListener(
         "change",
@@ -1893,12 +1832,102 @@ document.addEventListener("DOMContentLoaded", function () {
                 imageInput.files &&
                 imageInput.files[0];
 
-            if (file) {
-                sendImage(file);
+            if (!file) {
+                return;
             }
+
+            sendImageMessage(file);
 
         }
     );
+
+
+    /* =========================
+       EMOJI BUTTON
+    ========================= */
+
+    if (emojiButton) {
+
+        emojiButton.addEventListener(
+            "click",
+            function () {
+
+                if (!emojiPanel) {
+                    return;
+                }
+
+                if (attachmentPanel) {
+                    attachmentPanel.hidden = true;
+                }
+
+                emojiPanel.hidden =
+                    !emojiPanel.hidden;
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       EMOJI SELECTION
+    ========================= */
+
+    document
+        .querySelectorAll(
+            ".emoji-grid button"
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        if (!messageInput) {
+                            return;
+                        }
+
+                        const emoji =
+                            button.textContent;
+
+                        const start =
+                            messageInput.selectionStart;
+
+                        const end =
+                            messageInput.selectionEnd;
+
+                        const value =
+                            messageInput.value;
+
+                        messageInput.value =
+                            value.slice(
+                                0,
+                                start
+                            ) +
+                            emoji +
+                            value.slice(
+                                end
+                            );
+
+                        messageInput.focus();
+
+                        const cursor =
+                            start +
+                            emoji.length;
+
+                        messageInput.setSelectionRange(
+                            cursor,
+                            cursor
+                        );
+
+                        autoResizeTextarea();
+
+                    }
+                );
+
+            }
+        );
 
 
     /* =========================
@@ -1929,7 +1958,9 @@ document.addEventListener("DOMContentLoaded", function () {
             "input",
             function () {
 
-                clearTimeout(searchTimer);
+                clearTimeout(
+                    searchTimer
+                );
 
                 searchTimer =
                     setTimeout(
@@ -2068,12 +2099,19 @@ document.addEventListener("DOMContentLoaded", function () {
         function (event) {
 
             if (
-                event.key === "Escape" &&
-                newChatModal &&
-                !newChatModal.hidden
+                event.key === "Escape"
             ) {
 
-                closeNewChatModal();
+                if (
+                    newChatModal &&
+                    !newChatModal.hidden
+                ) {
+
+                    closeNewChatModal();
+
+                }
+
+                closePanels();
 
             }
 
@@ -2090,7 +2128,6 @@ document.addEventListener("DOMContentLoaded", function () {
             async function () {
 
                 await loadConversations();
-
                 await loadUnreadCount();
 
             },
@@ -2105,7 +2142,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (activeConversationId) {
 
                     await loadMessages();
-
                     await markAsRead();
 
                 }
