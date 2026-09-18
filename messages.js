@@ -872,7 +872,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             class="message-row ${mine ? "mine" : "theirs"}"
                         >
 
-                            <div>
+                            <div class="message-content">
 
                                 <div class="message-bubble">
                                     ${escapeHTML(
