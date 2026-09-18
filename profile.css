@@ -1,0 +1,725 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: #07070d;
+    color: white;
+    min-height: 100vh;
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    padding: 28px 18px;
+    background: #0b0b13;
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    margin-bottom: 45px;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.brand img {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar nav a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 13px 15px;
+    border-radius: 11px;
+    color: #858592;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.sidebar nav a span {
+    font-size: 21px;
+    width: 22px;
+    text-align: center;
+}
+
+.sidebar nav a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.sidebar nav a.active {
+    background: linear-gradient(
+        90deg,
+        rgba(73, 100, 255, 0.16),
+        rgba(161, 51, 255, 0.08)
+    );
+    color: white;
+}
+
+.notification-number {
+    margin-left: auto;
+    background: #765cff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.create-button {
+    margin-top: 28px;
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(
+        135deg,
+        #287cff,
+        #a52cff
+    );
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(92, 70, 255, 0.25);
+    transition: 0.2s;
+}
+
+.create-button:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   SIDEBAR BOTTOM
+========================= */
+
+.sidebar-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar-bottom a {
+    color: #858592;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 11px 15px;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.sidebar-bottom a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.main {
+    margin-left: 250px;
+    min-height: 100vh;
+}
+
+.topbar {
+    height: 75px;
+    padding: 0 35px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7, 7, 13, 0.95);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.topbar h1 {
+    font-size: 20px;
+    margin-bottom: 3px;
+}
+
+.topbar p {
+    color: #777785;
+    font-size: 12px;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mobile-search {
+    border: none;
+    background: transparent;
+    color: #aaa;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.profile-button {
+    border: none;
+    background: transparent;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+}
+
+.small-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(
+        135deg,
+        #287cff,
+        #a52cff
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.profile-button span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-button small {
+    color: #777785;
+}
+
+
+/* =========================
+   PROFILE PAGE
+========================= */
+
+.profile-page {
+    width: min(900px, calc(100% - 50px));
+    margin: 35px auto 60px;
+}
+
+
+/* =========================
+   PROFILE HEADER
+========================= */
+
+.profile-header {
+    background: #0d0d16;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.profile-cover {
+    height: 210px;
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(40, 124, 255, 0.35),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(165, 44, 255, 0.35),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #101b48,
+            #31164e
+        );
+}
+
+.profile-info {
+    position: relative;
+    padding: 0 30px 30px;
+}
+
+.profile-avatar {
+    width: 112px;
+    height: 112px;
+    margin-top: -56px;
+    border-radius: 50%;
+    border: 5px solid #0d0d16;
+    background: linear-gradient(
+        135deg,
+        #287cff,
+        #a52cff
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 800;
+    position: relative;
+}
+
+.profile-main-info {
+    margin-top: 18px;
+}
+
+.profile-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.profile-name-row h2 {
+    font-size: 27px;
+    margin-bottom: 5px;
+}
+
+.profile-name-row p {
+    color: #858592;
+    font-size: 14px;
+}
+
+.profile-bio {
+    margin-top: 16px;
+    color: #c6c6d0;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 650px;
+}
+
+.edit-profile {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #151520;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.edit-profile:hover {
+    background: #20202d;
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   PROFILE STATS
+========================= */
+
+.profile-stats {
+    display: flex;
+    gap: 45px;
+    margin-top: 25px;
+}
+
+.profile-stats > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.profile-stats strong {
+    font-size: 19px;
+}
+
+.profile-stats span {
+    color: #858592;
+    font-size: 12px;
+}
+
+
+/* =========================
+   POSTS SECTION
+========================= */
+
+.profile-posts-section {
+    margin-top: 25px;
+}
+
+.section-title {
+    padding: 0 5px 15px;
+}
+
+.section-title h2 {
+    font-size: 18px;
+}
+
+#profilePosts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-post {
+    background: #0d0d16;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    padding: 20px;
+    transition: 0.2s;
+}
+
+.profile-post:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.profile-post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-post-avatar {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(
+        135deg,
+        #287cff,
+        #a52cff
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.profile-post-user {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.profile-post-user strong {
+    font-size: 14px;
+}
+
+.profile-post-user span {
+    color: #777785;
+    font-size: 12px;
+}
+
+.profile-post-content {
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #e7e7ed;
+    white-space: pre-wrap;
+}
+
+.profile-post-stats {
+    margin-top: 18px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    color: #858592;
+    font-size: 12px;
+}
+
+.no-posts {
+    background: #0d0d16;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    padding: 40px 25px;
+    text-align: center;
+    color: #858592;
+}
+
+
+/* =========================
+   EDIT PROFILE MODAL
+========================= */
+
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+}
+
+.profile-modal.active {
+    display: flex;
+}
+
+.profile-modal-content {
+    width: min(500px, 100%);
+    background: #11111b;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+}
+
+.profile-modal-content h2 {
+    margin-bottom: 22px;
+    font-size: 21px;
+}
+
+.profile-modal-content label {
+    display: block;
+    margin-bottom: 7px;
+    color: #a5a5b2;
+    font-size: 13px;
+}
+
+.profile-modal-content input,
+.profile-modal-content textarea {
+    width: 100%;
+    background: #08080f;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 10px;
+    padding: 12px;
+    outline: none;
+    font-family: inherit;
+    margin-bottom: 18px;
+    transition: 0.2s;
+}
+
+.profile-modal-content input:focus,
+.profile-modal-content textarea:focus {
+    border-color: rgba(95, 117, 255, 0.7);
+}
+
+.profile-modal-content textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.profile-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.profile-modal-buttons button {
+    border: none;
+    border-radius: 9px;
+    padding: 10px 17px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.cancel-profile {
+    background: #24242f;
+    color: white;
+}
+
+.cancel-profile:hover {
+    background: #30303c;
+}
+
+.save-profile {
+    background: linear-gradient(
+        135deg,
+        #287cff,
+        #a52cff
+    );
+    color: white;
+}
+
+.save-profile:hover {
+    filter: brightness(1.1);
+}
+
+.save-profile:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+    .main {
+        margin-left: 210px;
+    }
+
+    .profile-page {
+        width: calc(100% - 30px);
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .sidebar nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .create-button {
+        margin-top: 15px;
+    }
+
+    .sidebar-bottom {
+        margin-top: 20px;
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .topbar {
+        padding: 0 20px;
+    }
+
+    .profile-page {
+        width: calc(100% - 20px);
+        margin-top: 20px;
+    }
+
+    .profile-cover {
+        height: 160px;
+    }
+
+    .profile-info {
+        padding: 0 20px 25px;
+    }
+
+    .profile-name-row {
+        flex-direction: column;
+    }
+
+    .edit-profile {
+        width: 100%;
+    }
+
+    .profile-stats {
+        gap: 25px;
+    }
+
+    .profile-stats strong {
+        font-size: 17px;
+    }
+}
+
+/* =========================
+   AVATAR UPLOAD
+========================= */
+
+.avatar-upload {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.avatar-preview {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(
+        135deg,
+        #287cff,
+        #a52cff
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    font-weight: 800;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.avatar-upload-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.avatar-upload-controls input[type="file"] {
+    margin-bottom: 0;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.avatar-upload-controls button {
+    width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #24242f;
+    color: white;
+    border-radius: 8px;
+    padding: 7px 12px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.avatar-upload-controls button:hover {
+    background: #30303c;
+}
+
+
+/* =========================
+   AVATAR IMAGES
+========================= */
+
+.small-avatar,
+.profile-avatar,
+.profile-post-avatar {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

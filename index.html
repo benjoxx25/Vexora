@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vexora — Connect. Share. Be You.</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav class="navbar">
+
+        <div class="logo-area">
+            <img src="images/logo.png" alt="Vexora Logo">
+            <span>Vexora</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Explore</a>
+            <a href="#">About</a>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="login-btn">Log in</button>
+            <button class="signup-btn">Sign up</button>
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO SECTION
+    ========================== -->
+
+    <main class="hero">
+
+        <div class="hero-content">
+
+            <div class="badge">
+                ✦ A new way to connect
+            </div>
+
+            <h1>
+                Your world.
+                <span>Your people.</span>
+                Your Vexora.
+            </h1>
+
+            <p>
+                Share your moments, discover new people,
+                and build your own world on Vexora.
+            </p>
+
+            <div class="hero-buttons">
+
+                <button class="primary-btn">
+                    Get Started
+                    <span>→</span>
+                </button>
+
+                <button class="secondary-btn">
+                    Explore Vexora
+                </button>
+
+            </div>
+
+            <div class="users-info">
+
+                <div class="avatars">
+                    <div>J</div>
+                    <div>A</div>
+                    <div>M</div>
+                    <div>S</div>
+                </div>
+
+                <p>
+                    Join thousands of people discovering Vexora
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             SOCIAL PREVIEW
+        ========================== -->
+
+        <div class="preview">
+
+            <div class="glow"></div>
+
+            <div class="social-card">
+
+                <div class="card-top">
+
+                    <div class="profile">
+
+                        <div class="profile-picture">
+                            A
+                        </div>
+
+                        <div>
+                            <strong>alex.m</strong>
+                            <small>2 min ago</small>
+                        </div>
+
+                    </div>
+
+                    <div class="dots">
+                        •••
+                    </div>
+
+                </div>
+
+
+                <div class="post-image">
+
+                    <div class="image-content">
+                        <span>VEXORA</span>
+                        <p>Share your world.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <div>
+                        <span>♡</span>
+                        <span>💬</span>
+                        <span>↗</span>
+                    </div>
+
+                    <div>
+                        ♡
+                    </div>
+
+                </div>
+
+
+                <div class="likes">
+                    Liked by <strong>maria</strong> and 248 others
+                </div>
+
+                <p class="caption">
+                    <strong>alex.m</strong>
+                    Just another day. ✦
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+        <p>
+            © 2026 Vexora. Connect • Share • Be You.
+        </p>
+    </footer>
+
+
+    <!-- =========================
+         AUTH MODAL
+    ========================== -->
+
+    <div class="auth-overlay" id="authOverlay">
+
+        <div class="auth-box">
+
+            <button class="close-auth" id="closeAuth">
+                ×
+            </button>
+
+
+            <!-- LOGO -->
+
+            <div class="auth-logo">
+
+                <img
+                    src="images/logo.png"
+                    alt="Vexora"
+                >
+
+            </div>
+
+
+            <!-- =========================
+                 LOGIN
+            ========================== -->
+
+            <div class="auth-form" id="loginForm">
+
+                <h2>
+                    Welcome back
+                </h2>
+
+                <p class="auth-subtitle">
+                    Log in to continue to Vexora.
+                </p>
+
+
+                <label for="loginEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="you@example.com"
+                >
+
+
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <div class="password-box">
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        placeholder="Enter your password"
+                    >
+
+                    <button
+                        class="show-password"
+                        type="button"
+                        data-target="loginPassword"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+
+                <button class="auth-submit">
+                    Log in
+                </button>
+
+
+                <p class="switch-auth">
+
+                    Don't have an account?
+
+                    <button id="showRegister">
+                        Create one
+                    </button>
+
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 REGISTER
+            ========================== -->
+
+            <div
+                class="auth-form hidden"
+                id="registerForm"
+            >
+
+                <h2>
+                    Create your account
+                </h2>
+
+                <p class="auth-subtitle">
+                    Join Vexora and start sharing your world.
+                </p>
+
+
+                <label for="registerUsername">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="registerUsername"
+                    placeholder="@username"
+                >
+
+
+                <label for="registerEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="you@example.com"
+                >
+
+
+                <label for="registerPassword">
+                    Password
+                </label>
+
+                <div class="password-box">
+
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        placeholder="Create a password"
+                    >
+
+                    <button
+                        class="show-password"
+                        type="button"
+                        data-target="registerPassword"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+
+                <button class="auth-submit">
+                    Create account
+                </button>
+
+
+                <p class="switch-auth">
+
+                    Already have an account?
+
+                    <button id="showLogin">
+                        Log in
+                    </button>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="script.js"></script>
+
+</body>
+</html>

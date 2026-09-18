@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vexora — Profile</title>
+
+    <link rel="stylesheet" href="profile.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <img
+                src="images/logo.png"
+                alt="Vexora"
+            >
+
+            <span>Vexora</span>
+
+        </div>
+
+
+        <nav>
+
+            <a href="dashboard.html">
+                <span>⌂</span>
+                Home
+            </a>
+
+            <a href="#">
+                <span>⌕</span>
+                Explore
+            </a>
+
+            <a href="#">
+                <span>♡</span>
+                Notifications
+                <b class="notification-number">3</b>
+            </a>
+
+            <a href="#">
+                <span>✉</span>
+                Messages
+            </a>
+
+            <a href="profile.html" class="active">
+                <span>♙</span>
+                Profile
+            </a>
+
+        </nav>
+
+
+        <button class="create-button" id="createPostButton">
+
+            <span>＋</span>
+            Create
+
+        </button>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="#">
+                ⚙ Settings
+            </a>
+
+            <a href="index.html" id="logoutButton">
+                ⇥ Log out
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Profile</h1>
+
+                <p>Your Vexora profile</p>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <button class="mobile-search">
+                    ⌕
+                </button>
+
+
+                <button class="profile-button">
+
+                    <div
+                        class="small-avatar"
+                        id="topAvatar"
+                    >
+                        B
+                    </div>
+
+                    <span id="topUsername">
+                        User
+                    </span>
+
+                    <small>
+                        ▼
+                    </small>
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- PROFILE -->
+
+        <div class="profile-page">
+
+
+            <!-- PROFILE HEADER -->
+
+            <section class="profile-header">
+
+
+                <div class="profile-cover"></div>
+
+
+                <div class="profile-info">
+
+
+                    <div
+                        class="profile-avatar"
+                        id="profileAvatar"
+                    >
+                        B
+                    </div>
+
+
+                    <div class="profile-main-info">
+
+
+                        <div class="profile-name-row">
+
+
+                            <div>
+
+                                <h2 id="profileUsername">
+                                    User
+                                </h2>
+
+                                <p id="profileTag">
+                                    @user
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                class="edit-profile"
+                                id="editProfileButton"
+                            >
+                                Edit profile
+                            </button>
+
+                        </div>
+
+
+                        <p
+                            class="profile-bio"
+                            id="profileBio"
+                        >
+                            Welcome to my Vexora profile.
+                        </p>
+
+
+                        <!-- STATS -->
+
+                        <div class="profile-stats">
+
+
+                            <div>
+
+                                <strong id="postCount">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Posts
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong id="followerCount">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Followers
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <strong id="followingCount">
+                                    0
+                                </strong>
+
+                                <span>
+                                    Following
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- POSTS -->
+
+            <section class="profile-posts-section">
+
+                <div class="section-title">
+
+                    <h2>
+                        Posts
+                    </h2>
+
+                </div>
+
+
+                <div id="profilePosts">
+
+                    <div class="no-posts">
+                        Loading posts...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- EDIT PROFILE MODAL -->
+
+    <div
+        class="profile-modal"
+        id="profileModal"
+    >
+
+        <div class="profile-modal-content">
+
+
+            <h2>
+                Edit Profile
+            </h2>
+
+
+            <!-- PROFILE PICTURE -->
+
+            <label>
+                Profile picture
+            </label>
+
+            <div class="avatar-upload">
+
+                <div
+                    class="avatar-preview"
+                    id="avatarPreview"
+                >
+                    B
+                </div>
+
+                <div class="avatar-upload-controls">
+
+                    <input
+                        type="file"
+                        id="avatarInput"
+                        accept="image/png,image/jpeg,image/webp"
+                    >
+
+                    <button
+                        type="button"
+                        id="removeAvatar"
+                    >
+                        Remove photo
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <label for="editUsername">
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="editUsername"
+                placeholder="Username"
+            >
+
+
+            <label for="editBio">
+                Bio
+            </label>
+
+            <textarea
+                id="editBio"
+                placeholder="Tell people about yourself..."
+            ></textarea>
+
+
+            <div class="profile-modal-buttons">
+
+                <button
+                    type="button"
+                    class="cancel-profile"
+                    id="closeProfileModal"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    class="save-profile"
+                    id="saveProfile"
+                >
+                    Save
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <script src="profile.js" defer></script>
+
+</body>
+
+</html>

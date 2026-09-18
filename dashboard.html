@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vexora — Home</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body>
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <img
+            src="images/logo.png"
+            alt="Vexora"
+        >
+
+        <span>Vexora</span>
+
+    </div>
+
+
+    <nav>
+
+        <a href="dashboard.html" class="active">
+
+            <span>⌂</span>
+
+            Home
+
+        </a>
+
+
+        <a href="#" id="searchNavButton">
+
+            <span>⌕</span>
+
+            Search
+
+        </a>
+
+
+        <a href="#">
+
+            <span>♡</span>
+
+            Notifications
+
+        </a>
+
+
+        <a href="#">
+
+            <span>✉</span>
+
+            Messages
+
+        </a>
+
+
+        <a href="profile.html">
+
+            <span>♙</span>
+
+            Profile
+
+        </a>
+
+    </nav>
+
+
+    <button
+        class="create-button"
+        id="openPostModal2"
+        type="button"
+    >
+
+        <span>＋</span>
+
+        Create
+
+    </button>
+
+
+    <div class="sidebar-bottom">
+
+        <a href="#">
+
+            ⚙ Settings
+
+        </a>
+
+
+        <a
+            href="index.html"
+            id="logoutButton"
+        >
+
+            ⇥ Log out
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="main">
+
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1>
+                Home
+            </h1>
+
+            <p>
+                Welcome back to Vexora.
+            </p>
+
+        </div>
+
+
+        <div class="top-actions">
+
+            <button
+                class="mobile-search"
+                id="mobileSearchButton"
+                type="button"
+            >
+                ⌕
+            </button>
+
+
+            <button
+                class="profile-button"
+                id="topProfileButton"
+                type="button"
+            >
+
+                <div
+                    class="small-avatar"
+                    id="topAvatar"
+                >
+                    U
+                </div>
+
+
+                <span id="topUsername">
+                    User
+                </span>
+
+
+                <small>
+                    ▼
+                </small>
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         CONTENT
+    ========================== -->
+
+    <div class="content">
+
+
+        <!-- FEED -->
+
+        <section class="feed">
+
+
+            <!-- CREATE POST -->
+
+            <div class="create-post">
+
+                <div
+                    class="avatar"
+                    id="createPostAvatar"
+                >
+                    U
+                </div>
+
+
+                <div class="create-post-content">
+
+
+                    <button
+                        class="post-input"
+                        id="openPostModal"
+                        type="button"
+                    >
+
+                        What's on your mind?
+
+                    </button>
+
+
+                    <div class="create-post-actions">
+
+
+                        <button
+                            class="create-action"
+                            id="openPhotoModal"
+                            type="button"
+                        >
+
+                            📷 Photo
+
+                        </button>
+
+
+                        <button
+                            class="create-action"
+                            id="openPostModal3"
+                            type="button"
+                        >
+
+                            ✦ Create post
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 DEMO POST 1
+            ========================== -->
+
+            <article class="post demo-post">
+
+                <div class="post-header">
+
+                    <div class="post-user">
+
+                        <div class="post-avatar purple">
+                            A
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                alex.m
+                            </strong>
+
+                            <span>
+                                12 min ago · 🌎
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="more"
+                        type="button"
+                    >
+                        •••
+                    </button>
+
+                </div>
+
+
+                <div class="post-text">
+
+                    Just discovered this place.
+                    Definitely coming back. ✦
+
+                </div>
+
+
+                <div class="post-photo photo-one">
+
+                    <div class="photo-title">
+                        VEXORA
+                    </div>
+
+                    <div class="photo-subtitle">
+                        Discover more.
+                    </div>
+
+                </div>
+
+
+                <div class="post-stats">
+
+                    <span>
+                        ♡ 248 likes
+                    </span>
+
+                    <span>
+                        32 comments
+                    </span>
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <button
+                        class="like-button"
+                        type="button"
+                    >
+
+                        ♡
+
+                        <span>
+                            Like
+                        </span>
+
+                    </button>
+
+
+                    <button type="button">
+
+                        ♧
+
+                        <span>
+                            Comment
+                        </span>
+
+                    </button>
+
+
+                    <button type="button">
+
+                        ↗
+
+                        <span>
+                            Share
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- =========================
+                 DEMO POST 2
+            ========================== -->
+
+            <article class="post demo-post">
+
+                <div class="post-header">
+
+                    <div class="post-user">
+
+                        <div class="post-avatar blue">
+                            M
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                maria.x
+                            </strong>
+
+                            <span>
+                                1 hour ago
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="more"
+                        type="button"
+                    >
+                        •••
+                    </button>
+
+                </div>
+
+
+                <div class="post-text">
+
+                    New week.
+                    New goals.
+                    Let's get it. 🔥
+
+                </div>
+
+
+                <div class="post-photo photo-two">
+
+                    <div class="quote">
+
+                        KEEP<br>
+                        MOVING.
+
+                    </div>
+
+                </div>
+
+
+                <div class="post-stats">
+
+                    <span>
+                        ♡ 391 likes
+                    </span>
+
+                    <span>
+                        47 comments
+                    </span>
+
+                </div>
+
+
+                <div class="post-actions">
+
+                    <button type="button">
+
+                        ♡
+
+                        <span>
+                            Like
+                        </span>
+
+                    </button>
+
+
+                    <button type="button">
+
+                        ♧
+
+                        <span>
+                            Comment
+                        </span>
+
+                    </button>
+
+
+                    <button type="button">
+
+                        ↗
+
+                        <span>
+                            Share
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             RIGHT SIDE
+        ========================== -->
+
+        <aside class="right-panel">
+
+
+            <!-- PROFILE CARD -->
+
+            <div class="profile-card">
+
+                <div class="cover"></div>
+
+
+                <div class="profile-card-content">
+
+
+                    <div
+                        class="big-avatar"
+                        id="currentAvatar"
+                    >
+                        U
+                    </div>
+
+
+                    <h3 id="currentUsername">
+                        User
+                    </h3>
+
+
+                    <p>
+
+                        @<span id="currentUsernameTag">user</span>
+
+                    </p>
+
+
+                    <div class="profile-stats">
+
+
+                        <div>
+
+                            <strong id="followingCount">
+                                0
+                            </strong>
+
+                            <span>
+                                Following
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong id="followerCount">
+                                0
+                            </strong>
+
+                            <span>
+                                Followers
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="view-profile"
+                        id="viewProfileButton"
+                        type="button"
+                    >
+
+                        View profile
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 REAL USER SUGGESTIONS
+            ========================== -->
+
+            <div class="suggestions">
+
+                <div class="suggestions-title">
+
+                    <strong>
+                        Suggested for you
+                    </strong>
+
+                    <a href="#">
+                        See all
+                    </a>
+
+                </div>
+
+
+                <div id="suggestionsList">
+
+                    <div class="suggestion-loading">
+                        Loading users...
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </aside>
+
+    </div>
+
+</main>
+
+
+
+<!-- =========================
+     CREATE POST MODAL
+========================= -->
+
+<div
+    class="post-modal"
+    id="postModal"
+>
+
+    <div class="post-modal-box">
+
+        <button
+            class="close-post-modal"
+            id="closePostModal"
+            type="button"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            Create a post
+        </h2>
+
+
+        <p class="post-modal-subtitle">
+
+            Share something with your Vexora community.
+
+        </p>
+
+
+        <div class="modal-user">
+
+            <div
+                class="avatar"
+                id="modalAvatar"
+            >
+                U
+            </div>
+
+
+            <div>
+
+                <strong id="modalUsername">
+                    User
+                </strong>
+
+                <span>
+                    Public
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <textarea
+            id="postText"
+            placeholder="What's on your mind?"
+            maxlength="500"
+        ></textarea>
+
+
+        <div class="post-modal-bottom">
+
+            <span id="characterCount">
+                0 / 500
+            </span>
+
+
+            <button
+                id="publishPost"
+                type="button"
+            >
+                Publish
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     SEARCH MODAL
+========================= -->
+
+<div
+    id="searchModal"
+    style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.45);
+        z-index:9999;
+        align-items:flex-start;
+        justify-content:center;
+        padding-top:90px;
+    "
+>
+
+    <div
+        style="
+            width:420px;
+            max-width:calc(100% - 30px);
+            background:white;
+            border-radius:18px;
+            padding:24px;
+            box-shadow:0 20px 60px rgba(0,0,0,0.2);
+        "
+    >
+
+        <div
+            style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:18px;
+            "
+        >
+
+            <h2 style="margin:0;">
+                Search Vexora
+            </h2>
+
+
+            <button
+                id="closeSearchModal"
+                type="button"
+                style="
+                    border:none;
+                    background:none;
+                    font-size:28px;
+                    cursor:pointer;
+                "
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search username..."
+            autocomplete="off"
+            style="
+                width:100%;
+                box-sizing:border-box;
+                padding:13px 15px;
+                border:1px solid #ddd;
+                border-radius:12px;
+                outline:none;
+                font-size:15px;
+                margin-bottom:15px;
+            "
+        >
+
+
+        <div id="searchResults">
+
+            <div
+                style="
+                    color:#888;
+                    text-align:center;
+                    padding:20px 0;
+                "
+            >
+                Type a username to search.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script src="dashboard.js" defer></script>
+
+
+<!-- =========================
+     USER DATA + NAVIGATION
+========================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const savedUser =
+        localStorage.getItem("vexoraUser");
+
+
+    if (!savedUser) {
+
+        window.location.href =
+            "index.html";
+
+        return;
+
+    }
+
+
+    let user;
+
+    try {
+
+        user =
+            JSON.parse(savedUser);
+
+    } catch (error) {
+
+        localStorage.removeItem(
+            "vexoraUser"
+        );
+
+        window.location.href =
+            "index.html";
+
+        return;
+
+    }
+
+
+    if (!user || !user.id || !user.username) {
+
+        localStorage.removeItem(
+            "vexoraUser"
+        );
+
+        window.location.href =
+            "index.html";
+
+        return;
+
+    }
+
+
+    const username =
+        user.username || "User";
+
+
+    const firstLetter =
+        username.charAt(0).toUpperCase();
+
+
+    function setAvatar(
+        element,
+        avatar,
+        username
+    ) {
+
+        if (!element) {
+            return;
+        }
+
+
+        if (avatar) {
+
+            element.textContent =
+                "";
+
+            element.style.backgroundImage =
+                `url("${avatar}")`;
+
+            element.style.backgroundSize =
+                "cover";
+
+            element.style.backgroundPosition =
+                "center";
+
+            element.style.backgroundRepeat =
+                "no-repeat";
+
+        } else {
+
+            element.style.backgroundImage =
+                "";
+
+            element.style.backgroundSize =
+                "";
+
+            element.style.backgroundPosition =
+                "";
+
+            element.style.backgroundRepeat =
+                "";
+
+            element.textContent =
+                (username || "U")
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+    }
+
+
+    const topUsername =
+        document.getElementById("topUsername");
+
+
+    const topAvatar =
+        document.getElementById("topAvatar");
+
+
+    const currentUsername =
+        document.getElementById("currentUsername");
+
+
+    const currentUsernameTag =
+        document.getElementById("currentUsernameTag");
+
+
+    const currentAvatar =
+        document.getElementById("currentAvatar");
+
+
+    const createPostAvatar =
+        document.getElementById("createPostAvatar");
+
+
+    const modalAvatar =
+        document.getElementById("modalAvatar");
+
+
+    const modalUsername =
+        document.getElementById("modalUsername");
+
+
+    if (topUsername) {
+        topUsername.textContent =
+            username;
+    }
+
+
+    setAvatar(
+        topAvatar,
+        user.avatar || "",
+        username
+    );
+
+
+    if (currentUsername) {
+        currentUsername.textContent =
+            username;
+    }
+
+
+    if (currentUsernameTag) {
+        currentUsernameTag.textContent =
+            username;
+    }
+
+
+    setAvatar(
+        currentAvatar,
+        user.avatar || "",
+        username
+    );
+
+
+    setAvatar(
+        createPostAvatar,
+        user.avatar || "",
+        username
+    );
+
+
+    setAvatar(
+        modalAvatar,
+        user.avatar || "",
+        username
+    );
+
+
+    if (modalUsername) {
+        modalUsername.textContent =
+            username;
+    }
+
+
+    /* =========================
+       PROFILE NAVIGATION
+    ========================= */
+
+    const topProfileButton =
+        document.getElementById("topProfileButton");
+
+
+    const viewProfileButton =
+        document.getElementById("viewProfileButton");
+
+
+    if (topProfileButton) {
+
+        topProfileButton.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "profile.html";
+
+            }
+        );
+
+    }
+
+
+    if (viewProfileButton) {
+
+        viewProfileButton.addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "profile.html";
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    const logoutButton =
+        document.getElementById("logoutButton");
+
+
+    if (logoutButton) {
+
+        logoutButton.addEventListener(
+            "click",
+            function () {
+
+                localStorage.removeItem(
+                    "vexoraUser"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    const searchModal =
+        document.getElementById("searchModal");
+
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+
+    const searchResults =
+        document.getElementById("searchResults");
+
+
+    const searchNavButton =
+        document.getElementById("searchNavButton");
+
+
+    const mobileSearchButton =
+        document.getElementById("mobileSearchButton");
+
+
+    const closeSearchModal =
+        document.getElementById("closeSearchModal");
+
+
+    function openSearch() {
+
+        if (!searchModal) {
+            return;
+        }
+
+
+        searchModal.style.display =
+            "flex";
+
+
+        if (searchInput) {
+
+            searchInput.value = "";
+
+            searchInput.focus();
+
+        }
+
+
+        if (searchResults) {
+
+            searchResults.innerHTML = `
+                <div
+                    style="
+                        color:#888;
+                        text-align:center;
+                        padding:20px 0;
+                    "
+                >
+                    Type a username to search.
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    function closeSearch() {
+
+        if (!searchModal) {
+            return;
+        }
+
+
+        searchModal.style.display =
+            "none";
+
+    }
+
+
+    if (searchNavButton) {
+
+        searchNavButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                openSearch();
+
+            }
+        );
+
+    }
+
+
+    if (mobileSearchButton) {
+
+        mobileSearchButton.addEventListener(
+            "click",
+            function () {
+
+                openSearch();
+
+            }
+        );
+
+    }
+
+
+    if (closeSearchModal) {
+
+        closeSearchModal.addEventListener(
+            "click",
+            function () {
+
+                closeSearch();
+
+            }
+        );
+
+    }
+
+
+    if (searchModal) {
+
+        searchModal.addEventListener(
+            "click",
+            function (event) {
+
+                if (event.target === searchModal) {
+
+                    closeSearch();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    let searchTimeout;
+
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            function () {
+
+                clearTimeout(searchTimeout);
+
+
+                const query =
+                    searchInput.value.trim();
+
+
+                if (!query) {
+
+                    searchResults.innerHTML = `
+                        <div
+                            style="
+                                color:#888;
+                                text-align:center;
+                                padding:20px 0;
+                            "
+                        >
+                            Type a username to search.
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                searchResults.innerHTML = `
+                    <div
+                        style="
+                            color:#888;
+                            text-align:center;
+                            padding:20px 0;
+                        "
+                    >
+                        Searching...
+                    </div>
+                `;
+
+
+                searchTimeout =
+                    setTimeout(
+                        async function () {
+
+                            try {
+
+                                const response =
+                                    await fetch(
+                                        "/api/users?username=" +
+                                        encodeURIComponent(query)
+                                    );
+
+
+                                const data =
+                                    await response.json();
+
+
+                                if (!response.ok) {
+
+                                    throw new Error(
+                                        data.message ||
+                                        "Search failed."
+                                    );
+
+                                }
+
+
+                                let users = [];
+
+
+                                if (Array.isArray(data)) {
+
+                                    users = data;
+
+                                } else if (
+                                    Array.isArray(data.users)
+                                ) {
+
+                                    users = data.users;
+
+                                } else if (data.user) {
+
+                                    users = [data.user];
+
+                                }
+
+
+                                if (users.length === 0) {
+
+                                    searchResults.innerHTML = `
+                                        <div
+                                            style="
+                                                color:#888;
+                                                text-align:center;
+                                                padding:20px 0;
+                                            "
+                                        >
+                                            No users found.
+                                        </div>
+                                    `;
+
+                                    return;
+
+                                }
+
+
+                                searchResults.innerHTML =
+                                    users.map(
+                                        function (foundUser) {
+
+                                            const foundUsername =
+                                                foundUser.username ||
+                                                "User";
+
+
+                                            const letter =
+                                                foundUsername
+                                                    .charAt(0)
+                                                    .toUpperCase();
+
+
+                                            const foundId =
+                                                foundUser.id;
+
+
+                                            return `
+                                                <button
+                                                    type="button"
+                                                    class="vexora-search-result"
+                                                    data-user-id="${foundId}"
+                                                    style="
+                                                        width:100%;
+                                                        display:flex;
+                                                        align-items:center;
+                                                        gap:12px;
+                                                        padding:11px;
+                                                        border:none;
+                                                        background:white;
+                                                        border-radius:12px;
+                                                        cursor:pointer;
+                                                        text-align:left;
+                                                        margin-bottom:5px;
+                                                    "
+                                                >
+
+                                                    <div
+                                                        class="vexora-search-avatar"
+                                                        style="
+                                                            width:42px;
+                                                            height:42px;
+                                                            border-radius:50%;
+                                                            display:flex;
+                                                            align-items:center;
+                                                            justify-content:center;
+                                                            background:#eee;
+                                                            font-weight:700;
+                                                            font-size:16px;
+                                                            flex-shrink:0;
+                                                            background-size:cover;
+                                                            background-position:center;
+                                                            background-repeat:no-repeat;
+                                                        "
+                                                    >
+                                                        ${letter}
+                                                    </div>
+
+                                                    <div>
+
+                                                        <strong
+                                                            style="
+                                                                display:block;
+                                                                color:#111;
+                                                            "
+                                                        >
+                                                            ${foundUsername}
+                                                        </strong>
+
+                                                        <span
+                                                            style="
+                                                                color:#888;
+                                                                font-size:13px;
+                                                            "
+                                                        >
+                                                            @${foundUsername}
+                                                        </span>
+
+                                                    </div>
+
+                                                </button>
+                                            `;
+
+                                        }
+                                    ).join("");
+
+
+                                // SEARCH AVATARS
+
+                                document
+                                    .querySelectorAll(
+                                        ".vexora-search-result"
+                                    )
+                                    .forEach(
+                                        function (button, index) {
+
+                                            const foundUser =
+                                                users[index];
+
+
+                                            const avatar =
+                                                button.querySelector(
+                                                    ".vexora-search-avatar"
+                                                );
+
+
+                                            if (
+                                                avatar &&
+                                                foundUser &&
+                                                foundUser.avatar
+                                            ) {
+
+                                                avatar.textContent =
+                                                    "";
+
+                                                avatar.style.backgroundImage =
+                                                    `url("${foundUser.avatar}")`;
+
+                                            }
+
+                                        }
+                                    );
+
+
+                                document
+                                    .querySelectorAll(
+                                        ".vexora-search-result"
+                                    )
+                                    .forEach(
+                                        function (button) {
+
+                                            button.addEventListener(
+                                                "click",
+                                                function () {
+
+                                                    const userId =
+                                                        button.dataset.userId;
+
+
+                                                    if (!userId) {
+                                                        return;
+                                                    }
+
+
+                                                    window.location.href =
+                                                        "profile.html?userId=" +
+                                                        encodeURIComponent(
+                                                            userId
+                                                        );
+
+                                                }
+                                            );
+
+                                        }
+                                    );
+
+
+                            } catch (error) {
+
+                                console.error(
+                                    "Search error:",
+                                    error
+                                );
+
+
+                                searchResults.innerHTML = `
+                                    <div
+                                        style="
+                                            color:#d33;
+                                            text-align:center;
+                                            padding:20px 0;
+                                        "
+                                    >
+                                        Search failed. Try again.
+                                    </div>
+                                `;
+
+                            }
+
+                        },
+                        300
+                    );
+
+            }
+        );
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>
