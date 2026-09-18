@@ -201,7 +201,9 @@ db.prepare(`
         conversation_id INTEGER NOT NULL,
         sender_id INTEGER NOT NULL,
 
-        content TEXT NOT NULL,
+        content TEXT NOT NULL DEFAULT '',
+
+        image_url TEXT DEFAULT '',
 
         is_read INTEGER DEFAULT 0,
 
@@ -211,6 +213,27 @@ db.prepare(`
         FOREIGN KEY (sender_id) REFERENCES users(id)
     )
 `).run();
+
+
+// =========================
+// DODAVANJE IMAGE_URL KOLONE
+// ZA POSTOJEĆU BAZU
+// =========================
+
+const messageColumns = db.prepare(`
+    PRAGMA table_info(messages)
+`).all();
+
+const hasImageUrlColumn = messageColumns.some(function (column) {
+    return column.name === "image_url";
+});
+
+if (!hasImageUrlColumn) {
+    db.prepare(`
+        ALTER TABLE messages
+        ADD COLUMN image_url TEXT DEFAULT ''
+    `).run();
+}
 
 
 // =========================
