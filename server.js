@@ -3,7 +3,7 @@ const path = require("path");
 const db = require("./database");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.static(__dirname));
@@ -2059,10 +2059,10 @@ app.post("/api/messages/:conversationId/read", (req, res) => {
 // SERVER
 // ==========================
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
 
     console.log(
-        `Vexora server is running at http://localhost:${PORT}`
+        `Vexora server is running on port ${PORT}`
     );
 
 });
