@@ -361,12 +361,6 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-    const initial =
-        getInitial(
-            user.username
-        );
-
-
     if (topUsername) {
 
         topUsername.textContent =
@@ -573,8 +567,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
-
-            // Refresh avatar from server
 
             if (
                 data.user &&
@@ -827,8 +819,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     );
 
 
-                    // OPEN PROFILE
-
                     avatar.addEventListener(
                         "click",
                         function () {
@@ -852,8 +842,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     );
 
-
-                    // FOLLOW / UNFOLLOW
 
                     followButton.addEventListener(
                         "click",
@@ -937,6 +925,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                 await loadUserStats();
 
+                                await loadNotificationCount();
+
 
                             } catch (error) {
 
@@ -984,6 +974,864 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     }
+
+
+    // ==========================
+    // NOTIFICATIONS
+    // ==========================
+
+    const notificationsNavButton =
+        document.getElementById(
+            "notificationsNavButton"
+        );
+
+
+    const notificationsPanel =
+        document.getElementById(
+            "notificationsPanel"
+        );
+
+
+    const notificationBadge =
+        document.getElementById(
+            "notificationBadge"
+        );
+
+
+    const notificationUnreadText =
+        document.getElementById(
+            "notificationUnreadText"
+        );
+
+
+    const notificationsList =
+        document.getElementById(
+            "notificationsList"
+        );
+
+
+    const markAllNotificationsReadButton =
+        document.getElementById(
+            "markAllNotificationsRead"
+        );
+
+
+    function updateNotificationBadge(
+        unreadCount
+    ) {
+
+        const count =
+            Number(unreadCount) || 0;
+
+
+        if (!notificationBadge) {
+            return;
+        }
+
+
+        if (count > 0) {
+
+            notificationBadge.textContent =
+                count > 99
+                    ? "99+"
+                    : String(count);
+
+            notificationBadge.style.display =
+                "inline-flex";
+
+        } else {
+
+            notificationBadge.textContent =
+                "0";
+
+            notificationBadge.style.display =
+                "none";
+
+        }
+
+
+        if (notificationUnreadText) {
+
+            notificationUnreadText.textContent =
+                count > 0
+                    ? `${count} unread notification${count === 1 ? "" : "s"}`
+                    : "No new notifications";
+
+        }
+
+    }
+
+
+    async function loadNotificationCount() {
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/notifications/unread-count?userId=${encodeURIComponent(user.id)}`
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                return;
+
+            }
+
+
+            updateNotificationBadge(
+                data.unread || 0
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Could not load notification count:",
+                error
+            );
+
+        }
+
+    }
+
+
+    function formatNotificationMessage(
+        notification
+    ) {
+
+        const actor =
+            notification.actor_username ||
+            notification.username ||
+            "Someone";
+
+
+        const type =
+            String(
+                notification.type || ""
+            ).toLowerCase();
+
+
+        if (type === "like") {
+
+            return `${actor} liked your post.`;
+
+        }
+
+
+        if (type === "comment") {
+
+            return `${actor} commented on your post.`;
+
+        }
+
+
+        if (type === "reply") {
+
+            return `${actor} replied to your comment.`;
+
+        }
+
+
+        if (type === "follow") {
+
+            return `${actor} started following you.`;
+
+        }
+
+
+        if (type === "mention") {
+
+            return `${actor} mentioned you.`;
+
+        }
+
+
+        return `${actor} interacted with you.`;
+
+    }
+
+
+    function getNotificationIcon(
+        notification
+    ) {
+
+        const type =
+            String(
+                notification.type || ""
+            ).toLowerCase();
+
+
+        if (type === "like") {
+            return "♥";
+        }
+
+
+        if (type === "comment") {
+            return "💬";
+        }
+
+
+        if (type === "reply") {
+            return "↩";
+        }
+
+
+        if (type === "follow") {
+            return "♙";
+        }
+
+
+        if (type === "mention") {
+            return "@";
+        }
+
+
+        return "♡";
+
+    }
+
+
+    function renderNotifications(
+        notifications
+    ) {
+
+        if (!notificationsList) {
+            return;
+        }
+
+
+        notificationsList.innerHTML =
+            "";
+
+
+        if (
+            !Array.isArray(notifications) ||
+            notifications.length === 0
+        ) {
+
+            const empty =
+                createElement(
+                    "div",
+                    "notifications-empty"
+                );
+
+
+            const icon =
+                createElement(
+                    "div",
+                    "notifications-empty-icon",
+                    "♡"
+                );
+
+
+            const title =
+                createElement(
+                    "strong",
+                    "",
+                    "No notifications yet"
+                );
+
+
+            const description =
+                createElement(
+                    "span",
+                    "",
+                    "When someone interacts with you, it will appear here."
+                );
+
+
+            empty.appendChild(
+                icon
+            );
+
+
+            empty.appendChild(
+                title
+            );
+
+
+            empty.appendChild(
+                description
+            );
+
+
+            notificationsList.appendChild(
+                empty
+            );
+
+
+            return;
+
+        }
+
+
+        notifications.forEach(
+            function (notification) {
+
+                const item =
+                    createElement(
+                        "div",
+                        "notification-item"
+                    );
+
+
+                if (
+                    !Number(
+                        notification.is_read
+                    )
+                ) {
+
+                    item.classList.add(
+                        "unread"
+                    );
+
+                }
+
+
+                item.dataset.notificationId =
+                    notification.id;
+
+
+                const avatar =
+                    createElement(
+                        "div",
+                        "notification-avatar",
+                        getInitial(
+                            notification.actor_username ||
+                            notification.username
+                        )
+                    );
+
+
+                setAvatar(
+                    avatar,
+                    notification.actor_avatar ||
+                    notification.avatar ||
+                    "",
+                    notification.actor_username ||
+                    notification.username
+                );
+
+
+                const content =
+                    createElement(
+                        "div",
+                        "notification-content"
+                    );
+
+
+                const message =
+                    createElement(
+                        "div",
+                        "notification-message",
+                        formatNotificationMessage(
+                            notification
+                        )
+                    );
+
+
+                const time =
+                    createElement(
+                        "span",
+                        "notification-time",
+                        formatDate(
+                            notification.created_at
+                        )
+                    );
+
+
+                content.appendChild(
+                    message
+                );
+
+
+                content.appendChild(
+                    time
+                );
+
+
+                const icon =
+                    createElement(
+                        "div",
+                        "notification-icon",
+                        getNotificationIcon(
+                            notification
+                        )
+                    );
+
+
+                item.appendChild(
+                    avatar
+                );
+
+
+                item.appendChild(
+                    content
+                );
+
+
+                item.appendChild(
+                    icon
+                );
+
+
+                notificationsList.appendChild(
+                    item
+                );
+
+
+                item.addEventListener(
+                    "click",
+                    async function () {
+
+                        await markNotificationRead(
+                            notification.id
+                        );
+
+
+                        if (
+                            notification.post_id
+                        ) {
+
+                            window.location.href =
+                                `dashboard.html?postId=${encodeURIComponent(notification.post_id)}`;
+
+                            return;
+
+                        }
+
+
+                        if (
+                            notification.actor_id
+                        ) {
+
+                            openUserProfile(
+                                notification.actor_id
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    async function loadNotifications() {
+
+        if (!notificationsList) {
+            return;
+        }
+
+
+        notificationsList.innerHTML = `
+            <div class="notifications-empty">
+                <div class="notifications-empty-icon">
+                    …
+                </div>
+
+                <strong>
+                    Loading notifications...
+                </strong>
+
+                <span>
+                    Please wait.
+                </span>
+            </div>
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/notifications?userId=${encodeURIComponent(user.id)}`
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                notificationsList.innerHTML = `
+                    <div class="notifications-empty">
+                        <div class="notifications-empty-icon">
+                            !
+                        </div>
+
+                        <strong>
+                            Could not load notifications
+                        </strong>
+
+                        <span>
+                            Please try again.
+                        </span>
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            renderNotifications(
+                Array.isArray(data.notifications)
+                    ? data.notifications
+                    : []
+            );
+
+
+            updateNotificationBadge(
+                data.unread || 0
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Could not load notifications:",
+                error
+            );
+
+
+            notificationsList.innerHTML = `
+                <div class="notifications-empty">
+                    <div class="notifications-empty-icon">
+                        !
+                    </div>
+
+                    <strong>
+                        Could not connect to the server
+                    </strong>
+
+                    <span>
+                        Please try again.
+                    </span>
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    async function markNotificationRead(
+        notificationId
+    ) {
+
+        if (!notificationId) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/notifications/${encodeURIComponent(notificationId)}/read`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                userId:
+                                    user.id
+                            })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                return;
+
+            }
+
+
+            const item =
+                document.querySelector(
+                    `.notification-item[data-notification-id="${CSS.escape(String(notificationId))}"]`
+                );
+
+
+            if (item) {
+
+                item.classList.remove(
+                    "unread"
+                );
+
+            }
+
+
+            await loadNotificationCount();
+
+
+        } catch (error) {
+
+            console.error(
+                "Could not mark notification as read:",
+                error
+            );
+
+        }
+
+    }
+
+
+    async function markAllNotificationsRead() {
+
+        if (
+            markAllNotificationsReadButton
+        ) {
+
+            markAllNotificationsReadButton.disabled =
+                true;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/notifications/read-all",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                userId:
+                                    user.id
+                            })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                alert(
+                    data.message ||
+                    "Could not mark notifications as read."
+                );
+
+
+                return;
+
+            }
+
+
+            document
+                .querySelectorAll(
+                    ".notification-item.unread"
+                )
+                .forEach(
+                    function (item) {
+
+                        item.classList.remove(
+                            "unread"
+                        );
+
+                    }
+                );
+
+
+            updateNotificationBadge(
+                0
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Could not mark all notifications as read:",
+                error
+            );
+
+
+            alert(
+                "Could not connect to the Vexora server."
+            );
+
+        } finally {
+
+            if (
+                markAllNotificationsReadButton
+            ) {
+
+                markAllNotificationsReadButton.disabled =
+                    false;
+
+            }
+
+        }
+
+    }
+
+
+    function toggleNotificationsPanel() {
+
+        if (!notificationsPanel) {
+            return;
+        }
+
+
+        const isHidden =
+            notificationsPanel.style.display ===
+            "none" ||
+            notificationsPanel.style.display ===
+            "";
+
+
+        if (isHidden) {
+
+            notificationsPanel.style.display =
+                "block";
+
+
+            loadNotifications();
+
+        } else {
+
+            notificationsPanel.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    if (notificationsNavButton) {
+
+        notificationsNavButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                toggleNotificationsPanel();
+
+            }
+        );
+
+    }
+
+
+    if (
+        markAllNotificationsReadButton
+    ) {
+
+        markAllNotificationsReadButton.addEventListener(
+            "click",
+            function () {
+
+                markAllNotificationsRead();
+
+            }
+        );
+
+    }
+
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !notificationsPanel ||
+                !notificationsNavButton
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                notificationsPanel.style.display ===
+                "none"
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                notificationsPanel.contains(
+                    event.target
+                ) ||
+                notificationsNavButton.contains(
+                    event.target
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            notificationsPanel.style.display =
+                "none";
+
+        }
+    );
+
+
+    // ==========================
+    // NOTIFICATION POLLING
+    // ==========================
+
+    loadNotificationCount();
+
+
+    setInterval(
+        function () {
+
+            loadNotificationCount();
+
+        },
+        10000
+    );
 
 
     // ==========================
@@ -1044,6 +1892,495 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
+    // ==========================
+    // IMAGE POST ELEMENTS
+    // ==========================
+
+    const postImageInput =
+        document.getElementById(
+            "postImageInput"
+        );
+
+
+    const choosePostImage =
+        document.getElementById(
+            "choosePostImage"
+        );
+
+
+    const postImagePreview =
+        document.getElementById(
+            "postImagePreview"
+        );
+
+
+    const postImagePreviewImg =
+        document.getElementById(
+            "postImagePreviewImg"
+        );
+
+
+    const removePostImage =
+        document.getElementById(
+            "removePostImage"
+        );
+
+
+    let selectedPostImage =
+        "";
+
+
+    // ==========================
+    // VIDEO POST ELEMENTS
+    // ==========================
+
+    const postVideoInput =
+        document.getElementById(
+            "postVideoInput"
+        );
+
+
+    const choosePostVideo =
+        document.getElementById(
+            "choosePostVideo"
+        );
+
+
+    const postVideoPreview =
+        document.getElementById(
+            "postVideoPreview"
+        );
+
+
+    const postVideoPreviewVideo =
+        document.getElementById(
+            "postVideoPreviewVideo"
+        );
+
+
+    const removePostVideo =
+        document.getElementById(
+            "removePostVideo"
+        );
+
+
+    let selectedPostVideo =
+        "";
+
+
+    // ==========================
+    // CHOOSE POST IMAGE
+    // ==========================
+
+    if (
+        choosePostImage &&
+        postImageInput
+    ) {
+
+        choosePostImage.addEventListener(
+            "click",
+            function () {
+
+                postImageInput.click();
+
+            }
+        );
+
+    }
+
+
+    // ==========================
+    // IMAGE PREVIEW
+    // ==========================
+
+    function resetPostImage() {
+
+        selectedPostImage =
+            "";
+
+
+        if (postImageInput) {
+
+            postImageInput.value =
+                "";
+
+        }
+
+
+        if (postImagePreview) {
+
+            postImagePreview.style.display =
+                "none";
+
+        }
+
+
+        if (postImagePreviewImg) {
+
+            postImagePreviewImg.src =
+                "";
+
+        }
+
+    }
+
+
+    function handlePostImageChange() {
+
+        if (!postImageInput) {
+            return;
+        }
+
+
+        const file =
+            postImageInput.files &&
+            postImageInput.files[0];
+
+
+        if (!file) {
+
+            resetPostImage();
+
+            return;
+
+        }
+
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp",
+            "image/gif"
+        ];
+
+
+        if (
+            !allowedTypes.includes(
+                file.type
+            )
+        ) {
+
+            alert(
+                "Please choose a JPG, PNG, WEBP or GIF image."
+            );
+
+
+            resetPostImage();
+
+            return;
+
+        }
+
+
+        const maxSize =
+            8 * 1024 * 1024;
+
+
+        if (file.size > maxSize) {
+
+            alert(
+                "Image cannot be larger than 8 MB."
+            );
+
+
+            resetPostImage();
+
+            return;
+
+        }
+
+
+        resetPostVideo();
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function (event) {
+
+            selectedPostImage =
+                event.target.result;
+
+
+            if (
+                postImagePreviewImg
+            ) {
+
+                postImagePreviewImg.src =
+                    selectedPostImage;
+
+            }
+
+
+            if (
+                postImagePreview
+            ) {
+
+                postImagePreview.style.display =
+                    "block";
+
+            }
+
+        };
+
+
+        reader.onerror =
+            function () {
+
+                alert(
+                    "Could not read the image."
+                );
+
+
+                resetPostImage();
+
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+
+    }
+
+
+    if (postImageInput) {
+
+        postImageInput.addEventListener(
+            "change",
+            handlePostImageChange
+        );
+
+    }
+
+
+    if (removePostImage) {
+
+        removePostImage.addEventListener(
+            "click",
+            function () {
+
+                resetPostImage();
+
+            }
+        );
+
+    }
+
+
+    // ==========================
+    // CHOOSE POST VIDEO
+    // ==========================
+
+    if (
+        choosePostVideo &&
+        postVideoInput
+    ) {
+
+        choosePostVideo.addEventListener(
+            "click",
+            function () {
+
+                postVideoInput.click();
+
+            }
+        );
+
+    }
+
+
+    // ==========================
+    // VIDEO PREVIEW
+    // ==========================
+
+    function resetPostVideo() {
+
+        selectedPostVideo =
+            "";
+
+
+        if (postVideoInput) {
+
+            postVideoInput.value =
+                "";
+
+        }
+
+
+        if (postVideoPreview) {
+
+            postVideoPreview.style.display =
+                "none";
+
+        }
+
+
+        if (postVideoPreviewVideo) {
+
+            postVideoPreviewVideo.pause();
+
+            postVideoPreviewVideo.removeAttribute(
+                "src"
+            );
+
+            postVideoPreviewVideo.load();
+
+        }
+
+    }
+
+
+    function handlePostVideoChange() {
+
+        if (!postVideoInput) {
+            return;
+        }
+
+
+        const file =
+            postVideoInput.files &&
+            postVideoInput.files[0];
+
+
+        if (!file) {
+
+            resetPostVideo();
+
+            return;
+
+        }
+
+
+        const allowedTypes = [
+            "video/mp4",
+            "video/webm",
+            "video/ogg"
+        ];
+
+
+        if (
+            !allowedTypes.includes(
+                file.type
+            )
+        ) {
+
+            alert(
+                "Please choose an MP4, WEBM or OGG video."
+            );
+
+
+            resetPostVideo();
+
+            return;
+
+        }
+
+
+        const maxSize =
+            20 * 1024 * 1024;
+
+
+        if (file.size > maxSize) {
+
+            alert(
+                "Video cannot be larger than 20 MB."
+            );
+
+
+            resetPostVideo();
+
+            return;
+
+        }
+
+
+        resetPostImage();
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function (event) {
+
+            selectedPostVideo =
+                event.target.result;
+
+
+            if (
+                postVideoPreviewVideo
+            ) {
+
+                postVideoPreviewVideo.src =
+                    selectedPostVideo;
+
+                postVideoPreviewVideo.load();
+
+            }
+
+
+            if (
+                postVideoPreview
+            ) {
+
+                postVideoPreview.style.display =
+                    "block";
+
+            }
+
+        };
+
+
+        reader.onerror =
+            function () {
+
+                alert(
+                    "Could not read the video."
+                );
+
+
+                resetPostVideo();
+
+            };
+
+
+        reader.readAsDataURL(
+            file
+        );
+
+    }
+
+
+    if (postVideoInput) {
+
+        postVideoInput.addEventListener(
+            "change",
+            handlePostVideoChange
+        );
+
+    }
+
+
+    if (removePostVideo) {
+
+        removePostVideo.addEventListener(
+            "click",
+            function () {
+
+                resetPostVideo();
+
+            }
+        );
+
+    }
+
+
+    // ==========================
+    // OPEN CREATE POST
+    // ==========================
+
     function openCreatePost() {
 
         if (!postModal) {
@@ -1069,17 +2406,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
+        }
 
-            setTimeout(
-                function () {
+
+        resetPostImage();
+
+        resetPostVideo();
+
+
+        setTimeout(
+            function () {
+
+                if (postText) {
 
                     postText.focus();
 
-                },
-                50
-            );
+                }
 
-        }
+            },
+            50
+        );
 
     }
 
@@ -1133,6 +2479,10 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
         }
+
+        resetPostImage();
+
+        resetPostVideo();
 
     }
 
@@ -1218,27 +2568,34 @@ document.addEventListener("DOMContentLoaded", function () {
     // PUBLISH POST
     // ==========================
 
-    if (
-        publishPost &&
-        postText
-    ) {
+    if (publishPost) {
 
         publishPost.addEventListener(
             "click",
             async function () {
 
                 const text =
-                    postText.value.trim();
+                    postText
+                        ? postText.value.trim()
+                        : "";
 
 
-                if (!text) {
+                if (
+                    !text &&
+                    !selectedPostImage &&
+                    !selectedPostVideo
+                ) {
 
                     alert(
-                        "Write something first."
+                        "Write something or choose an image or video first."
                     );
 
 
-                    postText.focus();
+                    if (postText) {
+
+                        postText.focus();
+
+                    }
 
 
                     return;
@@ -1250,6 +2607,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     alert(
                         "Post cannot be longer than 500 characters."
+                    );
+
+
+                    return;
+
+                }
+
+
+                if (
+                    selectedPostImage &&
+                    selectedPostVideo
+                ) {
+
+                    alert(
+                        "Choose either an image or a video, not both."
                     );
 
 
@@ -1285,7 +2657,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                             user.id,
 
                                         content:
-                                            text
+                                            text,
+
+                                        imageData:
+                                            selectedPostImage || "",
+
+                                        videoData:
+                                            selectedPostVideo || ""
                                     })
                             }
                         );
@@ -1311,8 +2689,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                    postText.value =
-                        "";
+                    if (postText) {
+
+                        postText.value =
+                            "";
+
+                    }
 
 
                     if (characterCount) {
@@ -1321,6 +2703,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             "0 / 500";
 
                     }
+
+
+                    resetPostImage();
+
+                    resetPostVideo();
 
 
                     closeCreatePost();
@@ -1406,8 +2793,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
 
-            // REMOVE OLD REAL POSTS
-
             feed.querySelectorAll(
                 ".real-post"
             ).forEach(function (post) {
@@ -1417,8 +2802,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
 
-            // REMOVE DEMO POSTS
-
             feed.querySelectorAll(
                 ".demo-post"
             ).forEach(function (post) {
@@ -1427,8 +2810,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             });
 
-
-            // REMOVE EMPTY MESSAGE
 
             feed.querySelectorAll(
                 ".no-posts-feed"
@@ -1480,6 +2861,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 }
             );
+
+
+            const postIdFromUrl =
+                new URLSearchParams(
+                    window.location.search
+                ).get("postId");
+
+
+            if (postIdFromUrl) {
+
+                setTimeout(
+                    function () {
+
+                        const targetPost =
+                            document.querySelector(
+                                `article[data-post-id="${CSS.escape(String(postIdFromUrl))}"]`
+                            );
+
+
+                        if (targetPost) {
+
+                            targetPost.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+
+                            targetPost.classList.add(
+                                "notification-target-post"
+                            );
+
+
+                            setTimeout(
+                                function () {
+
+                                    targetPost.classList.remove(
+                                        "notification-target-post"
+                                    );
+
+                                },
+                                2500
+                            );
+
+                        }
+
+                    },
+                    100
+                );
+
+            }
 
 
         } catch (error) {
@@ -1624,10 +3055,6 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
 
-        // ==========================
-        // OPEN USER PROFILE
-        // ==========================
-
         avatar.addEventListener(
             "click",
             function () {
@@ -1653,15 +3080,143 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         // ==========================
-        // POST TEXT
+        // POST CONTENT
         // ==========================
 
-        const content =
-            createElement(
-                "div",
-                "post-text",
-                post.content || ""
+        if (post.content) {
+
+            const content =
+                createElement(
+                    "div",
+                    "post-text",
+                    post.content
+                );
+
+
+            article.appendChild(
+                content
             );
+
+        }
+
+
+        // ==========================
+        // POST IMAGE
+        // ==========================
+
+        if (post.image_url) {
+
+            const imageWrapper =
+                createElement(
+                    "div",
+                    "post-image-wrapper"
+                );
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.className =
+                "post-image";
+
+
+            image.src =
+                post.image_url;
+
+
+            image.alt =
+                `Post by @${post.username || "user"}`;
+
+
+            image.loading =
+                "lazy";
+
+
+            image.addEventListener(
+                "click",
+                function () {
+
+                    openImageViewer(
+                        post.image_url
+                    );
+
+                }
+            );
+
+
+            imageWrapper.appendChild(
+                image
+            );
+
+
+            article.appendChild(
+                imageWrapper
+            );
+
+        }
+
+
+        // ==========================
+        // POST VIDEO
+        // ==========================
+
+        if (
+            post.video_url &&
+            !post.image_url
+        ) {
+
+            const videoWrapper =
+                createElement(
+                    "div",
+                    "post-video-wrapper"
+                );
+
+
+            const video =
+                document.createElement(
+                    "video"
+                );
+
+
+            video.className =
+                "post-video";
+
+
+            video.src =
+                post.video_url;
+
+
+            video.controls =
+                true;
+
+
+            video.playsInline =
+                true;
+
+
+            video.preload =
+                "metadata";
+
+
+            video.setAttribute(
+                "aria-label",
+                `Video post by @${post.username || "user"}`
+            );
+
+
+            videoWrapper.appendChild(
+                video
+            );
+
+
+            article.appendChild(
+                videoWrapper
+            );
+
+        }
 
 
         // ==========================
@@ -1910,11 +3465,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         article.appendChild(
-            content
-        );
-
-
-        article.appendChild(
             stats
         );
 
@@ -1999,6 +3549,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     likeCount.textContent =
                         `♡ ${data.likes || 0} likes`;
+
+
+                    await loadNotificationCount();
 
 
                 } catch (error) {
@@ -2180,10 +3733,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
 
 
-                    // ==========================
-                    // COMMENT AVATAR
-                    // ==========================
-
                     const commentAvatar =
                         createElement(
                             "div",
@@ -2216,10 +3765,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     );
 
-
-                    // ==========================
-                    // COMMENT CONTENT
-                    // ==========================
 
                     const commentContent =
                         createElement(
@@ -2397,6 +3942,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                                 updateCommentLikeButton();
+
+
+                                await loadNotificationCount();
 
 
                             } catch (error) {
@@ -2685,6 +4233,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             commentCount.textContent =
                                 `${commentsList.querySelectorAll(".comment").length} comments`;
+
+
+                            await loadNotificationCount();
 
 
                         } catch (error) {
@@ -3015,6 +4566,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     `${commentsList.querySelectorAll(".comment").length} comments`;
 
 
+                await loadNotificationCount();
+
+
             } catch (error) {
 
                 console.error(
@@ -3078,8 +4632,16 @@ document.addEventListener("DOMContentLoaded", function () {
             "click",
             async function () {
 
-                const shareText =
-                    `@${post.username}: ${post.content}`;
+                let shareText =
+                    `@${post.username}:`;
+
+
+                if (post.content) {
+
+                    shareText +=
+                        ` ${post.content}`;
+
+                }
 
 
                 try {
@@ -3093,7 +4655,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 "Vexora post",
 
                             text:
-                                shareText
+                                shareText,
+
+                            url:
+                                window.location.href
                         });
 
                     } else if (
@@ -3178,6 +4743,133 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         return article;
+
+    }
+
+
+    // ==========================
+    // IMAGE VIEWER
+    // ==========================
+
+    function openImageViewer(
+        imageUrl
+    ) {
+
+        if (!imageUrl) {
+            return;
+        }
+
+
+        const viewer =
+            document.createElement(
+                "div"
+            );
+
+
+        viewer.className =
+            "vexora-image-viewer";
+
+
+        const image =
+            document.createElement(
+                "img"
+            );
+
+
+        image.src =
+            imageUrl;
+
+
+        image.alt =
+            "Vexora post image";
+
+
+        image.className =
+            "vexora-image-viewer-image";
+
+
+        const close =
+            createElement(
+                "button",
+                "vexora-image-viewer-close",
+                "×"
+            );
+
+
+        close.type =
+            "button";
+
+
+        viewer.appendChild(
+            image
+        );
+
+
+        viewer.appendChild(
+            close
+        );
+
+
+        document.body.appendChild(
+            viewer
+        );
+
+
+        function closeViewer() {
+
+            viewer.remove();
+
+            document.removeEventListener(
+                "keydown",
+                handleEscape
+            );
+
+        }
+
+
+        function handleEscape(
+            event
+        ) {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                closeViewer();
+
+            }
+
+        }
+
+
+        close.addEventListener(
+            "click",
+            closeViewer
+        );
+
+
+        viewer.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    viewer
+                ) {
+
+                    closeViewer();
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            handleEscape
+        );
 
     }
 
@@ -3336,6 +5028,274 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ==========================
+
+    // ==========================
+    // LIVE USER SEARCH
+    // ==========================
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+    const searchResults =
+        document.getElementById(
+            "searchResults"
+        );
+
+    let searchRequestId = 0;
+
+    function clearSearchResults() {
+
+        if (!searchResults) {
+            return;
+        }
+
+        searchResults.innerHTML = "";
+
+    }
+
+    function renderLiveSearchResults(
+        users
+    ) {
+
+        if (!searchResults) {
+            return;
+        }
+
+        searchResults.innerHTML = "";
+
+        if (
+            !Array.isArray(users) ||
+            users.length === 0
+        ) {
+
+            const empty =
+                createElement(
+                    "div",
+                    "vexora-search-empty",
+                    "No users found."
+                );
+
+            searchResults.appendChild(
+                empty
+            );
+
+            return;
+        }
+
+        users
+            .slice(0, 8)
+            .forEach(function (searchedUser) {
+
+                const result =
+                    document.createElement(
+                        "button"
+                    );
+
+                result.type =
+                    "button";
+
+                result.className =
+                    "vexora-search-result";
+
+                const avatar =
+                    createElement(
+                        "div",
+                        "vexora-search-avatar",
+                        getInitial(
+                            searchedUser.username
+                        )
+                    );
+
+                setAvatar(
+                    avatar,
+                    searchedUser.avatar || "",
+                    searchedUser.username
+                );
+
+                const info =
+                    document.createElement(
+                        "div"
+                    );
+
+                const username =
+                    createElement(
+                        "strong",
+                        "",
+                        "@" +
+                        (
+                            searchedUser.username ||
+                            "user"
+                        )
+                    );
+
+                const bio =
+                    createElement(
+                        "span",
+                        "",
+                        searchedUser.bio ||
+                        "View profile"
+                    );
+
+                info.appendChild(
+                    username
+                );
+
+                info.appendChild(
+                    bio
+                );
+
+                result.appendChild(
+                    avatar
+                );
+
+                result.appendChild(
+                    info
+                );
+
+                result.addEventListener(
+                    "click",
+                    function () {
+
+                        openUserProfile(
+                            searchedUser.id
+                        );
+
+                    }
+                );
+
+                searchResults.appendChild(
+                    result
+                );
+
+            });
+
+    }
+
+    async function loadLiveSearchResults(
+        query
+    ) {
+
+        const requestId =
+            ++searchRequestId;
+
+        const normalizedQuery =
+            String(query || "")
+                .trim()
+                .toLowerCase();
+
+        if (!normalizedQuery) {
+
+            clearSearchResults();
+
+            return;
+        }
+
+        if (!searchResults) {
+            return;
+        }
+
+        searchResults.innerHTML = `
+            <div class="vexora-search-empty">
+                Searching...
+            </div>
+        `;
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/users?username=${encodeURIComponent(normalizedQuery)}`
+                );
+
+            const data =
+                await response.json();
+
+            if (
+                requestId !==
+                searchRequestId
+            ) {
+                return;
+            }
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                searchResults.innerHTML = `
+                    <div class="vexora-search-empty">
+                        Could not search users.
+                    </div>
+                `;
+
+                return;
+            }
+
+            const users =
+                Array.isArray(data.users)
+                    ? data.users
+                    : [];
+
+            const prefixMatches =
+                users.filter(
+                    function (searchedUser) {
+
+                        return String(
+                            searchedUser.username || ""
+                        )
+                            .toLowerCase()
+                            .startsWith(
+                                normalizedQuery
+                            );
+
+                    }
+                );
+
+            renderLiveSearchResults(
+                prefixMatches
+            );
+
+        } catch (error) {
+
+            if (
+                requestId !==
+                searchRequestId
+            ) {
+                return;
+            }
+
+            console.error(
+                "Live search error:",
+                error
+            );
+
+            searchResults.innerHTML = `
+                <div class="vexora-search-empty">
+                    Could not connect to the Vexora server.
+                </div>
+            `;
+
+        }
+
+    }
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "input",
+            function () {
+
+                loadLiveSearchResults(
+                    searchInput.value
+                );
+
+            }
+        );
+
+    }
+
     // START
     // ==========================
 
