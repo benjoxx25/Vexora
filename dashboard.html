@@ -1,28 +1,30 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Vexora — Home</title>
+<title>Vexora — Home</title>
 
-    <link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="dashboard.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+```
 
 </head>
 
 <body>
-
 
 <!-- =========================
      SIDEBAR
@@ -30,106 +32,111 @@
 
 <aside class="sidebar">
 
-    <div class="brand">
+```
+<div class="brand">
 
-        <img
-            src="images/logo.png"
-            alt="Vexora"
-        >
-
-        <span>Vexora</span>
-
-    </div>
-
-
-    <nav>
-
-        <a href="dashboard.html" class="active">
-
-            <span>⌂</span>
-
-            Home
-
-        </a>
-
-
-        <a href="#" id="searchNavButton">
-
-            <span>⌕</span>
-
-            Search
-
-        </a>
-
-
-        <a href="#">
-
-            <span>♡</span>
-
-            Notifications
-
-        </a>
-
-
-        <!-- MESSAGES -->
-
-        <a href="messages.html">
-
-            <span>✉</span>
-
-            Messages
-
-        </a>
-
-
-        <a href="profile.html">
-
-            <span>♙</span>
-
-            Profile
-
-        </a>
-
-    </nav>
-
-
-    <button
-        class="create-button"
-        id="openPostModal2"
-        type="button"
+    <img
+        src="images/logo.png"
+        alt="Vexora"
     >
 
-        <span>＋</span>
+    <span>Vexora</span>
 
-        Create
-
-    </button>
+</div>
 
 
-    <div class="sidebar-bottom">
+<nav>
 
-        <a href="#">
+    <a href="dashboard.html" class="active">
 
-            ⚙ Settings
+        <span>⌂</span>
 
-        </a>
+        Home
+
+    </a>
 
 
-        <a
-            href="index.html"
-            id="logoutButton"
+    <a href="#" id="searchNavButton">
+
+        <span>⌕</span>
+
+        Search
+
+    </a>
+
+
+    <a href="#" id="notificationsNavButton">
+
+        <span>♡</span>
+
+        Notifications
+
+        <span
+            id="notificationBadge"
+            class="notification-badge"
+            style="display:none;"
         >
+            0
+        </span>
 
-            ⇥ Log out
+    </a>
 
-        </a>
 
-    </div>
+    <a href="messages.html">
+
+        <span>✉</span>
+
+        Messages
+
+    </a>
+
+
+    <a href="profile.html">
+
+        <span>♙</span>
+
+        Profile
+
+    </a>
+
+</nav>
+
+
+<button
+    class="create-button"
+    id="openPostModal2"
+    type="button"
+>
+
+    <span>＋</span>
+
+    Create
+
+</button>
+
+
+<div class="sidebar-bottom">
+
+    <a href="#">
+
+        ⚙ Settings
+
+    </a>
+
+
+    <a
+        href="index.html"
+        id="logoutButton"
+    >
+
+        ⇥ Log out
+
+    </a>
+
+</div>
+```
 
 </aside>
-
-
-
 
 <!-- =========================
      MAIN
@@ -137,186 +144,188 @@
 
 <main class="main">
 
+```
+<!-- TOP BAR -->
 
-    <!-- TOP BAR -->
+<header class="topbar">
 
-    <header class="topbar">
+    <div>
 
-        <div>
+        <h1>
+            Home
+        </h1>
 
-            <h1>
-                Home
-            </h1>
+        <p>
+            Welcome back to Vexora.
+        </p>
 
-            <p>
-                Welcome back to Vexora.
-            </p>
-
-        </div>
+    </div>
 
 
-        <div class="top-actions">
+    <div class="top-actions">
 
-            <button
-                class="mobile-search"
-                id="mobileSearchButton"
-                type="button"
+        <button
+            class="mobile-search"
+            id="mobileSearchButton"
+            type="button"
+        >
+            ⌕
+        </button>
+
+
+        <button
+            class="profile-button"
+            id="topProfileButton"
+            type="button"
+        >
+
+            <div
+                class="small-avatar"
+                id="topAvatar"
             >
-                ⌕
-            </button>
+                U
+            </div>
 
 
-            <button
-                class="profile-button"
-                id="topProfileButton"
-                type="button"
+            <span id="topUsername">
+                User
+            </span>
+
+
+            <small>
+                ▼
+            </small>
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+
+<!-- =========================
+     CONTENT
+========================== -->
+
+<div class="content">
+
+
+    <!-- FEED -->
+
+    <section class="feed">
+
+
+        <!-- CREATE POST -->
+
+        <div class="create-post">
+
+            <div
+                class="avatar"
+                id="createPostAvatar"
             >
+                U
+            </div>
 
-                <div
-                    class="small-avatar"
-                    id="topAvatar"
+
+            <div class="create-post-content">
+
+
+                <button
+                    class="post-input"
+                    id="openPostModal"
+                    type="button"
                 >
-                    U
-                </div>
+
+                    What's on your mind?
+
+                </button>
 
 
-                <span id="topUsername">
-                    User
-                </span>
-
-
-                <small>
-                    ▼
-                </small>
-
-            </button>
-
-        </div>
-
-    </header>
-
-
-
-
-    <!-- =========================
-         CONTENT
-    ========================== -->
-
-    <div class="content">
-
-
-        <!-- FEED -->
-
-        <section class="feed">
-
-
-            <!-- CREATE POST -->
-
-            <div class="create-post">
-
-                <div
-                    class="avatar"
-                    id="createPostAvatar"
-                >
-                    U
-                </div>
-
-
-                <div class="create-post-content">
+                <div class="create-post-actions">
 
 
                     <button
-                        class="post-input"
-                        id="openPostModal"
+                        class="create-action"
+                        id="openPhotoModal"
                         type="button"
                     >
 
-                        What's on your mind?
+                        📷 Photo
 
                     </button>
 
 
-                    <div class="create-post-actions">
+                    <button
+                        class="create-action"
+                        id="openPostModal3"
+                        type="button"
+                    >
 
+                        ✦ Create post
 
-                        <button
-                            class="create-action"
-                            id="openPhotoModal"
-                            type="button"
-                        >
-
-                            📷 Photo
-
-                        </button>
-
-
-                        <button
-                            class="create-action"
-                            id="openPostModal3"
-                            type="button"
-                        >
-
-                            ✦ Create post
-
-                        </button>
-
-                    </div>
+                    </button>
 
                 </div>
 
             </div>
 
+        </div>
 
 
 
-            <!-- =========================
-                 DEMO POST 1
-            ========================== -->
 
-            <article class="post demo-post">
+        <!-- =========================
+             DEMO POST 1
+        ========================== -->
 
-                <div class="post-header">
+        <article class="post demo-post">
 
-                    <div class="post-user">
+            <div class="post-header">
 
-                        <div class="post-avatar purple">
-                            A
-                        </div>
+                <div class="post-user">
 
-                        <div>
+                    <div class="post-avatar purple">
+                        A
+                    </div>
 
-                            <strong>
-                                alex.m
-                            </strong>
+                    <div>
 
-                            <span>
-                                12 min ago · 🌎
-                            </span>
+                        <strong>
+                            alex.m
+                        </strong>
 
-                        </div>
+                        <span>
+                            12 min ago · 🌎
+                        </span>
 
                     </div>
 
-
-                    <button
-                        class="more"
-                        type="button"
-                    >
-                        •••
-                    </button>
-
                 </div>
 
 
-                <div class="post-text">
+                <button
+                    class="more"
+                    type="button"
+                >
+                    •••
+                </button>
 
-                    Just discovered this place.
-                    Definitely coming back. ✦
-
-                </div>
+            </div>
 
 
-                <div class="post-photo photo-one">
+            <div class="post-text">
+
+                Just discovered this place.
+                Definitely coming back. ✦
+
+            </div>
+
+
+            <div class="post-photo photo-one">
+
+                <div>
 
                     <div class="photo-title">
                         VEXORA
@@ -328,305 +337,367 @@
 
                 </div>
 
-
-                <div class="post-stats">
-
-                    <span>
-                        ♡ 248 likes
-                    </span>
-
-                    <span>
-                        32 comments
-                    </span>
-
-                </div>
+            </div>
 
 
-                <div class="post-actions">
+            <div class="post-stats">
 
-                    <button
-                        class="like-button"
-                        type="button"
-                    >
+                <span>
+                    ♡ 248 likes
+                </span>
 
-                        ♡
+                <span>
+                    32 comments
+                </span>
 
-                        <span>
-                            Like
-                        </span>
-
-                    </button>
+            </div>
 
 
-                    <button type="button">
+            <div class="post-actions">
 
-                        ♧
+                <button
+                    class="like-button"
+                    type="button"
+                >
 
-                        <span>
-                            Comment
-                        </span>
-
-                    </button>
-
-
-                    <button type="button">
-
-                        ↗
-
-                        <span>
-                            Share
-                        </span>
-
-                    </button>
-
-                </div>
-
-            </article>
-
-
-
-
-            <!-- =========================
-                 DEMO POST 2
-            ========================== -->
-
-            <article class="post demo-post">
-
-                <div class="post-header">
-
-                    <div class="post-user">
-
-                        <div class="post-avatar blue">
-                            M
-                        </div>
-
-                        <div>
-
-                            <strong>
-                                maria.x
-                            </strong>
-
-                            <span>
-                                1 hour ago
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        class="more"
-                        type="button"
-                    >
-                        •••
-                    </button>
-
-                </div>
-
-
-                <div class="post-text">
-
-                    New week.
-                    New goals.
-                    Let's get it. 🔥
-
-                </div>
-
-
-                <div class="post-photo photo-two">
-
-                    <div class="quote">
-
-                        KEEP<br>
-                        MOVING.
-
-                    </div>
-
-                </div>
-
-
-                <div class="post-stats">
+                    ♡
 
                     <span>
-                        ♡ 391 likes
+                        Like
                     </span>
+
+                </button>
+
+
+                <button type="button">
+
+                    ♧
 
                     <span>
-                        47 comments
+                        Comment
                     </span>
 
-                </div>
+                </button>
 
 
-                <div class="post-actions">
+                <button type="button">
 
-                    <button type="button">
+                    ↗
 
-                        ♡
+                    <span>
+                        Share
+                    </span>
 
-                        <span>
-                            Like
-                        </span>
+                </button>
 
-                    </button>
+            </div>
 
-
-                    <button type="button">
-
-                        ♧
-
-                        <span>
-                            Comment
-                        </span>
-
-                    </button>
-
-
-                    <button type="button">
-
-                        ↗
-
-                        <span>
-                            Share
-                        </span>
-
-                    </button>
-
-                </div>
-
-            </article>
-
-
-        </section>
+        </article>
 
 
 
 
         <!-- =========================
-             RIGHT SIDE
+             DEMO POST 2
         ========================== -->
 
-        <aside class="right-panel">
+        <article class="post demo-post">
 
+            <div class="post-header">
 
-            <!-- PROFILE CARD -->
+                <div class="post-user">
 
-            <div class="profile-card">
-
-                <div class="cover"></div>
-
-
-                <div class="profile-card-content">
-
-
-                    <div
-                        class="big-avatar"
-                        id="currentAvatar"
-                    >
-                        U
+                    <div class="post-avatar blue">
+                        M
                     </div>
 
+                    <div>
 
-                    <h3 id="currentUsername">
-                        User
-                    </h3>
+                        <strong>
+                            maria.x
+                        </strong>
 
-
-                    <p>
-
-                        @<span id="currentUsernameTag">user</span>
-
-                    </p>
-
-
-                    <div class="profile-stats">
-
-
-                        <div>
-
-                            <strong id="followingCount">
-                                0
-                            </strong>
-
-                            <span>
-                                Following
-                            </span>
-
-                        </div>
-
-
-                        <div>
-
-                            <strong id="followerCount">
-                                0
-                            </strong>
-
-                            <span>
-                                Followers
-                            </span>
-
-                        </div>
+                        <span>
+                            1 hour ago
+                        </span>
 
                     </div>
 
+                </div>
 
-                    <button
-                        class="view-profile"
-                        id="viewProfileButton"
-                        type="button"
-                    >
 
-                        View profile
+                <button
+                    class="more"
+                    type="button"
+                >
+                    •••
+                </button>
 
-                    </button>
+            </div>
+
+
+            <div class="post-text">
+
+                New week.
+                New goals.
+                Let's get it. 🔥
+
+            </div>
+
+
+            <div class="post-photo photo-two">
+
+                <div class="quote">
+
+                    KEEP<br>
+                    MOVING.
 
                 </div>
 
             </div>
 
 
+            <div class="post-stats">
+
+                <span>
+                    ♡ 391 likes
+                </span>
+
+                <span>
+                    47 comments
+                </span>
+
+            </div>
 
 
-            <!-- =========================
-                 REAL USER SUGGESTIONS
-            ========================== -->
+            <div class="post-actions">
 
-            <div class="suggestions">
+                <button type="button">
 
-                <div class="suggestions-title">
+                    ♡
 
-                    <strong>
-                        Suggested for you
-                    </strong>
+                    <span>
+                        Like
+                    </span>
 
-                    <a href="#">
-                        See all
-                    </a>
+                </button>
 
+
+                <button type="button">
+
+                    ♧
+
+                    <span>
+                        Comment
+                    </span>
+
+                </button>
+
+
+                <button type="button">
+
+                    ↗
+
+                    <span>
+                        Share
+                    </span>
+
+                </button>
+
+            </div>
+
+        </article>
+
+
+    </section>
+
+
+
+
+    <!-- =========================
+         RIGHT SIDE
+    ========================== -->
+
+    <aside class="right-panel">
+
+
+        <!-- PROFILE CARD -->
+
+        <div class="profile-card">
+
+            <div class="cover"></div>
+
+
+            <div class="profile-card-content">
+
+
+                <div
+                    class="big-avatar"
+                    id="currentAvatar"
+                >
+                    U
                 </div>
 
 
-                <div id="suggestionsList">
+                <h3 id="currentUsername">
+                    User
+                </h3>
 
-                    <div class="suggestion-loading">
-                        Loading users...
+
+                <p>
+
+                    @<span id="currentUsernameTag">user</span>
+
+                </p>
+
+
+                <div class="profile-stats">
+
+
+                    <div>
+
+                        <strong id="followingCount">
+                            0
+                        </strong>
+
+                        <span>
+                            Following
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong id="followerCount">
+                            0
+                        </strong>
+
+                        <span>
+                            Followers
+                        </span>
+
                     </div>
 
                 </div>
 
 
+                <button
+                    class="view-profile"
+                    id="viewProfileButton"
+                    type="button"
+                >
+
+                    View profile
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+
+        <!-- =========================
+             REAL USER SUGGESTIONS
+        ========================== -->
+
+        <div class="suggestions">
+
+            <div class="suggestions-title">
+
+                <strong>
+                    Suggested for you
+                </strong>
+
+                <a href="#">
+                    See all
+                </a>
+
             </div>
 
 
-        </aside>
+            <div id="suggestionsList">
 
-    </div>
+                <div class="suggestion-loading">
+                    Loading users...
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </aside>
+
+</div>
+```
 
 </main>
 
+<!-- =========================
+     NOTIFICATIONS PANEL
+========================= -->
+
+<div
+    id="notificationsPanel"
+    class="notifications-panel"
+    style="display:none;"
+>
+
+```
+<div class="notifications-header">
+
+    <div>
+
+        <h2>
+            Notifications
+        </h2>
+
+        <span id="notificationUnreadText">
+            No new notifications
+        </span>
+
+    </div>
 
 
+    <button
+        type="button"
+        id="markAllNotificationsRead"
+    >
+        Mark all as read
+    </button>
+
+</div>
+
+
+<div
+    id="notificationsList"
+    class="notifications-list"
+>
+
+    <div class="notifications-empty">
+
+        <div class="notifications-empty-icon">
+            ♡
+        </div>
+
+        <strong>
+            No notifications yet
+        </strong>
+
+        <span>
+            When someone interacts with you, it will appear here.
+        </span>
+
+    </div>
+
+</div>
+```
+
+</div>
 
 <!-- =========================
      CREATE POST MODAL
@@ -637,83 +708,219 @@
     id="postModal"
 >
 
-    <div class="post-modal-box">
+```
+<div class="post-modal-box">
 
-        <button
-            class="close-post-modal"
-            id="closePostModal"
-            type="button"
+    <button
+        class="close-post-modal"
+        id="closePostModal"
+        type="button"
+    >
+        ×
+    </button>
+
+
+    <h2>
+        Create a post
+    </h2>
+
+
+    <p class="post-modal-subtitle">
+
+        Share something with your Vexora community.
+
+    </p>
+
+
+    <div class="modal-user">
+
+        <div
+            class="avatar"
+            id="modalAvatar"
         >
-            ×
-        </button>
-
-
-        <h2>
-            Create a post
-        </h2>
-
-
-        <p class="post-modal-subtitle">
-
-            Share something with your Vexora community.
-
-        </p>
-
-
-        <div class="modal-user">
-
-            <div
-                class="avatar"
-                id="modalAvatar"
-            >
-                U
-            </div>
-
-
-            <div>
-
-                <strong id="modalUsername">
-                    User
-                </strong>
-
-                <span>
-                    Public
-                </span>
-
-            </div>
-
+            U
         </div>
 
 
-        <textarea
-            id="postText"
-            placeholder="What's on your mind?"
-            maxlength="500"
-        ></textarea>
+        <div>
 
+            <strong id="modalUsername">
+                User
+            </strong>
 
-        <div class="post-modal-bottom">
-
-            <span id="characterCount">
-                0 / 500
+            <span>
+                Public
             </span>
-
-
-            <button
-                id="publishPost"
-                type="button"
-            >
-                Publish
-            </button>
 
         </div>
 
     </div>
 
+
+    <textarea
+        id="postText"
+        placeholder="What's on your mind?"
+        maxlength="500"
+    ></textarea>
+
+
+    <!-- =========================
+         IMAGE UPLOAD
+    ========================== -->
+
+    <input
+        type="file"
+        id="postImageInput"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        hidden
+    >
+
+
+    <div
+        class="post-image-upload"
+        id="postImageUpload"
+    >
+
+        <button
+            type="button"
+            class="post-image-button"
+            id="choosePostImage"
+        >
+
+            📷 Add photo
+
+        </button>
+
+
+        <span class="post-image-info">
+
+            JPG, PNG, WEBP or GIF
+
+        </span>
+
+    </div>
+
+
+    <!-- =========================
+         IMAGE PREVIEW
+    ========================== -->
+
+    <div
+        class="post-image-preview"
+        id="postImagePreview"
+        style="display:none;"
+    >
+
+        <img
+            id="postImagePreviewImg"
+            src=""
+            alt="Selected image preview"
+        >
+
+
+        <button
+            type="button"
+            class="remove-post-image"
+            id="removePostImage"
+        >
+
+            × Remove
+
+        </button>
+
+    </div>
+
+
+
+
+    <!-- =========================
+         VIDEO UPLOAD
+    ========================== -->
+
+    <input
+        type="file"
+        id="postVideoInput"
+        accept="video/mp4,video/webm,video/ogg"
+        hidden
+    >
+
+
+    <div
+        class="post-video-upload"
+        id="postVideoUpload"
+    >
+
+        <button
+            type="button"
+            class="post-video-button"
+            id="choosePostVideo"
+        >
+
+            🎬 Add video
+
+        </button>
+
+
+        <span class="post-video-info">
+
+            MP4, WEBM or OGG · Max 20 MB
+
+        </span>
+
+    </div>
+
+
+    <!-- =========================
+         VIDEO PREVIEW
+    ========================== -->
+
+    <div
+        class="post-video-preview"
+        id="postVideoPreview"
+        style="display:none;"
+    >
+
+        <video
+            id="postVideoPreviewVideo"
+            controls
+            playsinline
+            preload="metadata"
+        ></video>
+
+
+        <button
+            type="button"
+            class="remove-post-video"
+            id="removePostVideo"
+        >
+
+            × Remove
+
+        </button>
+
+    </div>
+
+
+    <div class="post-modal-bottom">
+
+        <span id="characterCount">
+            0 / 500
+        </span>
+
+
+        <button
+            id="publishPost"
+            type="button"
+        >
+            Publish
+        </button>
+
+    </div>
+
 </div>
+```
 
-
-
+</div>
 
 <!-- =========================
      SEARCH MODAL
@@ -733,88 +940,86 @@
     "
 >
 
+```
+<div
+    style="
+        width:420px;
+        max-width:calc(100% - 30px);
+        background:white;
+        border-radius:18px;
+        padding:24px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    "
+>
+
     <div
         style="
-            width:420px;
-            max-width:calc(100% - 30px);
-            background:white;
-            border-radius:18px;
-            padding:24px;
-            box-shadow:0 20px 60px rgba(0,0,0,0.2);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:18px;
         "
     >
 
+        <h2 style="margin:0;">
+            Search Vexora
+        </h2>
+
+
+        <button
+            id="closeSearchModal"
+            type="button"
+            style="
+                border:none;
+                background:none;
+                font-size:28px;
+                cursor:pointer;
+            "
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search username..."
+        autocomplete="off"
+        style="
+            width:100%;
+            box-sizing:border-box;
+            padding:13px 15px;
+            border:1px solid #ddd;
+            border-radius:12px;
+            outline:none;
+            font-size:15px;
+            margin-bottom:15px;
+        "
+    >
+
+
+    <div id="searchResults">
+
         <div
             style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:18px;
+                color:#888;
+                text-align:center;
+                padding:20px 0;
             "
         >
-
-            <h2 style="margin:0;">
-                Search Vexora
-            </h2>
-
-
-            <button
-                id="closeSearchModal"
-                type="button"
-                style="
-                    border:none;
-                    background:none;
-                    font-size:28px;
-                    cursor:pointer;
-                "
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search username..."
-            autocomplete="off"
-            style="
-                width:100%;
-                box-sizing:border-box;
-                padding:13px 15px;
-                border:1px solid #ddd;
-                border-radius:12px;
-                outline:none;
-                font-size:15px;
-                margin-bottom:15px;
-            "
-        >
-
-
-        <div id="searchResults">
-
-            <div
-                style="
-                    color:#888;
-                    text-align:center;
-                    padding:20px 0;
-                "
-            >
-                Type a username to search.
-            </div>
-
+            Type a username to search.
         </div>
 
     </div>
 
 </div>
+```
 
-
-
+</div>
 
 <script src="dashboard.js" defer></script>
-
 
 <!-- =========================
      USER DATA + NAVIGATION
@@ -875,10 +1080,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const username =
         user.username || "User";
-
-
-    const firstLetter =
-        username.charAt(0).toUpperCase();
 
 
     function setAvatar(
@@ -1188,6 +1389,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 openSearch();
 
             }
+
         );
 
     }
@@ -1202,6 +1404,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 closeSearch();
 
             }
+
         );
 
     }
@@ -1220,6 +1423,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
             }
+
         );
 
     }
@@ -1399,6 +1603,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                         ${letter}
                                                     </div>
 
+
                                                     <div>
 
                                                         <strong
@@ -1409,6 +1614,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                         >
                                                             ${foundUsername}
                                                         </strong>
+
 
                                                         <span
                                                             style="
@@ -1532,7 +1738,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
-
 
 </body>
 
