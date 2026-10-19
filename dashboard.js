@@ -42,8 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (
         !user ||
-        !user.id ||
-        !user.username
+        !user.id
     ) {
 
         localStorage.removeItem(
@@ -56,6 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
 
     }
+
+    user.username = user.username || "User";
 
 
     // ==========================
@@ -447,7 +448,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
         );
-
     }
 
 
@@ -489,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     "index.html";
 
             }
-        );
+            );
 
     }
 
@@ -1740,20 +1740,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    if (notificationsNavButton) {
-
-        notificationsNavButton.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-
-                toggleNotificationsPanel();
-
-            }
-        );
-
-    }
+    // Keep the sidebar notification link as normal page navigation.
+    // The old click handler prevented navigation, and a stray redirect
+    // immediately below it forced every dashboard visit to notifications.
 
 
     if (
@@ -1835,814 +1824,857 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ==========================
-    // CREATE POST MODAL
+    // VEXORA SHARE MODAL
     // ==========================
 
-    const postModal =
-        document.getElementById(
-            "postModal"
-        );
+    let shareModal = null;
+    let shareUsers = [];
+    let shareSelectedUser = null;
+    let shareCurrentPost = null;
 
 
-    const openPostModal =
-        document.getElementById(
-            "openPostModal"
-        );
+    function closeShareModal() {
+
+        if (!shareModal) {
+            return;
+        }
 
 
-    const openPostModal2 =
-        document.getElementById(
-            "openPostModal2"
-        );
+        shareModal.remove();
+
+        shareModal =
+            null;
+
+        shareUsers =
+            [];
+
+        shareSelectedUser =
+            null;
+
+        shareCurrentPost =
+            null;
+
+    }
 
 
-    const openPostModal3 =
-        document.getElementById(
-            "openPostModal3"
-        );
+    function createShareModal() {
+
+        if (shareModal) {
+
+            return shareModal;
+
+        }
 
 
-    const openPhotoModal =
-        document.getElementById(
-            "openPhotoModal"
-        );
+        const overlay =
+            document.createElement(
+                "div"
+            );
 
 
-    const closePostModal =
-        document.getElementById(
-            "closePostModal"
-        );
+        overlay.className =
+            "vexora-share-modal";
 
 
-    const postText =
-        document.getElementById(
-            "postText"
-        );
+        overlay.style.position =
+            "fixed";
 
 
-    const characterCount =
-        document.getElementById(
-            "characterCount"
-        );
+        overlay.style.inset =
+            "0";
 
 
-    const publishPost =
-        document.getElementById(
-            "publishPost"
-        );
+        overlay.style.background =
+            "rgba(0, 0, 0, 0.72)";
 
 
-    // ==========================
-    // IMAGE POST ELEMENTS
-    // ==========================
-
-    const postImageInput =
-        document.getElementById(
-            "postImageInput"
-        );
+        overlay.style.display =
+            "flex";
 
 
-    const choosePostImage =
-        document.getElementById(
-            "choosePostImage"
-        );
+        overlay.style.alignItems =
+            "center";
 
 
-    const postImagePreview =
-        document.getElementById(
-            "postImagePreview"
-        );
+        overlay.style.justifyContent =
+            "center";
 
 
-    const postImagePreviewImg =
-        document.getElementById(
-            "postImagePreviewImg"
-        );
+        overlay.style.padding =
+            "20px";
 
 
-    const removePostImage =
-        document.getElementById(
-            "removePostImage"
-        );
+        overlay.style.zIndex =
+            "20000";
 
 
-    let selectedPostImage =
-        "";
+        const modal =
+            document.createElement(
+                "div"
+            );
 
 
-    // ==========================
-    // VIDEO POST ELEMENTS
-    // ==========================
-
-    const postVideoInput =
-        document.getElementById(
-            "postVideoInput"
-        );
+        modal.style.width =
+            "100%";
 
 
-    const choosePostVideo =
-        document.getElementById(
-            "choosePostVideo"
-        );
+        modal.style.maxWidth =
+            "430px";
 
 
-    const postVideoPreview =
-        document.getElementById(
-            "postVideoPreview"
-        );
+        modal.style.maxHeight =
+            "80vh";
 
 
-    const postVideoPreviewVideo =
-        document.getElementById(
-            "postVideoPreviewVideo"
-        );
+        modal.style.overflow =
+            "hidden";
 
 
-    const removePostVideo =
-        document.getElementById(
-            "removePostVideo"
-        );
+        modal.style.background =
+            "#17171d";
 
 
-    let selectedPostVideo =
-        "";
+        modal.style.border =
+            "1px solid rgba(255,255,255,0.08)";
 
 
-    // ==========================
-    // CHOOSE POST IMAGE
-    // ==========================
+        modal.style.borderRadius =
+            "18px";
 
-    if (
-        choosePostImage &&
-        postImageInput
-    ) {
 
-        choosePostImage.addEventListener(
+        modal.style.boxShadow =
+            "0 20px 70px rgba(0,0,0,0.45)";
+
+
+        modal.style.display =
+            "flex";
+
+
+        modal.style.flexDirection =
+            "column";
+
+
+        const header =
+            document.createElement(
+                "div"
+            );
+
+
+        header.style.display =
+            "flex";
+
+
+        header.style.alignItems =
+            "center";
+
+
+        header.style.justifyContent =
+            "space-between";
+
+
+        header.style.padding =
+            "18px";
+
+
+        header.style.borderBottom =
+            "1px solid rgba(255,255,255,0.07)";
+
+
+        const title =
+            createElement(
+                "strong",
+                "",
+                "Share on Vexora"
+            );
+
+
+        title.style.color =
+            "#ffffff";
+
+
+        title.style.fontSize =
+            "18px";
+
+
+        const closeButton =
+            createElement(
+                "button",
+                "",
+                "×"
+            );
+
+
+        closeButton.type =
+            "button";
+
+
+        closeButton.style.border =
+            "0";
+
+
+        closeButton.style.background =
+            "transparent";
+
+
+        closeButton.style.color =
+            "#aaa";
+
+
+        closeButton.style.fontSize =
+            "28px";
+
+
+        closeButton.style.cursor =
+            "pointer";
+
+
+        closeButton.addEventListener(
             "click",
-            function () {
-
-                postImageInput.click();
-
-            }
+            closeShareModal
         );
 
-    }
+
+        header.appendChild(
+            title
+        );
 
 
-    // ==========================
-    // IMAGE PREVIEW
-    // ==========================
-
-    function resetPostImage() {
-
-        selectedPostImage =
-            "";
+        header.appendChild(
+            closeButton
+        );
 
 
-        if (postImageInput) {
-
-            postImageInput.value =
-                "";
-
-        }
+        const preview =
+            document.createElement(
+                "div"
+            );
 
 
-        if (postImagePreview) {
-
-            postImagePreview.style.display =
-                "none";
-
-        }
+        preview.style.padding =
+            "14px 18px";
 
 
-        if (postImagePreviewImg) {
-
-            postImagePreviewImg.src =
-                "";
-
-        }
-
-    }
+        preview.style.borderBottom =
+            "1px solid rgba(255,255,255,0.07)";
 
 
-    function handlePostImageChange() {
-
-        if (!postImageInput) {
-            return;
-        }
-
-
-        const file =
-            postImageInput.files &&
-            postImageInput.files[0];
+        const previewLabel =
+            createElement(
+                "span",
+                "",
+                "Send this post to:"
+            );
 
 
-        if (!file) {
-
-            resetPostImage();
-
-            return;
-
-        }
+        previewLabel.style.color =
+            "#aaa";
 
 
-        const allowedTypes = [
-            "image/jpeg",
-            "image/jpg",
-            "image/png",
-            "image/webp",
-            "image/gif"
-        ];
+        previewLabel.style.fontSize =
+            "13px";
+
+
+        const postPreview =
+            document.createElement(
+                "div"
+            );
+
+
+        postPreview.style.marginTop =
+            "10px";
+
+
+        postPreview.style.padding =
+            "12px";
+
+
+        postPreview.style.background =
+            "rgba(255,255,255,0.04)";
+
+
+        postPreview.style.borderRadius =
+            "12px";
+
+
+        postPreview.style.color =
+            "#fff";
 
 
         if (
-            !allowedTypes.includes(
-                file.type
-            )
+            shareCurrentPost &&
+            shareCurrentPost.username
         ) {
 
-            alert(
-                "Please choose a JPG, PNG, WEBP or GIF image."
-            );
-
-
-            resetPostImage();
-
-            return;
-
-        }
-
-
-        const maxSize =
-            8 * 1024 * 1024;
-
-
-        if (file.size > maxSize) {
-
-            alert(
-                "Image cannot be larger than 8 MB."
-            );
-
-
-            resetPostImage();
-
-            return;
-
-        }
-
-
-        resetPostVideo();
-
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload = function (event) {
-
-            selectedPostImage =
-                event.target.result;
-
-
-            if (
-                postImagePreviewImg
-            ) {
-
-                postImagePreviewImg.src =
-                    selectedPostImage;
-
-            }
-
-
-            if (
-                postImagePreview
-            ) {
-
-                postImagePreview.style.display =
-                    "block";
-
-            }
-
-        };
-
-
-        reader.onerror =
-            function () {
-
-                alert(
-                    "Could not read the image."
+            postPreview.textContent =
+                `@${shareCurrentPost.username}` +
+                (
+                    shareCurrentPost.content
+                        ? ` · ${shareCurrentPost.content}`
+                        : " · Post"
                 );
 
+        } else {
 
-                resetPostImage();
-
-            };
-
-
-        reader.readAsDataURL(
-            file
-        );
-
-    }
-
-
-    if (postImageInput) {
-
-        postImageInput.addEventListener(
-            "change",
-            handlePostImageChange
-        );
-
-    }
-
-
-    if (removePostImage) {
-
-        removePostImage.addEventListener(
-            "click",
-            function () {
-
-                resetPostImage();
-
-            }
-        );
-
-    }
-
-
-    // ==========================
-    // CHOOSE POST VIDEO
-    // ==========================
-
-    if (
-        choosePostVideo &&
-        postVideoInput
-    ) {
-
-        choosePostVideo.addEventListener(
-            "click",
-            function () {
-
-                postVideoInput.click();
-
-            }
-        );
-
-    }
-
-
-    // ==========================
-    // VIDEO PREVIEW
-    // ==========================
-
-    function resetPostVideo() {
-
-        selectedPostVideo =
-            "";
-
-
-        if (postVideoInput) {
-
-            postVideoInput.value =
-                "";
+            postPreview.textContent =
+                "Vexora post";
 
         }
 
 
-        if (postVideoPreview) {
-
-            postVideoPreview.style.display =
-                "none";
-
-        }
+        preview.appendChild(
+            previewLabel
+        );
 
 
-        if (postVideoPreviewVideo) {
+        preview.appendChild(
+            postPreview
+        );
 
-            postVideoPreviewVideo.pause();
 
-            postVideoPreviewVideo.removeAttribute(
-                "src"
+        const search =
+            document.createElement(
+                "input"
             );
 
-            postVideoPreviewVideo.load();
 
-        }
-
-    }
+        search.type =
+            "text";
 
 
-    function handlePostVideoChange() {
-
-        if (!postVideoInput) {
-            return;
-        }
+        search.placeholder =
+            "Search users...";
 
 
-        const file =
-            postVideoInput.files &&
-            postVideoInput.files[0];
+        search.style.margin =
+            "14px 18px 8px";
 
 
-        if (!file) {
-
-            resetPostVideo();
-
-            return;
-
-        }
+        search.style.padding =
+            "12px 14px";
 
 
-        const allowedTypes = [
-            "video/mp4",
-            "video/webm",
-            "video/ogg"
-        ];
+        search.style.borderRadius =
+            "10px";
 
 
-        if (
-            !allowedTypes.includes(
-                file.type
-            )
+        search.style.border =
+            "1px solid rgba(255,255,255,0.08)";
+
+
+        search.style.background =
+            "rgba(255,255,255,0.04)";
+
+
+        search.style.color =
+            "#fff";
+
+
+        search.style.outline =
+            "none";
+
+
+        const results =
+            document.createElement(
+                "div"
+            );
+
+
+        results.style.overflowY =
+            "auto";
+
+
+        results.style.padding =
+            "4px 18px 14px";
+
+
+        results.style.minHeight =
+            "120px";
+
+
+        results.style.maxHeight =
+            "320px";
+
+
+        const sendButton =
+            createElement(
+                "button",
+                "",
+                "Send post"
+            );
+
+
+        sendButton.type =
+            "button";
+
+
+        sendButton.disabled =
+            true;
+
+
+        sendButton.style.margin =
+            "0 18px 18px";
+
+
+        sendButton.style.padding =
+            "12px";
+
+
+        sendButton.style.border =
+            "0";
+
+
+        sendButton.style.borderRadius =
+            "10px";
+
+
+        sendButton.style.background =
+            "#7c5cff";
+
+
+        sendButton.style.color =
+            "#fff";
+
+
+        sendButton.style.fontWeight =
+            "700";
+
+
+        sendButton.style.cursor =
+            "pointer";
+
+
+        function renderShareUsers(
+            users
         ) {
 
-            alert(
-                "Please choose an MP4, WEBM or OGG video."
-            );
-
-
-            resetPostVideo();
-
-            return;
-
-        }
-
-
-        const maxSize =
-            20 * 1024 * 1024;
-
-
-        if (file.size > maxSize) {
-
-            alert(
-                "Video cannot be larger than 20 MB."
-            );
-
-
-            resetPostVideo();
-
-            return;
-
-        }
-
-
-        resetPostImage();
-
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload = function (event) {
-
-            selectedPostVideo =
-                event.target.result;
-
-
-            if (
-                postVideoPreviewVideo
-            ) {
-
-                postVideoPreviewVideo.src =
-                    selectedPostVideo;
-
-                postVideoPreviewVideo.load();
-
-            }
-
-
-            if (
-                postVideoPreview
-            ) {
-
-                postVideoPreview.style.display =
-                    "block";
-
-            }
-
-        };
-
-
-        reader.onerror =
-            function () {
-
-                alert(
-                    "Could not read the video."
-                );
-
-
-                resetPostVideo();
-
-            };
-
-
-        reader.readAsDataURL(
-            file
-        );
-
-    }
-
-
-    if (postVideoInput) {
-
-        postVideoInput.addEventListener(
-            "change",
-            handlePostVideoChange
-        );
-
-    }
-
-
-    if (removePostVideo) {
-
-        removePostVideo.addEventListener(
-            "click",
-            function () {
-
-                resetPostVideo();
-
-            }
-        );
-
-    }
-
-
-    // ==========================
-    // OPEN CREATE POST
-    // ==========================
-
-    function openCreatePost() {
-
-        if (!postModal) {
-            return;
-        }
-
-
-        postModal.classList.add(
-            "active"
-        );
-
-
-        if (postText) {
-
-            postText.value =
+            results.innerHTML =
                 "";
 
 
-            if (characterCount) {
+            if (
+                !Array.isArray(users) ||
+                users.length === 0
+            ) {
 
-                characterCount.textContent =
-                    "0 / 500";
+                results.appendChild(
+                    createElement(
+                        "div",
+                        "",
+                        "No users found."
+                    )
+                );
+
+
+                results.lastElementChild.style.color =
+                    "#888";
+
+
+                results.lastElementChild.style.padding =
+                    "16px 4px";
+
+
+                return;
 
             }
 
-        }
+
+            users.forEach(
+                function (shareUser) {
+
+                    const item =
+                        document.createElement(
+                            "button"
+                        );
 
 
-        resetPostImage();
+                    item.type =
+                        "button";
 
-        resetPostVideo();
+
+                    item.style.width =
+                        "100%";
 
 
-        setTimeout(
-            function () {
+                    item.style.display =
+                        "flex";
 
-                if (postText) {
 
-                    postText.focus();
+                    item.style.alignItems =
+                        "center";
+
+
+                    item.style.gap =
+                        "12px";
+
+
+                    item.style.padding =
+                        "10px";
+
+
+                    item.style.border =
+                        "1px solid transparent";
+
+
+                    item.style.borderRadius =
+                        "10px";
+
+
+                    item.style.background =
+                        "transparent";
+
+
+                    item.style.color =
+                        "#fff";
+
+
+                    item.style.cursor =
+                        "pointer";
+
+
+                    const avatar =
+                        createElement(
+                            "div",
+                            "",
+                            getInitial(
+                                shareUser.username
+                            )
+                        );
+
+
+                    avatar.style.width =
+                        "42px";
+
+
+                    avatar.style.height =
+                        "42px";
+
+
+                    avatar.style.minWidth =
+                        "42px";
+
+
+                    avatar.style.borderRadius =
+                        "50%";
+
+
+                    avatar.style.display =
+                        "flex";
+
+
+                    avatar.style.alignItems =
+                        "center";
+
+
+                    avatar.style.justifyContent =
+                        "center";
+
+
+                    avatar.style.background =
+                        "linear-gradient(135deg,#7c5cff,#ff4fa3)";
+
+
+                    avatar.style.fontWeight =
+                        "700";
+
+
+                    setAvatar(
+                        avatar,
+                        shareUser.avatar || "",
+                        shareUser.username
+                    );
+
+
+                    const info =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    info.style.textAlign =
+                        "left";
+
+
+                    const username =
+                        createElement(
+                            "strong",
+                            "",
+                            `@${shareUser.username}`
+                        );
+
+
+                    username.style.display =
+                        "block";
+
+
+                    const bio =
+                        createElement(
+                            "span",
+                            "",
+                            shareUser.bio ||
+                            "Vexora user"
+                        );
+
+
+                    bio.style.display =
+                        "block";
+
+
+                    bio.style.color =
+                        "#888";
+
+
+                    bio.style.fontSize =
+                        "12px";
+
+
+                    bio.style.marginTop =
+                        "3px";
+
+
+                    info.appendChild(
+                        username
+                    );
+
+
+                    info.appendChild(
+                        bio
+                    );
+
+
+                    item.appendChild(
+                        avatar
+                    );
+
+
+                    item.appendChild(
+                        info
+                    );
+
+
+                    item.addEventListener(
+                        "click",
+                        function () {
+
+                            shareSelectedUser =
+                                shareUser;
+
+
+                            document
+                                .querySelectorAll(
+                                    ".vexora-share-modal-user-selected"
+                                )
+                                .forEach(
+                                    function (selected) {
+
+                                        selected.classList.remove(
+                                            "vexora-share-modal-user-selected"
+                                        );
+
+                                        selected.style.background =
+                                            "transparent";
+
+                                        selected.style.borderColor =
+                                            "transparent";
+
+                                    }
+                                );
+
+
+                            item.classList.add(
+                                "vexora-share-modal-user-selected"
+                            );
+
+
+                            item.style.background =
+                                "rgba(124,92,255,0.14)";
+
+
+                            item.style.borderColor =
+                                "rgba(124,92,255,0.5)";
+
+
+                            sendButton.disabled =
+                                false;
+
+                        }
+                    );
+
+
+                    results.appendChild(
+                        item
+                    );
 
                 }
-
-            },
-            50
-        );
-
-    }
-
-
-    if (openPostModal) {
-
-        openPostModal.addEventListener(
-            "click",
-            openCreatePost
-        );
-
-    }
-
-
-    if (openPostModal2) {
-
-        openPostModal2.addEventListener(
-            "click",
-            openCreatePost
-        );
-
-    }
-
-
-    if (openPostModal3) {
-
-        openPostModal3.addEventListener(
-            "click",
-            openCreatePost
-        );
-
-    }
-
-
-    if (openPhotoModal) {
-
-        openPhotoModal.addEventListener(
-            "click",
-            openCreatePost
-        );
-
-    }
-
-
-    function closeCreatePost() {
-
-        if (postModal) {
-
-            postModal.classList.remove(
-                "active"
             );
 
         }
 
-        resetPostImage();
 
-        resetPostVideo();
+        async function loadShareUsers(
+            query
+        ) {
 
-    }
-
-
-    if (closePostModal) {
-
-        closePostModal.addEventListener(
-            "click",
-            closeCreatePost
-        );
-
-    }
+            results.innerHTML = "";
 
 
-    if (postModal) {
+            results.appendChild(
+                createElement(
+                    "div",
+                    "",
+                    "Loading users..."
+                )
+            );
 
-        postModal.addEventListener(
-            "click",
-            function (event) {
+
+            results.firstElementChild.style.color =
+                "#888";
+
+
+            try {
+
+                const url =
+                    query
+                        ? `/api/users?username=${encodeURIComponent(query)}`
+                        : `/api/users?currentUserId=${encodeURIComponent(user.id)}`;
+
+
+                const response =
+                    await fetch(
+                        url
+                    );
+
+
+                const data =
+                    await response.json();
+
 
                 if (
-                    event.target ===
-                    postModal
+                    !response.ok ||
+                    !data.success
                 ) {
 
-                    closeCreatePost();
+                    renderShareUsers(
+                        []
+                    );
+
+                    return;
 
                 }
 
-            }
-        );
 
-    }
+                shareUsers =
+                    Array.isArray(data.users)
+                        ? data.users.filter(
+                            function (shareUser) {
+
+                                return Number(
+                                    shareUser.id
+                                ) !== Number(
+                                    user.id
+                                );
+
+                            }
+                        )
+                        : [];
 
 
-    // ==========================
-    // ESC
-    // ==========================
+                renderShareUsers(
+                    shareUsers
+                );
 
-    document.addEventListener(
-        "keydown",
-        function (event) {
 
-            if (
-                event.key === "Escape" &&
-                postModal &&
-                postModal.classList.contains(
-                    "active"
-                )
-            ) {
+            } catch (error) {
 
-                closeCreatePost();
+                console.error(
+                    "Could not load share users:",
+                    error
+                );
+
+
+                results.innerHTML =
+                    "";
+
+
+                const errorElement =
+                    createElement(
+                        "div",
+                        "",
+                        "Could not connect to the server."
+                    );
+
+
+                errorElement.style.color =
+                    "#ff7777";
+
+
+                errorElement.style.padding =
+                    "16px 4px";
+
+
+                results.appendChild(
+                    errorElement
+                );
 
             }
 
         }
-    );
 
 
-    // ==========================
-    // CHARACTER COUNT
-    // ==========================
-
-    if (
-        postText &&
-        characterCount
-    ) {
-
-        postText.addEventListener(
+        search.addEventListener(
             "input",
             function () {
 
-                characterCount.textContent =
-                    `${postText.value.length} / 500`;
+                const query =
+                    search.value.trim();
+
+
+                if (!query) {
+
+                    loadShareUsers(
+                        ""
+                    );
+
+                    return;
+
+                }
+
+
+                loadShareUsers(
+                    query
+                );
 
             }
         );
 
-    }
 
-
-    // ==========================
-    // PUBLISH POST
-    // ==========================
-
-    if (publishPost) {
-
-        publishPost.addEventListener(
+        sendButton.addEventListener(
             "click",
             async function () {
 
-                const text =
-                    postText
-                        ? postText.value.trim()
-                        : "";
-
-
                 if (
-                    !text &&
-                    !selectedPostImage &&
-                    !selectedPostVideo
+                    !shareCurrentPost ||
+                    !shareCurrentPost.id ||
+                    !shareSelectedUser
                 ) {
 
-                    alert(
-                        "Write something or choose an image or video first."
-                    );
-
-
-                    if (postText) {
-
-                        postText.focus();
-
-                    }
-
-
                     return;
 
                 }
 
 
-                if (text.length > 500) {
-
-                    alert(
-                        "Post cannot be longer than 500 characters."
-                    );
-
-
-                    return;
-
-                }
-
-
-                if (
-                    selectedPostImage &&
-                    selectedPostVideo
-                ) {
-
-                    alert(
-                        "Choose either an image or a video, not both."
-                    );
-
-
-                    return;
-
-                }
-
-
-                publishPost.disabled =
+                sendButton.disabled =
                     true;
 
 
-                publishPost.textContent =
-                    "Publishing...";
+                sendButton.textContent =
+                    "Sending...";
 
 
                 try {
 
                     const response =
                         await fetch(
-                            "/api/posts",
+                            "/api/messages",
                             {
                                 method: "POST",
 
@@ -2656,14 +2688,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                         userId:
                                             user.id,
 
+                                        recipientId:
+                                            shareSelectedUser.id,
+
                                         content:
-                                            text,
+                                            "",
 
-                                        imageData:
-                                            selectedPostImage || "",
-
-                                        videoData:
-                                            selectedPostVideo || ""
+                                        sharedPostId:
+                                            shareCurrentPost.id
                                     })
                             }
                         );
@@ -2680,7 +2712,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         alert(
                             data.message ||
-                            "Could not publish post."
+                            "Could not share the post."
                         );
 
 
@@ -2689,40 +2721,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                    if (postText) {
+                    // FIX:
+                    // Save the username before closeShareModal()
+                    // resets shareSelectedUser to null.
 
-                        postText.value =
-                            "";
-
-                    }
-
-
-                    if (characterCount) {
-
-                        characterCount.textContent =
-                            "0 / 500";
-
-                    }
+                    const recipientUsername =
+                        shareSelectedUser.username;
 
 
-                    resetPostImage();
-
-                    resetPostVideo();
+                    closeShareModal();
 
 
-                    closeCreatePost();
-
-
-                    await loadPosts();
-
-
-                    await loadUserStats();
+                    alert(
+                        `Post sent to @${recipientUsername}.`
+                    );
 
 
                 } catch (error) {
 
                     console.error(
-                        "Post error:",
+                        "Share post error:",
                         error
                     );
 
@@ -2733,19 +2751,1016 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 } finally {
 
-                    publishPost.disabled =
-                        false;
+                    if (sendButton) {
 
+                        sendButton.disabled =
+                            false;
 
-                    publishPost.textContent =
-                        "Publish";
+                        sendButton.textContent =
+                            "Send post";
+
+                    }
 
                 }
 
             }
         );
 
+
+        modal.appendChild(
+            header
+        );
+
+
+        modal.appendChild(
+            preview
+        );
+
+
+        modal.appendChild(
+            search
+        );
+
+
+        modal.appendChild(
+            results
+        );
+
+
+        modal.appendChild(
+            sendButton
+        );
+
+
+        overlay.appendChild(
+            modal
+        );
+
+
+        overlay.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    overlay
+                ) {
+
+                    closeShareModal();
+
+                }
+
+            }
+        );
+
+
+        document.body.appendChild(
+            overlay
+        );
+
+
+        shareModal =
+            overlay;
+
+
+        loadShareUsers(
+            ""
+        );
+
+
+        return overlay;
+
     }
+
+
+    function openShareModal(
+        post
+    ) {
+
+        if (!post) {
+            return;
+        }
+
+
+        closeShareModal();
+
+
+        shareCurrentPost =
+            post;
+
+
+        createShareModal();
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                shareModal
+            ) {
+
+                closeShareModal();
+
+            }
+
+        }
+    );
+
+
+// ==========================
+// CREATE POST MODAL
+// ==========================
+
+const postModal = document.getElementById("postModal");
+const openPostModal = document.getElementById("openPostModal");
+const openPostModal2 = document.getElementById("openPostModal2");
+const openPostModal3 = document.getElementById("openPostModal3");
+const openPhotoModal = document.getElementById("openPhotoModal");
+const closePostModal = document.getElementById("closePostModal");
+
+const postText = document.getElementById("postText");
+const characterCount = document.getElementById("characterCount");
+const publishPost = document.getElementById("publishPost");
+
+const postImageInput = document.getElementById("postImageInput");
+const choosePostImage = document.getElementById("choosePostImage");
+const postImagePreview = document.getElementById("postImagePreview");
+const postImagePreviewImg = document.getElementById("postImagePreviewImg");
+const removePostImage = document.getElementById("removePostImage");
+
+const postVideoInput = document.getElementById("postVideoInput");
+const choosePostVideo = document.getElementById("choosePostVideo");
+const postVideoPreview = document.getElementById("postVideoPreview");
+const postVideoPreviewVideo = document.getElementById("postVideoPreviewVideo");
+const removePostVideo = document.getElementById("removePostVideo");
+
+let selectedPostImage = "";
+let selectedPostVideo = "";
+let publishingPost = false;
+
+
+// ==========================
+// MODAL VISIBILITY
+// ==========================
+
+function forcePostModalVisible() {
+
+    if (!postModal) {
+        console.error("Vexora: #postModal was not found.");
+        return;
+    }
+
+    postModal.classList.add("active");
+
+    // Ovo garantuje prikaz čak i ako dashboard.css
+    // nema ili drugačije definiše .post-modal.active.
+    postModal.style.display = "flex";
+    postModal.style.visibility = "visible";
+    postModal.style.opacity = "1";
+    postModal.style.pointerEvents = "auto";
+    postModal.style.zIndex = "99999";
+
+    const box = postModal.querySelector(".post-modal-box");
+
+    if (box) {
+        box.style.transform = "translateY(0) scale(1)";
+        box.style.opacity = "1";
+    }
+
+    document.body.style.overflow = "hidden";
+
+    setTimeout(function () {
+
+        if (postText) {
+            postText.focus();
+        }
+
+    }, 100);
+
+}
+
+
+function closeCreatePost() {
+
+    if (!postModal) {
+        return;
+    }
+
+    postModal.classList.remove("active");
+
+    postModal.style.opacity = "0";
+    postModal.style.visibility = "hidden";
+    postModal.style.pointerEvents = "none";
+
+    setTimeout(function () {
+
+        if (!postModal.classList.contains("active")) {
+            postModal.style.display = "none";
+        }
+
+    }, 180);
+
+    document.body.style.overflow = "";
+
+    resetPostImage();
+    resetPostVideo();
+
+    if (postText) {
+        postText.value = "";
+    }
+
+    updateCharacterCount();
+
+}
+
+
+// ==========================
+// RESET IMAGE
+// ==========================
+
+function resetPostImage() {
+
+    selectedPostImage = "";
+
+    if (postImageInput) {
+        postImageInput.value = "";
+    }
+
+    if (postImagePreviewImg) {
+        postImagePreviewImg.removeAttribute("src");
+    }
+
+    if (postImagePreview) {
+        postImagePreview.style.display = "none";
+        postImagePreview.style.opacity = "0";
+        postImagePreview.style.transform = "translateY(8px)";
+    }
+
+}
+
+
+// ==========================
+// RESET VIDEO
+// ==========================
+
+function resetPostVideo() {
+
+    selectedPostVideo = "";
+
+    if (postVideoInput) {
+        postVideoInput.value = "";
+    }
+
+    if (postVideoPreviewVideo) {
+
+        postVideoPreviewVideo.pause();
+        postVideoPreviewVideo.removeAttribute("src");
+        postVideoPreviewVideo.load();
+
+    }
+
+    if (postVideoPreview) {
+        postVideoPreview.style.display = "none";
+        postVideoPreview.style.opacity = "0";
+        postVideoPreview.style.transform = "translateY(8px)";
+    }
+
+}
+
+
+// ==========================
+// CHARACTER COUNT
+// ==========================
+
+function updateCharacterCount() {
+
+    if (!postText || !characterCount) {
+        return;
+    }
+
+    const length = postText.value.length;
+
+    characterCount.textContent =
+        `${length} / 500`;
+
+}
+
+
+// ==========================
+// OPEN MODAL BUTTONS
+// ==========================
+
+function openCreatePost(event) {
+
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    if (!postModal) {
+        console.error("Vexora: post modal not found.");
+        return;
+    }
+
+    // Reset previous draft.
+    if (postText) {
+        postText.value = "";
+    }
+
+    resetPostImage();
+    resetPostVideo();
+    updateCharacterCount();
+
+    forcePostModalVisible();
+
+}
+
+
+// Use one common handler.
+// This also prevents accidental form submission.
+
+[
+    openPostModal,
+    openPostModal2,
+    openPostModal3,
+    openPhotoModal
+].forEach(function (button) {
+
+    if (!button) {
+        return;
+    }
+
+    button.type = "button";
+
+    button.addEventListener(
+        "click",
+        openCreatePost
+    );
+
+});
+
+
+// ==========================
+// CLOSE MODAL
+// ==========================
+
+if (closePostModal) {
+
+    closePostModal.type = "button";
+
+    closePostModal.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            closeCreatePost();
+
+        }
+    );
+
+}
+
+
+if (postModal) {
+
+    postModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === postModal) {
+                closeCreatePost();
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================
+// ESCAPE
+// ==========================
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            postModal &&
+            postModal.classList.contains("active")
+        ) {
+
+            closeCreatePost();
+
+        }
+
+    }
+);
+
+
+// ==========================
+// CHARACTER INPUT
+// ==========================
+
+if (postText) {
+
+    postText.addEventListener(
+        "input",
+        updateCharacterCount
+    );
+
+}
+
+
+// ==========================
+// CHOOSE IMAGE
+// ==========================
+
+if (choosePostImage && postImageInput) {
+
+    choosePostImage.type = "button";
+
+    choosePostImage.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            postImageInput.click();
+
+        }
+    );
+
+}
+
+
+// ==========================
+// IMAGE CHANGE
+// ==========================
+
+if (postImageInput) {
+
+    postImageInput.addEventListener(
+        "change",
+        function () {
+
+            const file =
+                postImageInput.files &&
+                postImageInput.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif"
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+
+                alert(
+                    "Please choose a JPG, PNG, WEBP or GIF image."
+                );
+
+                resetPostImage();
+                return;
+
+            }
+
+            const maxSize = 8 * 1024 * 1024;
+
+            if (file.size > maxSize) {
+
+                alert(
+                    "Image cannot be larger than 8 MB."
+                );
+
+                resetPostImage();
+                return;
+
+            }
+
+            // Image and video cannot be selected together.
+            resetPostVideo();
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                selectedPostImage =
+                    String(event.target.result || "");
+
+                if (!selectedPostImage) {
+                    resetPostImage();
+                    return;
+                }
+
+                if (postImagePreviewImg) {
+
+                    postImagePreviewImg.src =
+                        selectedPostImage;
+
+                }
+
+                if (postImagePreview) {
+
+                    postImagePreview.style.display =
+                        "block";
+
+                    postImagePreview.style.opacity =
+                        "0";
+
+                    postImagePreview.style.transform =
+                        "translateY(8px)";
+
+                    requestAnimationFrame(
+                        function () {
+
+                            postImagePreview.style.transition =
+                                "opacity .25s ease, transform .25s ease";
+
+                            postImagePreview.style.opacity =
+                                "1";
+
+                            postImagePreview.style.transform =
+                                "translateY(0)";
+
+                        }
+                    );
+
+                }
+
+            };
+
+            reader.onerror = function () {
+
+                alert(
+                    "Could not read the image."
+                );
+
+                resetPostImage();
+
+            };
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+}
+
+
+// ==========================
+// REMOVE IMAGE
+// ==========================
+
+if (removePostImage) {
+
+    removePostImage.type = "button";
+
+    removePostImage.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            resetPostImage();
+
+        }
+    );
+
+}
+
+
+// ==========================
+// CHOOSE VIDEO
+// ==========================
+
+if (choosePostVideo && postVideoInput) {
+
+    choosePostVideo.type = "button";
+
+    choosePostVideo.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            postVideoInput.click();
+
+        }
+    );
+
+}
+
+
+// ==========================
+// VIDEO CHANGE
+// ==========================
+
+if (postVideoInput) {
+
+    postVideoInput.addEventListener(
+        "change",
+        function () {
+
+            const file =
+                postVideoInput.files &&
+                postVideoInput.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            const allowedTypes = [
+                "video/mp4",
+                "video/webm",
+                "video/ogg"
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+
+                alert(
+                    "Please choose an MP4, WEBM or OGG video."
+                );
+
+                resetPostVideo();
+                return;
+
+            }
+
+            const maxSize =
+                20 * 1024 * 1024;
+
+            if (file.size > maxSize) {
+
+                alert(
+                    "Video cannot be larger than 20 MB."
+                );
+
+                resetPostVideo();
+                return;
+
+            }
+
+            // Image and video cannot be selected together.
+            resetPostImage();
+
+            const reader =
+                new FileReader();
+
+            reader.onload =
+                function (event) {
+
+                    selectedPostVideo =
+                        String(
+                            event.target.result || ""
+                        );
+
+                    if (
+                        !selectedPostVideo
+                    ) {
+
+                        resetPostVideo();
+                        return;
+
+                    }
+
+                    if (
+                        postVideoPreviewVideo
+                    ) {
+
+                        postVideoPreviewVideo.src =
+                            selectedPostVideo;
+
+                        postVideoPreviewVideo.load();
+
+                    }
+
+                    if (
+                        postVideoPreview
+                    ) {
+
+                        postVideoPreview.style.display =
+                            "block";
+
+                        postVideoPreview.style.opacity =
+                            "0";
+
+                        postVideoPreview.style.transform =
+                            "translateY(8px)";
+
+                        requestAnimationFrame(
+                            function () {
+
+                                postVideoPreview.style.transition =
+                                    "opacity .25s ease, transform .25s ease";
+
+                                postVideoPreview.style.opacity =
+                                    "1";
+
+                                postVideoPreview.style.transform =
+                                    "translateY(0)";
+
+                            }
+                        );
+
+                    }
+
+                };
+
+            reader.onerror =
+                function () {
+
+                    alert(
+                        "Could not read the video."
+                    );
+
+                    resetPostVideo();
+
+                };
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+}
+
+
+// ==========================
+// REMOVE VIDEO
+// ==========================
+
+if (removePostVideo) {
+
+    removePostVideo.type = "button";
+
+    removePostVideo.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            resetPostVideo();
+
+        }
+    );
+
+}
+
+
+// ==========================
+// PUBLISH POST
+// ==========================
+
+if (publishPost) {
+
+    publishPost.type = "button";
+
+    publishPost.addEventListener(
+        "click",
+        async function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (publishingPost) {
+                return;
+            }
+
+            const text =
+                postText
+                    ? postText.value.trim()
+                    : "";
+
+            const imageData =
+                selectedPostImage || "";
+
+            const videoData =
+                selectedPostVideo || "";
+
+            // Nothing selected.
+            if (
+                !text &&
+                !imageData &&
+                !videoData
+            ) {
+
+                alert(
+                    "Write something or choose an image or video first."
+                );
+
+                if (postText) {
+                    postText.focus();
+                }
+
+                return;
+
+            }
+
+            if (text.length > 500) {
+
+                alert(
+                    "Post cannot be longer than 500 characters."
+                );
+
+                return;
+
+            }
+
+            if (imageData && videoData) {
+
+                alert(
+                    "Choose either an image or a video, not both."
+                );
+
+                return;
+
+            }
+
+            publishingPost = true;
+
+            publishPost.disabled = true;
+            publishPost.textContent = "Publishing...";
+
+            publishPost.style.transform =
+                "scale(.98)";
+
+            try {
+
+                const payload = {
+                    userId: Number(user.id),
+                    content: text,
+                    imageData: imageData,
+                    videoData: videoData
+                };
+
+                console.log(
+                    "Vexora: publishing post",
+                    {
+                        userId: payload.userId,
+                        contentLength: text.length,
+                        hasImage: Boolean(imageData),
+                        hasVideo: Boolean(videoData)
+                    }
+                );
+
+                const response =
+                    await fetch(
+                        "/api/posts",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+                            body:
+                                JSON.stringify(payload)
+                        }
+                    );
+
+                let data;
+
+                try {
+                    data =
+                        await response.json();
+                } catch (jsonError) {
+
+                    throw new Error(
+                        `Server returned invalid JSON (${response.status}).`
+                    );
+
+                }
+
+                if (
+                    !response.ok ||
+                    !data ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data &&
+                        data.message
+                            ? data.message
+                            : "Could not publish post."
+                    );
+
+                }
+
+                // Success state.
+                publishPost.textContent =
+                    "Published ✓";
+
+                publishPost.style.transform =
+                    "scale(1.04)";
+
+                // Clear form.
+                if (postText) {
+                    postText.value = "";
+                }
+
+                resetPostImage();
+                resetPostVideo();
+                updateCharacterCount();
+
+                // Close after a tiny success animation.
+                setTimeout(
+                    function () {
+                        closeCreatePost();
+                    },
+                    180
+                );
+
+                // Reload feed.
+                await loadPosts();
+
+                // Update profile stats.
+                await loadUserStats();
+
+                console.log(
+                    "Vexora: post published successfully.",
+                    data
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Vexora publish error:",
+                    error
+                );
+
+                alert(
+                    error &&
+                    error.message
+                        ? error.message
+                        : "Could not connect to the Vexora server."
+                );
+
+            } finally {
+
+                publishingPost = false;
+
+                publishPost.disabled =
+                    false;
+
+                publishPost.textContent =
+                    "Publish";
+
+                publishPost.style.transform =
+                    "";
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================
+// INITIAL MODAL STATE
+// ==========================
+
+if (postModal) {
+
+    // Prevent the modal from being accidentally visible
+    // before the user clicks Create.
+    if (
+        !postModal.classList.contains("active")
+    ) {
+
+        postModal.style.display =
+            "none";
+
+        postModal.style.visibility =
+            "hidden";
+
+        postModal.style.opacity =
+            "0";
+
+        postModal.style.pointerEvents =
+            "none";
+
+    }
+
+}
+
+updateCharacterCount();
 
 
     // ==========================
@@ -2954,6 +3969,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 "div",
                 "post-header"
             );
+
+        article.appendChild(
+            header
+        );
 
 
         const postUser =
@@ -3291,7 +4310,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const shareButton =
             createElement(
-                "button"
+                "button",
+                "share-button"
             );
 
 
@@ -3458,11 +4478,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // ==========================
         // APPEND
         // ==========================
-
-        article.appendChild(
-            header
-        );
-
 
         article.appendChild(
             stats
@@ -4002,7 +5017,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     );
 
 
-                    topRow.appendChild(
+                    commentContent.appendChild(
                         commentActions
                     );
 
@@ -4630,73 +5645,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         shareButton.addEventListener(
             "click",
-            async function () {
+            function () {
 
-                let shareText =
-                    `@${post.username}:`;
-
-
-                if (post.content) {
-
-                    shareText +=
-                        ` ${post.content}`;
-
-                }
-
-
-                try {
-
-                    if (
-                        navigator.share
-                    ) {
-
-                        await navigator.share({
-                            title:
-                                "Vexora post",
-
-                            text:
-                                shareText,
-
-                            url:
-                                window.location.href
-                        });
-
-                    } else if (
-                        navigator.clipboard
-                    ) {
-
-                        await navigator.clipboard.writeText(
-                            shareText
-                        );
-
-
-                        alert(
-                            "Post copied to clipboard."
-                        );
-
-                    } else {
-
-                        alert(
-                            shareText
-                        );
-
-                    }
-
-                } catch (error) {
-
-                    if (
-                        error.name !==
-                        "AbortError"
-                    ) {
-
-                        console.error(
-                            "Share error:",
-                            error
-                        );
-
-                    }
-
-                }
+                openShareModal(
+                    post
+                );
 
             }
         );
@@ -5028,8 +5981,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ==========================
-
-    // ==========================
     // LIVE USER SEARCH
     // ==========================
 
@@ -5038,12 +5989,15 @@ document.addEventListener("DOMContentLoaded", function () {
             "searchInput"
         );
 
+
     const searchResults =
         document.getElementById(
             "searchResults"
         );
 
+
     let searchRequestId = 0;
+
 
     function clearSearchResults() {
 
@@ -5051,9 +6005,12 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        searchResults.innerHTML = "";
+
+        searchResults.innerHTML =
+            "";
 
     }
+
 
     function renderLiveSearchResults(
         users
@@ -5063,7 +6020,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        searchResults.innerHTML = "";
+
+        searchResults.innerHTML =
+            "";
+
 
         if (
             !Array.isArray(users) ||
@@ -5077,12 +6037,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     "No users found."
                 );
 
+
             searchResults.appendChild(
                 empty
             );
 
+
             return;
+
         }
+
 
         users
             .slice(0, 8)
@@ -5093,11 +6057,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         "button"
                     );
 
+
                 result.type =
                     "button";
 
+
                 result.className =
                     "vexora-search-result";
+
 
                 const avatar =
                     createElement(
@@ -5108,16 +6075,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         )
                     );
 
+
                 setAvatar(
                     avatar,
                     searchedUser.avatar || "",
                     searchedUser.username
                 );
 
+
                 const info =
                     document.createElement(
                         "div"
                     );
+
 
                 const username =
                     createElement(
@@ -5130,6 +6100,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         )
                     );
 
+
                 const bio =
                     createElement(
                         "span",
@@ -5138,21 +6109,26 @@ document.addEventListener("DOMContentLoaded", function () {
                         "View profile"
                     );
 
+
                 info.appendChild(
                     username
                 );
+
 
                 info.appendChild(
                     bio
                 );
 
+
                 result.appendChild(
                     avatar
                 );
 
+
                 result.appendChild(
                     info
                 );
+
 
                 result.addEventListener(
                     "click",
@@ -5165,6 +6141,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 );
 
+
                 searchResults.appendChild(
                     result
                 );
@@ -5173,6 +6150,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
     async function loadLiveSearchResults(
         query
     ) {
@@ -5180,27 +6158,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const requestId =
             ++searchRequestId;
 
+
         const normalizedQuery =
             String(query || "")
                 .trim()
                 .toLowerCase();
+
 
         if (!normalizedQuery) {
 
             clearSearchResults();
 
             return;
+
         }
+
 
         if (!searchResults) {
             return;
         }
+
 
         searchResults.innerHTML = `
             <div class="vexora-search-empty">
                 Searching...
             </div>
         `;
+
 
         try {
 
@@ -5209,15 +6193,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     `/api/users?username=${encodeURIComponent(normalizedQuery)}`
                 );
 
+
             const data =
                 await response.json();
+
 
             if (
                 requestId !==
                 searchRequestId
             ) {
+
                 return;
+
             }
+
 
             if (
                 !response.ok ||
@@ -5230,13 +6219,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 `;
 
+
                 return;
+
             }
+
 
             const users =
                 Array.isArray(data.users)
                     ? data.users
                     : [];
+
 
             const prefixMatches =
                 users.filter(
@@ -5253,9 +6246,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 );
 
+
             renderLiveSearchResults(
                 prefixMatches
             );
+
 
         } catch (error) {
 
@@ -5263,13 +6258,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 requestId !==
                 searchRequestId
             ) {
+
                 return;
+
             }
+
 
             console.error(
                 "Live search error:",
                 error
             );
+
 
             searchResults.innerHTML = `
                 <div class="vexora-search-empty">
@@ -5280,6 +6279,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     }
+
 
     if (searchInput) {
 
@@ -5296,6 +6296,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+    // ==========================
     // START
     // ==========================
 
@@ -5304,5 +6306,13 @@ document.addEventListener("DOMContentLoaded", function () {
     loadSuggestions();
 
     loadPosts();
+
+    if (window.location.hash === "#search") {
+        window.setTimeout(openSearch, 80);
+    }
+
+    if (window.location.hash === "#notifications") {
+        window.setTimeout(toggleNotificationsPanel, 80);
+    }
 
 });
