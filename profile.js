@@ -128,6 +128,32 @@ document.addEventListener("DOMContentLoaded", async function () {
             "topAvatar"
         );
 
+    const profileNotificationNumber =
+        document.getElementById(
+            "profileNotificationNumber"
+        );
+
+    async function loadProfileNotificationCount() {
+        if (!profileNotificationNumber) {
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `/api/notifications/unread-count?userId=${encodeURIComponent(currentUser.id)}`
+            );
+            const data = await response.json();
+            const count = Number(data.unread || data.unreadCount || data.count || 0);
+
+            profileNotificationNumber.textContent = count > 99 ? "99+" : String(count);
+            profileNotificationNumber.hidden = count === 0;
+        } catch (error) {
+            profileNotificationNumber.hidden = true;
+        }
+    }
+
+    loadProfileNotificationCount();
+
 
     const editUsername =
         document.getElementById(
@@ -163,6 +189,117 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById(
             "followingCount"
         );
+
+    const relationshipsModal = document.getElementById("relationshipsModal");
+    const relationshipsTitle = document.getElementById("relationshipsTitle");
+    const relationshipsList = document.getElementById("relationshipsList");
+
+    async function openRelationships(type) {
+        if (!relationshipsModal || !relationshipsList) return;
+        relationshipsTitle.textContent = type === "following" ? "Following" : "Followers";
+        relationshipsList.replaceChildren();
+        const loading = document.createElement("p");
+        loading.className = "relationships-state";
+        loading.textContent = "Loading people…";
+        relationshipsList.appendChild(loading);
+        relationshipsModal.hidden = false;
+        document.body.classList.add("relationships-open");
+
+        try {
+            const response = await fetch(`/api/users/${encodeURIComponent(profileUserId)}/relations?type=${type}&viewerId=${encodeURIComponent(currentUser.id)}`);
+            const data = await response.json();
+            if (!response.ok || !data.success) throw new Error(data.message || "Could not load this list.");
+            relationshipsList.replaceChildren();
+            if (!data.users.length) {
+                const empty = document.createElement("p");
+                empty.className = "relationships-state";
+                empty.textContent = type === "following" ? "This profile is not following anyone yet." : "No followers yet.";
+                relationshipsList.appendChild(empty);
+                return;
+            }
+
+            data.users.forEach(person => {
+                const row = document.createElement("div");
+                row.className = "relationship-row";
+                const avatar = document.createElement("span");
+                avatar.className = "relationship-avatar";
+                avatar.textContent = (person.username || "V").charAt(0).toUpperCase();
+                if (person.avatar) avatar.style.backgroundImage = `url("${String(person.avatar).replace(/["\\]/g, "")}")`;
+
+                const identity = document.createElement("button");
+                identity.type = "button";
+                identity.className = "relationship-identity";
+                const name = document.createElement("strong");
+                name.textContent = person.username || "Vexora user";
+                const bio = document.createElement("span");
+                bio.textContent = person.bio || `@${person.username || "user"}`;
+                identity.append(name, bio);
+                identity.addEventListener("click", () => {
+                    window.location.href = `profile.html?userId=${encodeURIComponent(person.id)}`;
+                });
+                row.append(avatar, identity);
+
+                if (Number(person.id) !== Number(currentUser.id)) {
+                    const follow = document.createElement("button");
+                    follow.type = "button";
+                    follow.className = "relationship-follow" + (person.isFollowing ? " following" : "");
+                    follow.textContent = person.isFollowing ? "Following" : "Follow";
+                    follow.setAttribute("aria-pressed", person.isFollowing ? "true" : "false");
+                    follow.addEventListener("click", async () => {
+                        if (follow.disabled) return;
+                        follow.disabled = true;
+                        try {
+                            const result = await fetch(`/api/users/${encodeURIComponent(person.id)}/follow`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ followerId: currentUser.id })
+                            });
+                            const resultData = await result.json();
+                            if (!result.ok || !resultData.success) throw new Error(resultData.message || "Could not update follow.");
+                            person.isFollowing = Boolean(resultData.following);
+                            follow.textContent = person.isFollowing ? "Following" : "Follow";
+                            follow.classList.toggle("following", person.isFollowing);
+                            follow.setAttribute("aria-pressed", person.isFollowing ? "true" : "false");
+                        } catch (followError) {
+                            follow.title = followError.message;
+                        } finally {
+                            follow.disabled = false;
+                        }
+                    });
+                    row.appendChild(follow);
+                }
+                relationshipsList.appendChild(row);
+            });
+        } catch (error) {
+            relationshipsList.replaceChildren();
+            const failed = document.createElement("p");
+            failed.className = "relationships-state";
+            failed.textContent = error.message || "Could not load this list.";
+            relationshipsList.appendChild(failed);
+        }
+    }
+
+    const openFollowers = document.getElementById("openFollowers");
+    const openFollowing = document.getElementById("openFollowing");
+    const closeRelationships = document.getElementById("closeRelationships");
+    openFollowers?.addEventListener("click", () => openRelationships("followers"));
+    openFollowing?.addEventListener("click", () => openRelationships("following"));
+    closeRelationships?.addEventListener("click", () => {
+        relationshipsModal.hidden = true;
+        document.body.classList.remove("relationships-open");
+    });
+    relationshipsModal?.addEventListener("click", event => {
+        if (event.target === relationshipsModal) {
+            relationshipsModal.hidden = true;
+            document.body.classList.remove("relationships-open");
+        }
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && relationshipsModal && !relationshipsModal.hidden) {
+            relationshipsModal.hidden = true;
+            document.body.classList.remove("relationships-open");
+        }
+    });
 
 
     const profileModal =
@@ -705,25 +842,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     // PROFILE NAVIGATION
     // ==========================
 
-    const homeLinks =
+    const profileNavigationLinks =
         document.querySelectorAll(
-            'a[href="dashboard.html"]'
+            ".sidebar nav a, .sidebar-bottom a"
         );
 
-
-    homeLinks.forEach(
+    profileNavigationLinks.forEach(
         function (link) {
-
             link.addEventListener(
                 "click",
                 function () {
-
-                    window.location.href =
-                        "dashboard.html";
-
+                    link.classList.add("profile-nav-leaving");
                 }
             );
-
         }
     );
 
@@ -1566,6 +1697,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         commentButton.type =
             "button";
 
+        const shareButton =
+            createElement(
+                "button",
+                "profile-share-button",
+                "↗ Share"
+            );
+
+        shareButton.type =
+            "button";
+
 
         actions.appendChild(
             likeButton
@@ -1574,6 +1715,52 @@ document.addEventListener("DOMContentLoaded", async function () {
         actions.appendChild(
             commentButton
         );
+
+        actions.appendChild(
+            shareButton
+        );
+
+        const commentsPanel =
+            createElement(
+                "div",
+                "profile-comments"
+            );
+
+        commentsPanel.hidden = true;
+
+        const commentsList =
+            createElement(
+                "div",
+                "profile-comments-list"
+            );
+
+        const commentComposer =
+            createElement(
+                "div",
+                "profile-comment-composer"
+            );
+
+        const commentInput =
+            document.createElement(
+                "input"
+            );
+
+        commentInput.className = "profile-comment-input";
+        commentInput.maxLength = 300;
+        commentInput.placeholder = "Write a comment...";
+
+        const sendComment =
+            createElement(
+                "button",
+                "profile-send-comment",
+                "Send"
+            );
+
+        sendComment.type = "button";
+        commentComposer.appendChild(commentInput);
+        commentComposer.appendChild(sendComment);
+        commentsPanel.appendChild(commentsList);
+        commentsPanel.appendChild(commentComposer);
 
 
         // DELETE
@@ -1723,6 +1910,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             actions
         );
 
+        article.appendChild(
+            commentsPanel
+        );
+
 
         // ==========================
         // LIKE
@@ -1817,9 +2008,139 @@ document.addEventListener("DOMContentLoaded", async function () {
         // COMMENTS
         // ==========================
 
+        async function loadProfileComments() {
+            commentsPanel.hidden = false;
+            commentsList.innerHTML = '<div class="profile-comments-loading">Loading comments...</div>';
+
+            try {
+                const response = await fetch(
+                    `/api/posts/${post.id}/comments?userId=${encodeURIComponent(currentUser.id)}`
+                );
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || "Could not load comments.");
+                }
+
+                const comments = Array.isArray(data.comments) ? data.comments : [];
+                commentsList.innerHTML = "";
+
+                if (!comments.length) {
+                    commentsList.innerHTML = '<div class="profile-comments-empty">No comments yet. Start the conversation.</div>';
+                    return;
+                }
+
+                comments.forEach(function (comment) {
+                    const item = createElement("article", "profile-comment");
+                    const avatar = createElement("div", "profile-comment-avatar", getInitial(comment.username));
+                    const body = createElement("div", "profile-comment-body");
+                    const meta = createElement("div", "profile-comment-meta", `@${comment.username || "user"}`);
+                    const text = createElement("p", "profile-comment-text", comment.content || "");
+
+                    setAvatar(avatar, comment.avatar || "", comment.username);
+                    body.appendChild(meta);
+                    body.appendChild(text);
+                    item.appendChild(avatar);
+                    item.appendChild(body);
+                    commentsList.appendChild(item);
+                });
+            } catch (error) {
+                console.error("Could not load profile comments:", error);
+                commentsList.innerHTML = '<div class="profile-comments-empty">Comments are temporarily unavailable.</div>';
+            }
+        }
+
+        commentButton.addEventListener(
+            "click",
+            function () {
+                if (commentsPanel.hidden) {
+                    loadProfileComments();
+                } else {
+                    commentsPanel.hidden = true;
+                }
+            }
+        );
+
+        sendComment.addEventListener(
+            "click",
+            async function () {
+                const content = commentInput.value.trim();
+
+                if (!content) {
+                    commentInput.focus();
+                    return;
+                }
+
+                sendComment.disabled = true;
+
+                try {
+                    const response = await fetch(
+                        `/api/posts/${post.id}/comments`,
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                userId: currentUser.id,
+                                content: content
+                            })
+                        }
+                    );
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.message || "Could not add comment.");
+                    }
+
+                    commentInput.value = "";
+                    post.comments = Number(post.comments || 0) + 1;
+                    stats.textContent = `♡ ${post.likes || 0} likes · ${post.comments} comments`;
+                    await loadProfileComments();
+                } catch (error) {
+                    console.error("Profile comment error:", error);
+                } finally {
+                    sendComment.disabled = false;
+                }
+            }
+        );
+
+        commentInput.addEventListener(
+            "keydown",
+            function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    sendComment.click();
+                }
+            }
+        );
+
+        shareButton.addEventListener(
+            "click",
+            async function () {
+                const shareUrl = `${window.location.origin}/dashboard.html?postId=${encodeURIComponent(post.id)}`;
+                const originalText = shareButton.textContent;
+
+                try {
+                    if (navigator.share) {
+                        await navigator.share({ title: "Vexora post", url: shareUrl });
+                    } else {
+                        await navigator.clipboard.writeText(shareUrl);
+                    }
+
+                    shareButton.textContent = "✓ Copied";
+                    window.setTimeout(function () {
+                        shareButton.textContent = originalText;
+                    }, 1400);
+                } catch (error) {
+                    console.error("Profile share error:", error);
+                }
+            }
+        );
+
         commentButton.addEventListener(
             "click",
             async function () {
+
+                return;
 
                 try {
 
@@ -2389,6 +2710,26 @@ document.addEventListener("DOMContentLoaded", async function () {
     // ==========================
     // LOAD EVERYTHING
     // ==========================
+
+    const shareProfileButton = document.getElementById("shareProfileButton");
+    if (shareProfileButton) {
+        shareProfileButton.addEventListener("click", async function () {
+            const link = new URL("profile.html", window.location.href);
+            link.searchParams.set("userId", String(profileUserId));
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: `Vexora profile`, text: `Follow ${profileTag?.textContent || "this profile"} on Vexora`, url: link.href });
+                } else {
+                    await navigator.clipboard.writeText(link.href);
+                    const oldText = shareProfileButton.textContent;
+                    shareProfileButton.textContent = "✓ Copied";
+                    window.setTimeout(() => { shareProfileButton.textContent = oldText; }, 1500);
+                }
+            } catch (shareError) {
+                if (shareError.name !== "AbortError") console.error("Profile share error:", shareError);
+            }
+        });
+    }
 
     await loadProfile();
 
