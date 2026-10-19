@@ -23,11 +23,21 @@ const postUploadsDir = path.join(
     "posts"
 );
 
+const storyUploadsDir = path.join(
+    __dirname,
+    "uploads",
+    "stories"
+);
+
 fs.mkdirSync(messageUploadsDir, {
     recursive: true
 });
 
 fs.mkdirSync(postUploadsDir, {
+    recursive: true
+});
+
+fs.mkdirSync(storyUploadsDir, {
     recursive: true
 });
 
@@ -44,6 +54,36 @@ app.use(
 app.use(
     express.static(__dirname)
 );
+
+// ======================================================
+// DATABASE MIGRATION - SHARED POSTS
+// ======================================================
+
+const messageColumns = db.prepare(`
+    PRAGMA table_info(messages)
+`).all();
+
+const hasSharedPostIdColumn = messageColumns.some(
+    function (column) {
+        return column.name === "shared_post_id";
+    }
+);
+
+if (!hasSharedPostIdColumn) {
+    db.prepare(`
+        ALTER TABLE messages
+        ADD COLUMN shared_post_id INTEGER
+    `).run();
+
+    console.log(
+        "Added shared_post_id column to messages."
+    );
+}
+
+db.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_messages_shared_post
+    ON messages(shared_post_id)
+`).run();
 
 // ======================================================
 // HELPER - IMAGE DATA
@@ -134,6 +174,35 @@ function parseVideoData(videoData) {
     };
 }
 
+function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString("hex");
+    const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+
+    return `scrypt$${salt}$${hash}`;
+}
+
+function verifyPassword(password, storedPassword) {
+    if (typeof storedPassword !== "string") {
+        return false;
+    }
+
+    if (!storedPassword.startsWith("scrypt$")) {
+        return password === storedPassword;
+    }
+
+    const [, salt, storedHash] = storedPassword.split("$");
+
+    if (!salt || !storedHash) {
+        return false;
+    }
+
+    const actualHash = crypto.scryptSync(password, salt, 64);
+    const expectedHash = Buffer.from(storedHash, "hex");
+
+    return actualHash.length === expectedHash.length &&
+        crypto.timingSafeEqual(actualHash, expectedHash);
+}
+
 // ======================================================
 // HELPER - CREATE CONVERSATION
 // ======================================================
@@ -212,6 +281,43 @@ function createNotification(
         postId,
         commentId
     );
+}
+
+// ======================================================
+// HELPER - GET SHARED POST
+// ======================================================
+
+function getSharedPost(postId) {
+    if (!postId) {
+        return null;
+    }
+
+    const post =
+        db.prepare(`
+            SELECT
+                posts.id,
+                posts.user_id,
+                posts.content,
+                posts.image_url,
+                posts.video_url,
+                posts.created_at,
+
+                users.username,
+                users.avatar
+
+            FROM posts
+
+            JOIN users
+                ON users.id = posts.user_id
+
+            WHERE posts.id = ?
+        `).get(postId);
+
+    if (!post) {
+        return null;
+    }
+
+    return post;
 }
 
 // ======================================================
@@ -297,7 +403,7 @@ app.post("/api/register", function (req, res) {
             ).run(
                 username,
                 email,
-                password,
+                hashPassword(password),
                 "",
                 ""
             );
@@ -366,12 +472,21 @@ app.post("/api/login", function (req, res) {
             });
         }
 
-        if (user.password !== password) {
+        if (!verifyPassword(password, user.password)) {
             return res.status(401).json({
                 success: false,
                 message:
                     "Incorrect email or password."
             });
+        }
+
+        if (!user.password.startsWith("scrypt$")) {
+            db.prepare(
+                "UPDATE users SET password = ? WHERE id = ?"
+            ).run(
+                hashPassword(password),
+                user.id
+            );
         }
 
         return res.json({
@@ -413,6 +528,8 @@ app.get("/api/users", function (req, res) {
 
     const currentUserId =
         Number(req.query.currentUserId);
+    const forMessaging =
+        req.query.forMessaging === "1";
 
     try {
         if (username) {
@@ -462,9 +579,8 @@ app.get("/api/users", function (req, res) {
 
                 WHERE users.id != ?
 
-                ORDER BY users.id DESC
-
-                LIMIT 20
+                ORDER BY isFollowing DESC, users.username COLLATE NOCASE ASC
+                ${forMessaging ? "" : "LIMIT 20"}
             `).all(
                 currentUserId,
                 currentUserId
@@ -571,6 +687,36 @@ app.get(
         }
     }
 );
+
+// Profile follower/following lists for the interactive profile stats.
+app.get("/api/users/:userId/relations", function (req, res) {
+    const profileId = Number(req.params.userId);
+    const viewerId = Number(req.query.viewerId) || 0;
+    const type = req.query.type === "following" ? "following" : "followers";
+    if (!profileId) return res.status(400).json({ success: false, message: "Invalid user." });
+
+    try {
+        const profile = db.prepare("SELECT id FROM users WHERE id = ?").get(profileId);
+        if (!profile) return res.status(404).json({ success: false, message: "User not found." });
+        const rows = type === "followers"
+            ? db.prepare(`
+                SELECT users.id, users.username, users.avatar, users.bio,
+                    EXISTS(SELECT 1 FROM follows f2 WHERE f2.follower_id = ? AND f2.following_id = users.id) AS isFollowing
+                FROM follows JOIN users ON users.id = follows.follower_id
+                WHERE follows.following_id = ? ORDER BY users.username COLLATE NOCASE
+            `).all(viewerId, profileId)
+            : db.prepare(`
+                SELECT users.id, users.username, users.avatar, users.bio,
+                    EXISTS(SELECT 1 FROM follows f2 WHERE f2.follower_id = ? AND f2.following_id = users.id) AS isFollowing
+                FROM follows JOIN users ON users.id = follows.following_id
+                WHERE follows.follower_id = ? ORDER BY users.username COLLATE NOCASE
+            `).all(viewerId, profileId);
+        return res.json({ success: true, type, users: rows });
+    } catch (error) {
+        console.error("PROFILE RELATIONS ERROR:", error);
+        return res.status(500).json({ success: false, message: "Could not load this list." });
+    }
+});
 
 // ======================================================
 // UPDATE PROFILE
@@ -720,6 +866,166 @@ app.put(
 );
 
 // ======================================================
+// STORIES (EXPIRE AFTER 24 HOURS)
+// ======================================================
+
+app.get("/api/stories/:storyId", function (req, res) {
+    const storyId = Number(req.params.storyId);
+    if (!storyId) return res.status(400).json({ success: false, message: "Invalid story." });
+    try {
+        const story = db.prepare(`
+            SELECT stories.id, stories.user_id, stories.content, stories.image_url, stories.video_url,
+                stories.created_at, stories.expires_at, users.username, users.avatar
+            FROM stories JOIN users ON users.id = stories.user_id
+            WHERE stories.id = ? AND stories.expires_at > datetime('now')
+        `).get(storyId);
+        if (!story) return res.status(404).json({ success: false, message: "This story has expired or is unavailable." });
+        return res.json({ success: true, story });
+    } catch (error) {
+        console.error("GET SHARED STORY ERROR:", error);
+        return res.status(500).json({ success: false, message: "Could not open this story." });
+    }
+});
+
+app.get("/api/stories", function (req, res) {
+    const userId = Number(req.query.userId) || 0;
+    if (!userId) {
+        return res.status(400).json({ success: false, message: "Invalid user." });
+    }
+
+    try {
+        const expired = db.prepare(`
+            SELECT image_url, video_url FROM stories WHERE expires_at <= datetime('now')
+        `).all();
+        expired.forEach(function (story) {
+            [story.image_url, story.video_url].forEach(function (url) {
+                if (typeof url !== "string" || !url.startsWith("/uploads/stories/")) return;
+                const filePath = path.resolve(__dirname, "." + url);
+                if (filePath.startsWith(storyUploadsDir + path.sep) && fs.existsSync(filePath)) {
+                    try { fs.unlinkSync(filePath); } catch (error) { console.warn("Expired story media cleanup failed:", error.message); }
+                }
+            });
+        });
+        db.prepare("DELETE FROM stories WHERE expires_at <= datetime('now')").run();
+
+        const stories = db.prepare(`
+            SELECT stories.id, stories.user_id, stories.content, stories.image_url,
+                stories.video_url, stories.created_at, stories.expires_at,
+                users.username, users.avatar
+            FROM stories
+            JOIN users ON users.id = stories.user_id
+            WHERE stories.expires_at > datetime('now')
+                AND (stories.user_id = ? OR EXISTS (
+                    SELECT 1 FROM follows
+                    WHERE follows.follower_id = ? AND follows.following_id = stories.user_id
+                ))
+            ORDER BY CASE WHEN stories.user_id = ? THEN 0 ELSE 1 END, stories.created_at DESC
+        `).all(userId, userId, userId);
+
+        return res.json({ success: true, stories });
+    } catch (error) {
+        console.error("GET STORIES ERROR:", error);
+        return res.status(500).json({ success: false, message: "Could not load stories." });
+    }
+});
+
+app.post("/api/stories", function (req, res) {
+    const userId = Number(req.body.userId);
+    const content = typeof req.body.content === "string" ? req.body.content.trim() : "";
+    const imageData = typeof req.body.imageData === "string" ? req.body.imageData : "";
+    const videoData = typeof req.body.videoData === "string" ? req.body.videoData : "";
+
+    if (!userId || (!content && !imageData && !videoData)) {
+        return res.status(400).json({ success: false, message: "Add text, a photo or a video to your story." });
+    }
+    if (content.length > 300) {
+        return res.status(400).json({ success: false, message: "Story text cannot be longer than 300 characters." });
+    }
+    if (imageData && videoData) {
+        return res.status(400).json({ success: false, message: "Choose either a photo or a video." });
+    }
+
+    const parsedImage = imageData ? parseImageData(imageData) : null;
+    const parsedVideo = videoData ? parseVideoData(videoData) : null;
+    if (imageData && (!parsedImage || parsedImage.buffer.length > 8 * 1024 * 1024)) {
+        return res.status(400).json({ success: false, message: "Use a valid photo smaller than 8 MB." });
+    }
+    if (videoData && (!parsedVideo || parsedVideo.buffer.length > 20 * 1024 * 1024)) {
+        return res.status(400).json({ success: false, message: "Use a valid video smaller than 20 MB." });
+    }
+
+    let savedPath = null;
+    try {
+        const user = db.prepare("SELECT id FROM users WHERE id = ?").get(userId);
+        if (!user) return res.status(404).json({ success: false, message: "User not found." });
+
+        let imageUrl = "";
+        let videoUrl = "";
+        const media = parsedImage || parsedVideo;
+        if (media) {
+            const filename = Date.now() + "-" + crypto.randomBytes(8).toString("hex") + "." + media.extension;
+            savedPath = path.join(storyUploadsDir, filename);
+            fs.writeFileSync(savedPath, media.buffer);
+            if (parsedImage) imageUrl = "/uploads/stories/" + filename;
+            else videoUrl = "/uploads/stories/" + filename;
+        }
+
+        const result = db.prepare(`
+            INSERT INTO stories (user_id, content, image_url, video_url, created_at, expires_at)
+            VALUES (?, ?, ?, ?, datetime('now'), datetime('now', '+24 hours'))
+        `).run(userId, content, imageUrl, videoUrl);
+
+        return res.json({ success: true, storyId: result.lastInsertRowid, expiresInHours: 24 });
+    } catch (error) {
+        if (savedPath && fs.existsSync(savedPath)) {
+            try { fs.unlinkSync(savedPath); } catch (cleanupError) { console.warn("Story media cleanup failed:", cleanupError.message); }
+        }
+        console.error("CREATE STORY ERROR:", error);
+        return res.status(500).json({ success: false, message: "Could not publish story." });
+    }
+});
+
+app.patch("/api/stories/:storyId", function (req, res) {
+    const storyId = Number(req.params.storyId);
+    const userId = Number(req.body.userId);
+    const content = typeof req.body.content === "string" ? req.body.content.trim() : "";
+    if (!storyId || !userId || content.length > 300) {
+        return res.status(400).json({ success: false, message: "Story text must be 300 characters or less." });
+    }
+    try {
+        const result = db.prepare("UPDATE stories SET content = ? WHERE id = ? AND user_id = ? AND expires_at > datetime('now')")
+            .run(content, storyId, userId);
+        if (!result.changes) return res.status(404).json({ success: false, message: "Your active story could not be found." });
+        return res.json({ success: true });
+    } catch (error) {
+        console.error("EDIT STORY ERROR:", error);
+        return res.status(500).json({ success: false, message: "Could not update this story." });
+    }
+});
+
+app.delete("/api/stories/:storyId", function (req, res) {
+    const storyId = Number(req.params.storyId);
+    const userId = Number(req.query.userId);
+    if (!storyId || !userId) return res.status(400).json({ success: false, message: "Invalid story." });
+    try {
+        const story = db.prepare("SELECT image_url, video_url FROM stories WHERE id = ? AND user_id = ?").get(storyId, userId);
+        if (!story) return res.status(404).json({ success: false, message: "Your story could not be found." });
+        db.prepare("DELETE FROM stories WHERE id = ? AND user_id = ?").run(storyId, userId);
+        [story.image_url, story.video_url].forEach(url => {
+            if (typeof url !== "string" || !url.startsWith("/uploads/stories/")) return;
+            const filePath = path.resolve(__dirname, "." + url);
+            if (filePath.startsWith(storyUploadsDir + path.sep) && fs.existsSync(filePath)) {
+                try { fs.unlinkSync(filePath); } catch (error) { console.warn("Story media cleanup failed:", error.message); }
+            }
+        });
+        return res.json({ success: true });
+    } catch (error) {
+        console.error("DELETE STORY ERROR:", error);
+        return res.status(500).json({ success: false, message: "Could not delete this story." });
+    }
+});
+
+// ======================================================
 // CREATE POST
 // ======================================================
 
@@ -784,10 +1090,6 @@ app.post("/api/posts", function (req, res) {
     let parsedImage = null;
     let parsedVideo = null;
 
-    // ==================================================
-    // IMAGE
-    // ==================================================
-
     if (imageData) {
         parsedImage =
             parseImageData(
@@ -816,10 +1118,6 @@ app.post("/api/posts", function (req, res) {
             });
         }
     }
-
-    // ==================================================
-    // VIDEO
-    // ==================================================
 
     if (videoData) {
         parsedVideo =
@@ -870,10 +1168,6 @@ app.post("/api/posts", function (req, res) {
         let imageUrl = "";
         let videoUrl = "";
 
-        // ==================================================
-        // SAVE IMAGE
-        // ==================================================
-
         if (parsedImage) {
             const filename =
                 Date.now() +
@@ -899,10 +1193,6 @@ app.post("/api/posts", function (req, res) {
                 "/uploads/posts/" +
                 filename;
         }
-
-        // ==================================================
-        // SAVE VIDEO
-        // ==================================================
 
         if (parsedVideo) {
             const filename =
@@ -1268,10 +1558,6 @@ app.delete(
 
             deletePost();
 
-            // ==================================================
-            // DELETE IMAGE FILE
-            // ==================================================
-
             if (
                 post.image_url &&
                 post.image_url.startsWith(
@@ -1306,10 +1592,6 @@ app.delete(
                     );
                 }
             }
-
-            // ==================================================
-            // DELETE VIDEO FILE
-            // ==================================================
 
             if (
                 post.video_url &&
@@ -1975,6 +2257,73 @@ app.get(
 );
 
 // ======================================================
+// NOTIFICATIONS - MARK SINGLE AS READ
+// ======================================================
+
+app.post(
+    "/api/notifications/:notificationId/read",
+    function (req, res) {
+        const notificationId =
+            Number(req.params.notificationId);
+
+        const userId =
+            Number(req.body.userId);
+
+        if (!notificationId || !userId) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invalid notification or user."
+            });
+        }
+
+        try {
+            const notification =
+                db.prepare(`
+                    SELECT id
+                    FROM notifications
+                    WHERE id = ?
+                    AND recipient_id = ?
+                `).get(
+                    notificationId,
+                    userId
+                );
+
+            if (!notification) {
+                return res.status(404).json({
+                    success: false,
+                    message:
+                        "Notification not found."
+                });
+            }
+
+            db.prepare(`
+                UPDATE notifications
+                SET is_read = 1
+                WHERE id = ?
+                AND recipient_id = ?
+            `).run(notificationId, userId);
+
+            return res.json({
+                success: true
+            });
+
+        } catch (error) {
+            console.error(
+                "MARK NOTIFICATION READ ERROR:",
+                error
+            );
+
+            return res.status(500).json({
+                success: false,
+                message:
+                    "Could not mark notification as read."
+            });
+        }
+    }
+);
+
+// ======================================================
 // NOTIFICATIONS - MARK ALL AS READ
 // ======================================================
 
@@ -2023,6 +2372,60 @@ app.post(
         } catch (error) {
             console.error(
                 "MARK NOTIFICATIONS READ ERROR:",
+                error
+            );
+
+            return res.status(500).json({
+                success: false,
+                message:
+                    "Could not mark notifications as read."
+            });
+        }
+    }
+);
+
+app.post(
+    "/api/notifications/read-all",
+    function (req, res) {
+        const userId =
+            Number(req.body.userId);
+
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invalid user."
+            });
+        }
+
+        try {
+            const user =
+                db.prepare(
+                    "SELECT id FROM users WHERE id = ?"
+                ).get(userId);
+
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message:
+                        "User not found."
+                });
+            }
+
+            db.prepare(`
+                UPDATE notifications
+                SET is_read = 1
+                WHERE recipient_id = ?
+                AND is_read = 0
+            `).run(userId);
+
+            return res.json({
+                success: true
+            });
+
+        } catch (error) {
+            console.error(
+                "MARK ALL NOTIFICATIONS READ ERROR:",
                 error
             );
 
@@ -2320,9 +2723,13 @@ app.get(
                         other_user.avatar AS other_avatar,
 
                         CASE
+                            WHEN last_message.shared_post_id IS NOT NULL
+                            THEN '📌 Shared post'
+
                             WHEN last_message.image_url IS NOT NULL
                             AND last_message.image_url != ''
                             THEN '📷 Photo'
+
                             ELSE COALESCE(
                                 last_message.content,
                                 ''
@@ -2478,7 +2885,7 @@ app.get(
                     otherUserId
                 );
 
-            const messages =
+            const messageRows =
                 db.prepare(`
                     SELECT
                         messages.id,
@@ -2486,11 +2893,22 @@ app.get(
                         messages.sender_id,
                         messages.content,
                         messages.image_url,
+                        messages.shared_post_id,
                         messages.is_read,
                         messages.created_at,
 
                         users.username AS sender_username,
-                        users.avatar AS sender_avatar
+                        users.avatar AS sender_avatar,
+
+                        shared_post.id AS shared_post_id_value,
+                        shared_post.user_id AS shared_post_user_id,
+                        shared_post.content AS shared_post_content,
+                        shared_post.image_url AS shared_post_image_url,
+                        shared_post.video_url AS shared_post_video_url,
+                        shared_post.created_at AS shared_post_created_at,
+
+                        shared_post_user.username AS shared_post_username,
+                        shared_post_user.avatar AS shared_post_avatar
 
                     FROM messages
 
@@ -2498,12 +2916,113 @@ app.get(
                         ON users.id =
                             messages.sender_id
 
+                    LEFT JOIN posts AS shared_post
+                        ON shared_post.id =
+                            messages.shared_post_id
+
+                    LEFT JOIN users AS shared_post_user
+                        ON shared_post_user.id =
+                            shared_post.user_id
+
                     WHERE messages.conversation_id = ?
 
                     ORDER BY messages.id ASC
                 `).all(
                     conversationId
                 );
+
+            const messages =
+                messageRows.map(
+                    function (message) {
+                        return {
+                            id:
+                                message.id,
+
+                            conversation_id:
+                                message.conversation_id,
+
+                            sender_id:
+                                message.sender_id,
+
+                            content:
+                                message.content,
+
+                            image_url:
+                                message.image_url,
+
+                            shared_post_id:
+                                message.shared_post_id,
+
+                            is_read:
+                                message.is_read,
+
+                            created_at:
+                                message.created_at,
+
+                            sender_username:
+                                message.sender_username,
+
+                            sender_avatar:
+                                message.sender_avatar,
+
+                            shared_post:
+                                message.shared_post_id &&
+                                message.shared_post_id_value
+                                    ? {
+                                        id:
+                                            message.shared_post_id_value,
+
+                                        user_id:
+                                            message.shared_post_user_id,
+
+                                        content:
+                                            message.shared_post_content || "",
+
+                                        image_url:
+                                            message.shared_post_image_url || "",
+
+                                        video_url:
+                                            message.shared_post_video_url || "",
+
+                                        created_at:
+                                            message.shared_post_created_at,
+
+                                        username:
+                                            message.shared_post_username,
+
+                                        avatar:
+                                            message.shared_post_avatar || ""
+                                    }
+                                    : null
+                        };
+                    }
+                );
+
+            const messageIds = messages.map(message => Number(message.id)).filter(Boolean);
+            if (messageIds.length) {
+                const placeholders = messageIds.map(() => "?").join(",");
+                const reactionRows = db.prepare(`
+                    SELECT message_id, emoji, COUNT(*) AS count,
+                        MAX(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS mine
+                    FROM message_reactions
+                    WHERE message_id IN (${placeholders})
+                    GROUP BY message_id, emoji
+                `).all(userId, ...messageIds);
+                const reactionsByMessage = new Map();
+                reactionRows.forEach(row => {
+                    if (!reactionsByMessage.has(Number(row.message_id))) {
+                        reactionsByMessage.set(Number(row.message_id), []);
+                    }
+                    reactionsByMessage.get(Number(row.message_id)).push({
+                        emoji: row.emoji,
+                        count: Number(row.count),
+                        mine: Boolean(row.mine)
+                    });
+                });
+                messages.forEach(message => {
+                    message.reactions = reactionsByMessage.get(Number(message.id)) || [];
+                });
+            }
 
             return res.json({
                 success: true,
@@ -2535,14 +3054,75 @@ app.get(
 );
 
 // ======================================================
-// DM - SEND TEXT
+// DM - TOGGLE MESSAGE REACTION
+// ======================================================
+
+app.post("/api/messages/:messageId/reaction", function (req, res) {
+    const messageId = Number(req.params.messageId);
+    const userId = Number(req.body.userId);
+    const emoji = typeof req.body.emoji === "string" ? req.body.emoji : "";
+    const allowedEmojis = ["❤️", "👍", "😂", "😮", "😢", "🔥"];
+
+    if (!messageId || !userId || !allowedEmojis.includes(emoji)) {
+        return res.status(400).json({ success: false, message: "Choose a valid reaction." });
+    }
+
+    try {
+        const message = db.prepare(`
+            SELECT messages.id, conversations.user1_id, conversations.user2_id
+            FROM messages JOIN conversations ON conversations.id = messages.conversation_id
+            WHERE messages.id = ?
+        `).get(messageId);
+        if (!message) return res.status(404).json({ success: false, message: "Message not found." });
+        if (Number(message.user1_id) !== userId && Number(message.user2_id) !== userId) {
+            return res.status(403).json({ success: false, message: "You cannot react to this message." });
+        }
+
+        const existing = db.prepare(
+            "SELECT emoji FROM message_reactions WHERE message_id = ? AND user_id = ?"
+        ).get(messageId, userId);
+        if (existing && existing.emoji === emoji) {
+            db.prepare("DELETE FROM message_reactions WHERE message_id = ? AND user_id = ?").run(messageId, userId);
+        } else {
+            db.prepare(`
+                INSERT INTO message_reactions (message_id, user_id, emoji) VALUES (?, ?, ?)
+                ON CONFLICT(message_id, user_id) DO UPDATE SET emoji = excluded.emoji, created_at = CURRENT_TIMESTAMP
+            `).run(messageId, userId, emoji);
+        }
+
+        const reactions = db.prepare(`
+            SELECT emoji, COUNT(*) AS count,
+                MAX(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS mine
+            FROM message_reactions WHERE message_id = ? GROUP BY emoji
+        `).all(userId, messageId).map(row => ({
+            emoji: row.emoji,
+            count: Number(row.count),
+            mine: Boolean(row.mine)
+        }));
+        return res.json({ success: true, reactions });
+    } catch (error) {
+        console.error("MESSAGE REACTION ERROR:", error);
+        return res.status(500).json({ success: false, message: "Could not save this reaction." });
+    }
+});
+
+// ======================================================
+// DM - SEND TEXT / SHARED POST
 // ======================================================
 
 app.post(
     "/api/messages",
     function (req, res) {
+
+        // FIX:
+        // Normal messages use userId.
+        // Share modal uses senderId.
+        // Accept both so both systems work.
         const userId =
-            Number(req.body.userId);
+            Number(
+                req.body.userId ||
+                req.body.senderId
+            );
 
         const recipientId =
             Number(req.body.recipientId);
@@ -2552,10 +3132,25 @@ app.post(
                 ? req.body.content.trim()
                 : "";
 
+        const sharedPostId =
+            req.body.sharedPostId
+                ? Number(req.body.sharedPostId)
+                : null;
+
         if (
             !userId ||
-            !recipientId ||
-            !content
+            !recipientId
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Missing user information."
+            });
+        }
+
+        if (
+            !content &&
+            !sharedPostId
         ) {
             return res.status(400).json({
                 success: false,
@@ -2609,6 +3204,23 @@ app.post(
                 });
             }
 
+            let sharedPost = null;
+
+            if (sharedPostId) {
+                sharedPost =
+                    getSharedPost(
+                        sharedPostId
+                    );
+
+                if (!sharedPost) {
+                    return res.status(404).json({
+                        success: false,
+                        message:
+                            "Shared post not found."
+                    });
+                }
+            }
+
             const conversation =
                 createConversation(
                     userId,
@@ -2622,16 +3234,18 @@ app.post(
                         sender_id,
                         content,
                         image_url,
+                        shared_post_id,
                         is_read
                     )
-                    VALUES (?, ?, ?, '', 0)
+                    VALUES (?, ?, ?, '', ?, 0)
                 `).run(
                     conversation.id,
                     userId,
-                    content
+                    content,
+                    sharedPostId
                 );
 
-            const message =
+            const messageRow =
                 db.prepare(`
                     SELECT
                         messages.id,
@@ -2639,6 +3253,7 @@ app.post(
                         messages.sender_id,
                         messages.content,
                         messages.image_url,
+                        messages.shared_post_id,
                         messages.is_read,
                         messages.created_at,
 
@@ -2655,6 +3270,12 @@ app.post(
                 `).get(
                     result.lastInsertRowid
                 );
+
+            const message = {
+                ...messageRow,
+                shared_post:
+                    sharedPost
+            };
 
             return res.json({
                 success: true,
@@ -2812,9 +3433,10 @@ app.post(
                         sender_id,
                         content,
                         image_url,
+                        shared_post_id,
                         is_read
                     )
-                    VALUES (?, ?, '', ?, 0)
+                    VALUES (?, ?, '', ?, NULL, 0)
                 `).run(
                     conversation.id,
                     userId,
@@ -2829,6 +3451,7 @@ app.post(
                         messages.sender_id,
                         messages.content,
                         messages.image_url,
+                        messages.shared_post_id,
                         messages.is_read,
                         messages.created_at,
 
@@ -2850,8 +3473,10 @@ app.post(
                 success: true,
                 conversationId:
                     conversation.id,
-                message:
-                    message
+                message: {
+                    ...message,
+                    shared_post: null
+                }
             });
 
         } catch (error) {
