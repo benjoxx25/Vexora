@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080b10">
+    <title>Vexora | Search</title>
+    <link rel="stylesheet" href="messages.css">
+    <link rel="stylesheet" href="glass-theme.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Main navigation">
+            <a class="brand" href="dashboard.html"><img src="images/logo.png" alt="Vexora"><span>Vexora</span></a>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html"><span class="nav-icon">⌂</span><span>Home</span></a>
+                <a href="search.html" class="active" aria-current="page"><span class="nav-icon">⌕</span><span>Search</span></a>
+                <a href="notifications.html"><span class="nav-icon">♡</span><span>Activity</span></a>
+                <a href="messages.html"><span class="nav-icon">✉</span><span>Messages</span></a>
+                <a href="profile.html"><span class="nav-icon">♙</span><span>Profile</span></a>
+            </nav>
+            <div class="sidebar-bottom"><a href="dashboard.html"><span class="nav-icon">⚙</span><span>Settings</span></a><a href="index.html" id="logoutButton"><span class="nav-icon">⇥</span><span>Log out</span></a></div>
+        </aside>
+        <main class="main search-main">
+            <header class="topbar"><div><p class="eyebrow">DISCOVER YOUR PEOPLE</p><h1>Search</h1><p>Find people, ideas and new conversations.</p></div><a class="profile-link" href="profile.html">Open profile <span>↗</span></a></header>
+            <section class="search-hero glass-follow">
+                <div class="search-hero-copy"><span class="search-orbit">⌕</span><div><p class="eyebrow">VEXORA DISCOVER</p><h2>Who are you looking for?</h2><p>Search usernames and open a profile in one tap.</p></div></div>
+                <label class="search-field" for="peopleSearch"><span>⌕</span><input id="peopleSearch" type="search" placeholder="Search username..." autocomplete="off" autofocus><kbd>⌘ K</kbd></label>
+            </section>
+            <section class="search-results-shell"><div class="search-results-heading"><div><p class="eyebrow">PEOPLE</p><h2 id="resultsTitle">Suggested for you</h2></div><span id="resultsCount"></span></div><div id="peopleResults" class="people-results"><div class="search-loading">Start typing to discover people.</div></div></section>
+        </main>
+    </div>
+    <script src="glass-effects.js"></script>
+    <script src="navigation.js"></script>
+    <script src="search.js"></script>
+</body>
+</html>
