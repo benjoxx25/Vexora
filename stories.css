@@ -1,0 +1,103 @@
+.vex-story-strip {
+    min-width: 0;
+    padding: 16px 17px 13px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 22px;
+    background: linear-gradient(135deg,rgba(23,29,41,.94),rgba(16,20,29,.88));
+    box-shadow: 0 16px 42px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.045);
+    overflow: hidden;
+    animation: vexStoriesIn .42s cubic-bezier(.2,.8,.2,1) both;
+}
+.vex-story-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:13px; }
+.vex-story-heading > div { display:flex; align-items:baseline; gap:9px; min-width:0; }
+.vex-story-heading strong { color:#f3f6fb; font-size:12px; letter-spacing:-.02em; }
+.vex-story-heading > div > span { color:#7e899c; font-size:9px; }
+.vex-story-live { display:flex; align-items:center; gap:5px; color:#8692a7; font-size:8px; font-weight:800; letter-spacing:.1em; }
+.vex-story-live::first-letter { color:#72e2a4; }
+.vex-story-rail { display:flex; align-items:flex-start; gap:15px; overflow-x:auto; padding:3px 2px 4px; scrollbar-width:none; overscroll-behavior-inline:contain; }
+.vex-story-rail::-webkit-scrollbar { display:none; }
+.vex-story-create,.vex-story-person { display:flex; flex:0 0 66px; min-width:66px; flex-direction:column; align-items:center; gap:7px; padding:0; border:0; background:transparent; color:#aeb8ca; cursor:pointer; }
+.vex-story-create > span:last-child,.vex-story-name { width:70px; overflow:hidden; color:#aab4c4; font-size:9px; font-weight:650; text-align:center; text-overflow:ellipsis; white-space:nowrap; }
+.vex-story-avatar { position:relative; display:grid; place-items:center; width:58px; height:58px; flex:0 0 58px; padding:3px; border-radius:50%; background:conic-gradient(from 20deg,#ffd27b,#ff668e,#b26eff,#6e8aff,#ffd27b); transition:transform .24s cubic-bezier(.2,.8,.2,1),filter .24s ease; }
+.vex-story-avatar::before { content:""; position:absolute; inset:3px; z-index:0; border:2px solid #151b26; border-radius:50%; }
+.vex-story-avatar > span { position:relative; z-index:1; display:grid; place-items:center; width:100%; height:100%; border:2px solid #171d29; border-radius:50%; background:linear-gradient(145deg,#6c83e9,#a06fcd); background-position:center; background-size:cover; color:#fff; font-size:17px; font-weight:800; }
+.vex-story-avatar > span.has-image { color:transparent; }
+.vex-story-avatar > i { position:absolute; z-index:2; right:-1px; bottom:-1px; display:grid; place-items:center; width:21px; height:21px; border:2px solid #141a24; border-radius:50%; background:#7f9cff; color:#fff; font-size:14px; font-style:normal; font-weight:600; }
+.vex-story-person .vex-story-avatar { box-shadow:0 4px 17px rgba(176,102,239,.14); }
+.vex-story-person:hover .vex-story-avatar,.vex-story-create:hover .vex-story-avatar { transform:translateY(-2px) scale(1.045); filter:brightness(1.12); }
+.vex-story-create .vex-story-avatar { background:rgba(255,255,255,.16); }
+.vex-story-create .vex-story-avatar::before { border-color:#151b26; }
+.vex-story-create .vex-story-avatar > span { background:#252d3b; }
+.vex-story-create.has-active-story .vex-story-avatar { background:conic-gradient(from 20deg,#ffd27b,#ff668e,#b26eff,#6e8aff,#ffd27b); }
+.vex-stories-loading { align-self:center; min-width:170px; padding:5px 0 14px; color:#778398; font-size:9px; line-height:1.5; }
+.vex-story-modal,.vex-story-viewer { position:fixed; inset:0; z-index:5000; display:grid; place-items:center; padding:20px; background:rgba(4,7,13,.76); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px); animation:vexStoryFade .2s ease both; }
+.vex-story-modal[hidden],.vex-story-viewer[hidden] { display:none !important; }
+.vex-story-composer { position:relative; width:min(450px,100%); max-height:min(90dvh,780px); overflow-y:auto; padding:30px; border:1px solid rgba(255,255,255,.12); border-radius:26px; background:linear-gradient(145deg,#1a2130,#111720); box-shadow:0 35px 110px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.07); animation:vexStoryRise .32s cubic-bezier(.2,.8,.2,1) both; }
+.vex-story-close,.vex-story-viewer-card header > button { display:grid; place-items:center; width:38px; height:38px; border:1px solid rgba(255,255,255,.09); border-radius:12px; background:rgba(255,255,255,.06); color:#cbd3e0; cursor:pointer; font-size:22px; transition:background .2s ease,transform .2s ease; }
+.vex-story-close { position:absolute; top:17px; right:17px; }
+.vex-story-close:hover,.vex-story-viewer-card header > button:hover { transform:rotate(5deg); background:rgba(255,255,255,.12); }
+.vex-story-kicker { margin:2px 50px 8px 0; color:#a8baff; font-size:9px; font-weight:800; letter-spacing:.14em; }
+.vex-story-composer h2 { margin:0; color:#f5f7fc; font-size:24px; letter-spacing:-.06em; }
+.vex-story-help { margin:8px 0 22px; color:#929db0; font-size:11px; line-height:1.65; }
+.vex-story-text-label { display:block; margin-bottom:7px; color:#bbc4d3; font-size:10px; font-weight:750; }
+.vex-story-composer textarea { width:100%; min-height:96px; resize:vertical; padding:12px 13px; border:1px solid rgba(255,255,255,.1); border-radius:14px; outline:0; background:rgba(255,255,255,.045); color:#f3f6fb; font:inherit; font-size:12px; line-height:1.55; transition:border-color .2s ease,box-shadow .2s ease; }
+.vex-story-composer textarea:focus { border-color:rgba(124,156,255,.55); box-shadow:0 0 0 4px rgba(124,156,255,.1); }
+.vex-story-upload { display:flex; align-items:center; gap:11px; min-height:59px; margin-top:12px; padding:9px 12px; border:1px dashed rgba(144,164,219,.32); border-radius:14px; background:rgba(124,156,255,.055); color:#dce3f0; cursor:pointer; transition:background .2s ease,border-color .2s ease; }
+.vex-story-upload:hover { border-color:rgba(144,164,255,.6); background:rgba(124,156,255,.1); }
+.vex-story-upload > span:first-child { display:grid; place-items:center; width:34px; height:34px; border-radius:11px; background:rgba(124,156,255,.16); color:#b9c9ff; font-size:21px; }
+.vex-story-upload > span:last-child { display:flex; flex-direction:column; gap:4px; }
+.vex-story-upload strong { font-size:10px; }
+.vex-story-upload small { color:#7f8b9d; font-size:9px; }
+.vex-story-preview { max-height:250px; margin-top:12px; overflow:hidden; border:1px solid rgba(255,255,255,.09); border-radius:14px; background:#0b0f16; }
+.vex-story-preview[hidden] { display:none !important; }
+.vex-story-preview img,.vex-story-preview video { display:block; width:100%; max-height:250px; object-fit:contain; }
+.vex-story-form-bottom { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:15px; }
+.vex-story-form-bottom > span { color:#78859a; font-size:9px; }
+.vex-story-form-bottom button { min-height:42px; padding:0 16px; border:0; border-radius:13px; background:linear-gradient(135deg,#698cff,#9a70f2); color:#fff; cursor:pointer; font-size:11px; font-weight:800; box-shadow:0 12px 28px rgba(105,140,255,.22); transition:transform .2s ease,filter .2s ease; }
+.vex-story-form-bottom button:hover { transform:translateY(-2px); filter:brightness(1.08); }
+.vex-story-form-bottom button:disabled { opacity:.65; cursor:wait; }
+.vex-story-error { min-height:14px; margin:9px 0 0; color:#ff9cab; font-size:10px; }
+.vex-story-viewer-card { position:relative; display:flex; width:min(420px,100%); height:min(780px,90dvh); flex-direction:column; overflow:hidden; border:1px solid rgba(255,255,255,.16); border-radius:24px; background:#10141d; box-shadow:0 40px 130px rgba(0,0,0,.6); animation:vexStoryRise .28s cubic-bezier(.2,.8,.2,1) both; }
+.vex-story-progress { position:absolute; z-index:5; top:12px; right:12px; left:12px; height:3px; overflow:hidden; border-radius:9px; background:rgba(255,255,255,.3); }
+.vex-story-progress span { display:block; width:100%; height:100%; transform-origin:left center; background:#fff; }
+@keyframes vexStoryProgress { to { transform:scaleX(0); } }
+.vex-story-viewer-card header { position:absolute; z-index:4; top:22px; right:12px; left:12px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.vex-story-viewer-user { display:flex; align-items:center; gap:9px; min-width:0; }
+.vex-story-viewer-user > span { display:grid; place-items:center; width:36px; height:36px; border:2px solid rgba(255,255,255,.8); border-radius:50%; background:linear-gradient(135deg,#698cff,#9a70f2); background-position:center; background-size:cover; color:#fff; font-size:12px; font-weight:800; }
+.vex-story-viewer-user > span.has-image { color:transparent; }
+.vex-story-viewer-user > div { display:flex; min-width:0; flex-direction:column; gap:3px; }
+.vex-story-viewer-user strong { overflow:hidden; color:#fff; font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+.vex-story-viewer-user small { color:rgba(255,255,255,.74); font-size:9px; }
+.vex-story-viewer-card header > button { width:34px; height:34px; border:0; background:rgba(0,0,0,.24); color:#fff; }
+.vex-story-viewer-actions { display:flex; align-items:center; gap:5px; }
+.vex-story-viewer-actions button { display:grid; place-items:center; width:34px; height:34px; border:1px solid rgba(255,255,255,.12); border-radius:50%; background:rgba(5,8,12,.42); color:#fff; cursor:pointer; font-size:16px; backdrop-filter:blur(10px); transition:transform .2s ease,background .2s ease; }
+.vex-story-viewer-actions button:hover { transform:translateY(-2px) scale(1.04); background:rgba(255,255,255,.2); }
+.vex-story-viewer-actions button[hidden] { display:none !important; }
+.vex-story-viewer-actions button:last-child { font-size:20px; }
+.vex-story-viewer-content { position:relative; display:flex; flex:1; align-items:center; justify-content:center; overflow:hidden; background:radial-gradient(circle at 20% 20%,rgba(126,143,255,.24),transparent 40%),linear-gradient(155deg,#29253e,#111823 65%,#141d27); }
+.vex-story-viewer-content img,.vex-story-viewer-content video { display:block; width:100%; height:100%; object-fit:cover; }
+.vex-story-viewer-content p { position:absolute; right:14px; bottom:18px; left:14px; margin:0; padding:12px 14px; border:1px solid rgba(255,255,255,.14); border-radius:15px; background:rgba(8,11,16,.55); color:#fff; font-size:13px; font-weight:650; line-height:1.55; text-align:center; text-shadow:0 1px 4px #000; backdrop-filter:blur(12px); }
+.vex-story-next { position:absolute; z-index:3; top:50%; right:12px; display:grid; place-items:center; width:38px; height:44px; transform:translateY(-50%); border:1px solid rgba(255,255,255,.2); border-radius:13px; background:rgba(5,8,12,.38); color:#fff; cursor:pointer; font-size:30px; transition:background .2s ease; }
+.vex-story-next:hover { background:rgba(5,8,12,.68); }
+body.vex-story-modal-open { overflow:hidden; }
+@keyframes vexStoriesIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@keyframes vexStoryFade { from { opacity:0; } to { opacity:1; } }
+@keyframes vexStoryRise { from { opacity:0; transform:translateY(12px) scale(.98); } to { opacity:1; transform:none; } }
+@media(max-width:700px) {
+    .vex-story-strip { margin-bottom:0; padding:13px 12px 11px; border-radius:19px; }
+    .vex-story-heading { margin-bottom:11px; }
+    .vex-story-rail { gap:12px; }
+    .vex-story-create,.vex-story-person { flex-basis:61px; min-width:61px; }
+    .vex-story-avatar { width:54px; height:54px; flex-basis:54px; }
+    .vex-story-create > span:last-child,.vex-story-name { width:64px; font-size:8px; }
+    .vex-story-modal,.vex-story-viewer { padding:0; }
+    .vex-story-composer { width:100%; max-height:100dvh; min-height:100dvh; padding:calc(24px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); border:0; border-radius:0; }
+    .vex-story-viewer-card { width:100%; height:100dvh; max-height:100dvh; border:0; border-radius:0; }
+    .vex-story-viewer-card header { top:calc(22px + env(safe-area-inset-top)); }
+    .vex-story-viewer-actions { gap:4px; }
+    .vex-story-viewer-actions button { width:36px; height:36px; }
+}
+@media(prefers-reduced-motion:reduce) {
+    .vex-story-strip,.vex-story-composer,.vex-story-viewer-card,.vex-story-modal,.vex-story-viewer { animation:none !important; }
+    .vex-story-avatar,.vex-story-create,.vex-story-person { transition:none !important; }
+}
