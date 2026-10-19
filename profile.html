@@ -10,11 +10,15 @@
 
     <link rel="stylesheet" href="profile.css">
 
+    <link rel="stylesheet" href="glass-theme.css">
+
+    <link rel="stylesheet" href="profile-modern.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
 
@@ -45,18 +49,18 @@
                 Home
             </a>
 
-            <a href="#">
+            <a href="search.html">
                 <span>⌕</span>
                 Explore
             </a>
 
-            <a href="#">
+            <a href="notifications.html">
                 <span>♡</span>
                 Notifications
-                <b class="notification-number">3</b>
+                <b class="notification-number" id="profileNotificationNumber" hidden>0</b>
             </a>
 
-            <a href="#">
+            <a href="messages.html">
                 <span>✉</span>
                 Messages
             </a>
@@ -79,7 +83,7 @@
 
         <div class="sidebar-bottom">
 
-            <a href="#">
+            <a href="dashboard.html#settings">
                 ⚙ Settings
             </a>
 
@@ -190,6 +194,7 @@
                             >
                                 Edit profile
                             </button>
+                            <button type="button" class="edit-profile profile-share-profile" id="shareProfileButton" aria-label="Share profile">↗ Share</button>
 
                         </div>
 
@@ -220,30 +225,15 @@
                             </div>
 
 
-                            <div>
+                            <button type="button" class="profile-stat-link" id="openFollowers" aria-label="Open followers">
+                                <strong id="followerCount">0</strong>
+                                <span>Followers</span>
+                            </button>
 
-                                <strong id="followerCount">
-                                    0
-                                </strong>
-
-                                <span>
-                                    Followers
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong id="followingCount">
-                                    0
-                                </strong>
-
-                                <span>
-                                    Following
-                                </span>
-
-                            </div>
+                            <button type="button" class="profile-stat-link" id="openFollowing" aria-label="Open following">
+                                <strong id="followingCount">0</strong>
+                                <span>Following</span>
+                            </button>
 
 
                         </div>
@@ -282,6 +272,16 @@
         </div>
 
     </main>
+
+    <div class="relationships-modal" id="relationshipsModal" hidden>
+        <section class="relationships-box" role="dialog" aria-modal="true" aria-labelledby="relationshipsTitle">
+            <header class="relationships-header">
+                <div><p>YOUR COMMUNITY</p><h2 id="relationshipsTitle">Followers</h2></div>
+                <button type="button" id="closeRelationships" aria-label="Close">×</button>
+            </header>
+            <div class="relationships-list" id="relationshipsList" aria-live="polite"></div>
+        </section>
+    </div>
 
 
     <!-- EDIT PROFILE MODAL -->
@@ -382,6 +382,8 @@
     </div>
 
 
+    <script src="glass-effects.js" defer></script>
+    <script src="navigation.js" defer></script>
     <script src="profile.js" defer></script>
 
 </body>
