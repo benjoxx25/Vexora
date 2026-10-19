@@ -245,6 +245,25 @@ if (!hasImageUrlColumn) {
     `).run();
 }
 
+// Message reactions (one reaction per user and message)
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS message_reactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        message_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        emoji TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(message_id, user_id),
+        FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+`).run();
+
+db.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_message_reactions_message
+    ON message_reactions(message_id)
+`).run();
+
 
 // =========================
 // MESSAGE INDEXES
@@ -273,6 +292,28 @@ db.prepare(`
 db.prepare(`
     CREATE INDEX IF NOT EXISTS idx_conversations_user2
     ON conversations(user2_id)
+`).run();
+
+// =========================
+// STORIES (24 HOUR LIFETIME)
+// =========================
+
+db.prepare(`
+    CREATE TABLE IF NOT EXISTS stories (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        content TEXT NOT NULL DEFAULT '',
+        image_url TEXT DEFAULT '',
+        video_url TEXT DEFAULT '',
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        expires_at DATETIME NOT NULL DEFAULT (datetime('now', '+24 hours')),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+`).run();
+
+db.prepare(`
+    CREATE INDEX IF NOT EXISTS idx_stories_user_expiry
+    ON stories(user_id, expires_at)
 `).run();
 
 
