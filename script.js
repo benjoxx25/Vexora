@@ -6,79 +6,92 @@ const closeAuth = document.getElementById("closeAuth");
 const loginButton = document.querySelector(".login-btn");
 const signupButton = document.querySelector(".signup-btn");
 const getStarted = document.querySelector(".primary-btn");
+const exploreButton = document.querySelector(".secondary-btn");
 
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
+
+function openAuth(formToShow) {
+    if (!authOverlay || !loginForm || !registerForm) {
+        return;
+    }
+
+    authOverlay.classList.add("active");
+    loginForm.classList.toggle("hidden", formToShow !== loginForm);
+    registerForm.classList.toggle("hidden", formToShow !== registerForm);
+}
 
 
 // ==========================
 // OPEN LOGIN
 // ==========================
 
-loginButton.addEventListener("click", () => {
-    authOverlay.classList.add("active");
-
-    loginForm.classList.remove("hidden");
-    registerForm.classList.add("hidden");
-});
+if (loginButton) {
+    loginButton.addEventListener("click", () => openAuth(loginForm));
+}
 
 
 // ==========================
 // OPEN SIGN UP
 // ==========================
 
-signupButton.addEventListener("click", () => {
-    authOverlay.classList.add("active");
-
-    registerForm.classList.remove("hidden");
-    loginForm.classList.add("hidden");
-});
+if (signupButton) {
+    signupButton.addEventListener("click", () => openAuth(registerForm));
+}
 
 
 // ==========================
 // GET STARTED
 // ==========================
 
-getStarted.addEventListener("click", () => {
-    authOverlay.classList.add("active");
+if (getStarted) {
+    getStarted.addEventListener("click", () => openAuth(registerForm));
+}
 
-    registerForm.classList.remove("hidden");
-    loginForm.classList.add("hidden");
-});
+if (exploreButton) {
+    exploreButton.addEventListener("click", () => {
+        document.getElementById("preview")?.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    });
+}
 
 
 // ==========================
 // SWITCH LOGIN / SIGN UP
 // ==========================
 
-showRegister.addEventListener("click", () => {
-    loginForm.classList.add("hidden");
-    registerForm.classList.remove("hidden");
-});
+if (showRegister) {
+    showRegister.addEventListener("click", () => openAuth(registerForm));
+}
 
-showLogin.addEventListener("click", () => {
-    registerForm.classList.add("hidden");
-    loginForm.classList.remove("hidden");
-});
+if (showLogin) {
+    showLogin.addEventListener("click", () => openAuth(loginForm));
+}
 
 
 // ==========================
 // CLOSE
 // ==========================
 
-closeAuth.addEventListener("click", () => {
-    authOverlay.classList.remove("active");
-});
+if (closeAuth) {
+    closeAuth.addEventListener("click", () => authOverlay.classList.remove("active"));
+}
 
-authOverlay.addEventListener("click", (event) => {
-    if (event.target === authOverlay) {
-        authOverlay.classList.remove("active");
-    }
-});
+if (authOverlay) {
+    authOverlay.addEventListener("click", (event) => {
+        if (event.target === authOverlay) {
+            authOverlay.classList.remove("active");
+        }
+    });
+}
 
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-        authOverlay.classList.remove("active");
+        if (authOverlay) {
+            authOverlay.classList.remove("active");
+        }
     }
 });
 
@@ -114,7 +127,7 @@ document.querySelectorAll(".show-password").forEach((button) => {
 const registerButton =
     document.querySelector("#registerForm .auth-submit");
 
-registerButton.addEventListener("click", async () => {
+if (registerButton) registerButton.addEventListener("click", async () => {
 
     const username =
         document.getElementById("registerUsername").value.trim();
@@ -215,7 +228,7 @@ registerButton.addEventListener("click", async () => {
 const loginSubmitButton =
     document.querySelector("#loginForm .auth-submit");
 
-loginSubmitButton.addEventListener("click", async () => {
+if (loginSubmitButton) loginSubmitButton.addEventListener("click", async () => {
 
     const email =
         document.getElementById("loginEmail").value.trim();
