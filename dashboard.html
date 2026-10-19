@@ -1,645 +1,603 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-```
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Vexora — Home</title>
+    <title>Vexora — Home</title>
 
-<link rel="stylesheet" href="dashboard.css">
+    <link
+        rel="stylesheet"
+        href="dashboard.css"
+    >
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="stylesheet"
+        href="glass-theme.css"
+    >
 
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
->
-```
+    <link
+        rel="stylesheet"
+        href="dashboard-modern.css"
+    >
+
+    <link rel="stylesheet" href="stories.css">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
 </head>
 
+
 <body>
 
-<!-- =========================
-     SIDEBAR
-========================= -->
+
+<!-- =========================================================
+     DESKTOP SIDEBAR
+========================================================= -->
 
 <aside class="sidebar">
 
-```
-<div class="brand">
+    <div class="brand">
 
-    <img
-        src="images/logo.png"
-        alt="Vexora"
+        <img
+            src="images/logo.png"
+            alt="Vexora"
+        >
+
+        <span>
+            Vexora
+        </span>
+
+    </div>
+
+
+    <nav>
+
+        <a
+            href="dashboard.html"
+            class="active"
+        >
+
+            <span>
+                ⌂
+            </span>
+
+            Home
+
+        </a>
+
+
+        <a
+            href="search.html"
+            id="searchNavButton"
+        >
+
+            <span>
+                ⌕
+            </span>
+
+            Search
+
+        </a>
+
+
+        <a
+            href="notifications.html"
+            id="notificationsNavButton"
+        >
+
+            <span>
+                ♡
+            </span>
+
+            Notifications
+
+            <span
+                id="notificationBadge"
+                class="notification-badge"
+                style="display:none;"
+            >
+                0
+            </span>
+
+        </a>
+
+
+        <a href="messages.html">
+
+            <span>
+                ✉
+            </span>
+
+            Messages
+
+        </a>
+
+
+        <a href="profile.html">
+
+            <span>
+                ♙
+            </span>
+
+            Profile
+
+        </a>
+
+    </nav>
+
+
+    <button
+        class="create-button"
+        id="openPostModal2"
+        type="button"
     >
 
-    <span>Vexora</span>
+        <span>
+            ＋
+        </span>
 
-</div>
+        Create
 
-
-<nav>
-
-    <a href="dashboard.html" class="active">
-
-        <span>⌂</span>
-
-        Home
-
-    </a>
+    </button>
 
 
-    <a href="#" id="searchNavButton">
+    <div class="sidebar-bottom">
 
-        <span>⌕</span>
-
-        Search
-
-    </a>
+        <a href="dashboard.html">
+            ⚙ Settings
+        </a>
 
 
-    <a href="#" id="notificationsNavButton">
-
-        <span>♡</span>
-
-        Notifications
-
-        <span
-            id="notificationBadge"
-            class="notification-badge"
-            style="display:none;"
+        <a
+            href="index.html"
+            id="logoutButton"
         >
-            0
+
+            ⇥ Log out
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================================
+     MOBILE BOTTOM NAVIGATION
+========================================================= -->
+
+<nav
+    class="dashboard-legacy-mobile-nav"
+    id="mobileBottomNav"
+    aria-label="Mobile navigation"
+    hidden
+>
+
+    <a
+        href="dashboard.html"
+        class="mobile-nav-item active"
+        id="mobileHomeButton"
+    >
+
+        <span class="mobile-nav-icon">
+            ⌂
+        </span>
+
+        <span class="mobile-nav-label">
+            Home
         </span>
 
     </a>
 
 
-    <a href="messages.html">
+    <button
+        type="button"
+        class="mobile-nav-item"
+        id="mobileSearchNavButton"
+    >
 
-        <span>✉</span>
+        <span class="mobile-nav-icon">
+            ⌕
+        </span>
 
-        Messages
+        <span class="mobile-nav-label">
+            Search
+        </span>
+
+    </button>
+
+
+    <button
+        type="button"
+        class="mobile-nav-create"
+        id="mobileCreateButton"
+    >
+
+        <span class="mobile-create-icon">
+            ＋
+        </span>
+
+        <span class="mobile-nav-label">
+            Create
+        </span>
+
+    </button>
+
+
+    <button
+        type="button"
+        class="mobile-nav-item"
+        id="mobileNotificationsButton"
+    >
+
+        <span class="mobile-nav-icon mobile-notification-icon">
+
+            ♡
+
+            <span
+                id="mobileNotificationBadge"
+                class="mobile-notification-badge"
+                style="display:none;"
+            >
+                0
+            </span>
+
+        </span>
+
+
+        <span class="mobile-nav-label">
+            Activity
+        </span>
+
+    </button>
+
+
+    <a
+        href="messages.html"
+        class="mobile-nav-item"
+        id="mobileMessagesButton"
+    >
+
+        <span class="mobile-nav-icon">
+            ✉
+        </span>
+
+        <span class="mobile-nav-label">
+            Messages
+        </span>
 
     </a>
 
 
-    <a href="profile.html">
+    <a
+        href="profile.html"
+        class="mobile-nav-item"
+        id="mobileProfileButton"
+    >
 
-        <span>♙</span>
+        <span class="mobile-nav-icon">
+            ♙
+        </span>
 
-        Profile
+        <span class="mobile-nav-label">
+            Profile
+        </span>
 
     </a>
 
 </nav>
 
 
-<button
-    class="create-button"
-    id="openPostModal2"
-    type="button"
->
 
-    <span>＋</span>
-
-    Create
-
-</button>
-
-
-<div class="sidebar-bottom">
-
-    <a href="#">
-
-        ⚙ Settings
-
-    </a>
-
-
-    <a
-        href="index.html"
-        id="logoutButton"
-    >
-
-        ⇥ Log out
-
-    </a>
-
-</div>
-```
-
-</aside>
-
-<!-- =========================
+<!-- =========================================================
      MAIN
-========================= -->
+========================================================= -->
 
 <main class="main">
 
-```
-<!-- TOP BAR -->
+    <header class="topbar">
 
-<header class="topbar">
+        <div>
 
-    <div>
+            <h1>
+                Home
+            </h1>
 
-        <h1>
-            Home
-        </h1>
-
-        <p>
-            Welcome back to Vexora.
-        </p>
-
-    </div>
-
-
-    <div class="top-actions">
-
-        <button
-            class="mobile-search"
-            id="mobileSearchButton"
-            type="button"
-        >
-            ⌕
-        </button>
-
-
-        <button
-            class="profile-button"
-            id="topProfileButton"
-            type="button"
-        >
-
-            <div
-                class="small-avatar"
-                id="topAvatar"
-            >
-                U
-            </div>
-
-
-            <span id="topUsername">
-                User
-            </span>
-
-
-            <small>
-                ▼
-            </small>
-
-        </button>
-
-    </div>
-
-</header>
-
-
-
-
-<!-- =========================
-     CONTENT
-========================== -->
-
-<div class="content">
-
-
-    <!-- FEED -->
-
-    <section class="feed">
-
-
-        <!-- CREATE POST -->
-
-        <div class="create-post">
-
-            <div
-                class="avatar"
-                id="createPostAvatar"
-            >
-                U
-            </div>
-
-
-            <div class="create-post-content">
-
-
-                <button
-                    class="post-input"
-                    id="openPostModal"
-                    type="button"
-                >
-
-                    What's on your mind?
-
-                </button>
-
-
-                <div class="create-post-actions">
-
-
-                    <button
-                        class="create-action"
-                        id="openPhotoModal"
-                        type="button"
-                    >
-
-                        📷 Photo
-
-                    </button>
-
-
-                    <button
-                        class="create-action"
-                        id="openPostModal3"
-                        type="button"
-                    >
-
-                        ✦ Create post
-
-                    </button>
-
-                </div>
-
-            </div>
+            <p>
+                Welcome back to Vexora.
+            </p>
 
         </div>
 
 
-
-
-        <!-- =========================
-             DEMO POST 1
-        ========================== -->
-
-        <article class="post demo-post">
-
-            <div class="post-header">
-
-                <div class="post-user">
-
-                    <div class="post-avatar purple">
-                        A
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            alex.m
-                        </strong>
-
-                        <span>
-                            12 min ago · 🌎
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="more"
-                    type="button"
-                >
-                    •••
-                </button>
-
-            </div>
-
-
-            <div class="post-text">
-
-                Just discovered this place.
-                Definitely coming back. ✦
-
-            </div>
-
-
-            <div class="post-photo photo-one">
-
-                <div>
-
-                    <div class="photo-title">
-                        VEXORA
-                    </div>
-
-                    <div class="photo-subtitle">
-                        Discover more.
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="post-stats">
-
-                <span>
-                    ♡ 248 likes
-                </span>
-
-                <span>
-                    32 comments
-                </span>
-
-            </div>
-
-
-            <div class="post-actions">
-
-                <button
-                    class="like-button"
-                    type="button"
-                >
-
-                    ♡
-
-                    <span>
-                        Like
-                    </span>
-
-                </button>
-
-
-                <button type="button">
-
-                    ♧
-
-                    <span>
-                        Comment
-                    </span>
-
-                </button>
-
-
-                <button type="button">
-
-                    ↗
-
-                    <span>
-                        Share
-                    </span>
-
-                </button>
-
-            </div>
-
-        </article>
-
-
-
-
-        <!-- =========================
-             DEMO POST 2
-        ========================== -->
-
-        <article class="post demo-post">
-
-            <div class="post-header">
-
-                <div class="post-user">
-
-                    <div class="post-avatar blue">
-                        M
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            maria.x
-                        </strong>
-
-                        <span>
-                            1 hour ago
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="more"
-                    type="button"
-                >
-                    •••
-                </button>
-
-            </div>
-
-
-            <div class="post-text">
-
-                New week.
-                New goals.
-                Let's get it. 🔥
-
-            </div>
-
-
-            <div class="post-photo photo-two">
-
-                <div class="quote">
-
-                    KEEP<br>
-                    MOVING.
-
-                </div>
-
-            </div>
-
-
-            <div class="post-stats">
-
-                <span>
-                    ♡ 391 likes
-                </span>
-
-                <span>
-                    47 comments
-                </span>
-
-            </div>
-
-
-            <div class="post-actions">
-
-                <button type="button">
-
-                    ♡
-
-                    <span>
-                        Like
-                    </span>
-
-                </button>
-
-
-                <button type="button">
-
-                    ♧
-
-                    <span>
-                        Comment
-                    </span>
-
-                </button>
-
-
-                <button type="button">
-
-                    ↗
-
-                    <span>
-                        Share
-                    </span>
-
-                </button>
-
-            </div>
-
-        </article>
-
-
-    </section>
-
-
-
-
-    <!-- =========================
-         RIGHT SIDE
-    ========================== -->
-
-    <aside class="right-panel">
-
-
-        <!-- PROFILE CARD -->
-
-        <div class="profile-card">
-
-            <div class="cover"></div>
-
-
-            <div class="profile-card-content">
-
+        <div class="top-actions">
+
+            <button
+                class="mobile-search"
+                id="mobileSearchButton"
+                type="button"
+                aria-label="Search"
+            >
+                ⌕
+            </button>
+
+
+            <button
+                class="profile-button"
+                id="topProfileButton"
+                type="button"
+            >
 
                 <div
-                    class="big-avatar"
-                    id="currentAvatar"
+                    class="small-avatar"
+                    id="topAvatar"
                 >
                     U
                 </div>
 
 
-                <h3 id="currentUsername">
+                <span id="topUsername">
                     User
-                </h3>
+                </span>
 
 
-                <p>
+                <small>
+                    ▼
+                </small>
 
-                    @<span id="currentUsernameTag">user</span>
+            </button>
 
-                </p>
+        </div>
 
-
-                <div class="profile-stats">
-
-
-                    <div>
-
-                        <strong id="followingCount">
-                            0
-                        </strong>
-
-                        <span>
-                            Following
-                        </span>
-
-                    </div>
+    </header>
 
 
-                    <div>
 
-                        <strong id="followerCount">
-                            0
-                        </strong>
+    <div class="content">
 
-                        <span>
-                            Followers
-                        </span>
 
-                    </div>
+        <!-- =================================================
+             FEED
+        ================================================== -->
 
+        <section class="feed">
+
+
+            <section class="vex-story-strip" aria-label="Stories">
+                <div class="vex-story-heading">
+                    <div><strong>Stories</strong><span>Disappear after 24 hours</span></div>
+                    <span class="vex-story-live">● LIVE</span>
                 </div>
+                <div class="vex-story-rail" id="vexStoryRail" aria-live="polite">
+                    <button class="vex-story-create" id="vexCreateStory" type="button">
+                        <span class="vex-story-avatar"><span id="vexStoryCreateAvatar">+</span><i>+</i></span>
+                        <span>Your story</span>
+                    </button>
+                    <span class="vex-stories-loading">Loading stories…</span>
+                </div>
+            </section>
 
+            <!-- CREATE POST -->
 
-                <button
-                    class="view-profile"
-                    id="viewProfileButton"
-                    type="button"
+            <div class="create-post">
+
+                <div
+                    class="avatar"
+                    id="createPostAvatar"
                 >
-
-                    View profile
-
-                </button>
-
-            </div>
-
-        </div>
+                    U
+                </div>
 
 
+                <div class="create-post-content">
+
+                    <button
+                        class="post-input"
+                        id="openPostModal"
+                        type="button"
+                    >
+
+                        What's on your mind?
+
+                    </button>
 
 
-        <!-- =========================
-             REAL USER SUGGESTIONS
-        ========================== -->
+                    <div class="create-post-actions">
 
-        <div class="suggestions">
+                        <button
+                            class="create-action"
+                            id="openPhotoModal"
+                            type="button"
+                        >
 
-            <div class="suggestions-title">
+                            📷 Photo
 
-                <strong>
-                    Suggested for you
-                </strong>
-
-                <a href="#">
-                    See all
-                </a>
-
-            </div>
+                        </button>
 
 
-            <div id="suggestionsList">
+                        <button
+                            class="create-action"
+                            id="openPostModal3"
+                            type="button"
+                        >
 
-                <div class="suggestion-loading">
-                    Loading users...
+                            ✦ Create post
+
+                        </button>
+
+                    </div>
+
                 </div>
 
             </div>
 
 
-        </div>
+
+            <!-- =================================================
+                 POSTS
+                 Existing post structure kept for dashboard.js
+            ================================================== -->
+
+            <div
+                id="feedPosts"
+                class="feed-posts"
+            >
+
+                <!-- POSTS ARE LOADED HERE -->
+
+            </div>
 
 
-    </aside>
+        </section>
 
-</div>
-```
+
+
+        <!-- =================================================
+             RIGHT SIDE
+        ================================================== -->
+
+        <aside class="right-panel">
+
+
+            <div class="profile-card">
+
+                <div class="cover"></div>
+
+
+                <div class="profile-card-content">
+
+                    <div
+                        class="big-avatar"
+                        id="currentAvatar"
+                    >
+                        U
+                    </div>
+
+
+                    <h3 id="currentUsername">
+                        User
+                    </h3>
+
+
+                    <p>
+
+                        @<span id="currentUsernameTag">user</span>
+
+                    </p>
+
+
+                    <div class="profile-stats">
+
+
+                        <div>
+
+                            <strong id="followingCount">
+                                0
+                            </strong>
+
+                            <span>
+                                Following
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong id="followerCount">
+                                0
+                            </strong>
+
+                            <span>
+                                Followers
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <button
+                        class="view-profile"
+                        id="viewProfileButton"
+                        type="button"
+                    >
+
+                        View profile
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SUGGESTIONS
+            ================================================== -->
+
+            <div class="suggestions">
+
+                <div class="suggestions-title">
+
+                    <strong>
+                        Suggested for you
+                    </strong>
+
+
+                    <a href="dashboard.html">
+                        See all
+                    </a>
+
+                </div>
+
+
+                <div id="suggestionsList">
+
+                    <div class="suggestion-loading">
+                        Loading users...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </aside>
+
+    </div>
 
 </main>
 
-<!-- =========================
+
+
+<!-- =========================================================
      NOTIFICATIONS PANEL
-========================= -->
+========================================================= -->
 
 <div
     id="notificationsPanel"
@@ -647,387 +605,393 @@
     style="display:none;"
 >
 
-```
-<div class="notifications-header">
-
-    <div>
-
-        <h2>
-            Notifications
-        </h2>
-
-        <span id="notificationUnreadText">
-            No new notifications
-        </span>
-
-    </div>
-
-
-    <button
-        type="button"
-        id="markAllNotificationsRead"
-    >
-        Mark all as read
-    </button>
-
-</div>
-
-
-<div
-    id="notificationsList"
-    class="notifications-list"
->
-
-    <div class="notifications-empty">
-
-        <div class="notifications-empty-icon">
-            ♡
-        </div>
-
-        <strong>
-            No notifications yet
-        </strong>
-
-        <span>
-            When someone interacts with you, it will appear here.
-        </span>
-
-    </div>
-
-</div>
-```
-
-</div>
-
-<!-- =========================
-     CREATE POST MODAL
-========================= -->
-
-<div
-    class="post-modal"
-    id="postModal"
->
-
-```
-<div class="post-modal-box">
-
-    <button
-        class="close-post-modal"
-        id="closePostModal"
-        type="button"
-    >
-        ×
-    </button>
-
-
-    <h2>
-        Create a post
-    </h2>
-
-
-    <p class="post-modal-subtitle">
-
-        Share something with your Vexora community.
-
-    </p>
-
-
-    <div class="modal-user">
-
-        <div
-            class="avatar"
-            id="modalAvatar"
-        >
-            U
-        </div>
+    <div class="notifications-header">
 
 
         <div>
 
-            <strong id="modalUsername">
-                User
+            <h2>
+                Notifications
+            </h2>
+
+
+            <span id="notificationUnreadText">
+                No new notifications
+            </span>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="markAllNotificationsRead"
+        >
+
+            Mark all as read
+
+        </button>
+
+    </div>
+
+
+
+    <div
+        id="notificationsList"
+        class="notifications-list"
+    >
+
+        <div class="notifications-empty">
+
+            <div class="notifications-empty-icon">
+                ♡
+            </div>
+
+
+            <strong>
+                No notifications yet
             </strong>
 
+
             <span>
-                Public
+                When someone interacts with you,
+                it will appear here.
             </span>
 
         </div>
 
     </div>
 
-
-    <textarea
-        id="postText"
-        placeholder="What's on your mind?"
-        maxlength="500"
-    ></textarea>
-
-
-    <!-- =========================
-         IMAGE UPLOAD
-    ========================== -->
-
-    <input
-        type="file"
-        id="postImageInput"
-        accept="image/jpeg,image/png,image/webp,image/gif"
-        hidden
-    >
-
-
-    <div
-        class="post-image-upload"
-        id="postImageUpload"
-    >
-
-        <button
-            type="button"
-            class="post-image-button"
-            id="choosePostImage"
-        >
-
-            📷 Add photo
-
-        </button>
-
-
-        <span class="post-image-info">
-
-            JPG, PNG, WEBP or GIF
-
-        </span>
-
-    </div>
-
-
-    <!-- =========================
-         IMAGE PREVIEW
-    ========================== -->
-
-    <div
-        class="post-image-preview"
-        id="postImagePreview"
-        style="display:none;"
-    >
-
-        <img
-            id="postImagePreviewImg"
-            src=""
-            alt="Selected image preview"
-        >
-
-
-        <button
-            type="button"
-            class="remove-post-image"
-            id="removePostImage"
-        >
-
-            × Remove
-
-        </button>
-
-    </div>
-
-
-
-
-    <!-- =========================
-         VIDEO UPLOAD
-    ========================== -->
-
-    <input
-        type="file"
-        id="postVideoInput"
-        accept="video/mp4,video/webm,video/ogg"
-        hidden
-    >
-
-
-    <div
-        class="post-video-upload"
-        id="postVideoUpload"
-    >
-
-        <button
-            type="button"
-            class="post-video-button"
-            id="choosePostVideo"
-        >
-
-            🎬 Add video
-
-        </button>
-
-
-        <span class="post-video-info">
-
-            MP4, WEBM or OGG · Max 20 MB
-
-        </span>
-
-    </div>
-
-
-    <!-- =========================
-         VIDEO PREVIEW
-    ========================== -->
-
-    <div
-        class="post-video-preview"
-        id="postVideoPreview"
-        style="display:none;"
-    >
-
-        <video
-            id="postVideoPreviewVideo"
-            controls
-            playsinline
-            preload="metadata"
-        ></video>
-
-
-        <button
-            type="button"
-            class="remove-post-video"
-            id="removePostVideo"
-        >
-
-            × Remove
-
-        </button>
-
-    </div>
-
-
-    <div class="post-modal-bottom">
-
-        <span id="characterCount">
-            0 / 500
-        </span>
-
-
-        <button
-            id="publishPost"
-            type="button"
-        >
-            Publish
-        </button>
-
-    </div>
-
-</div>
-```
-
 </div>
 
-<!-- =========================
-     SEARCH MODAL
-========================= -->
+
+
+<div class="vex-story-modal" id="vexStoryComposer" hidden>
+    <section class="vex-story-composer" role="dialog" aria-modal="true" aria-labelledby="vexStoryComposerTitle">
+        <button class="vex-story-close" type="button" data-close-story aria-label="Close">×</button>
+        <p class="vex-story-kicker">YOUR MOMENT · 24 HOURS</p>
+        <h2 id="vexStoryComposerTitle">Create a story</h2>
+        <p class="vex-story-help">Share a quick photo, video, or thought. It disappears automatically after a day.</p>
+        <label class="vex-story-text-label" for="vexStoryText">Add a caption</label>
+        <textarea id="vexStoryText" maxlength="300" placeholder="What are you up to?" rows="3"></textarea>
+        <label class="vex-story-upload" for="vexStoryFile"><span>＋</span><span><strong>Add a photo or video</strong><small>JPG, PNG, WebP, MP4 or WebM</small></span></label>
+        <input id="vexStoryFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/ogg" hidden>
+        <div class="vex-story-preview" id="vexStoryPreview" hidden></div>
+        <div class="vex-story-form-bottom"><span id="vexStoryCounter">0 / 300</span><button type="button" id="vexPublishStory">Share story <span>↗</span></button></div>
+        <p class="vex-story-error" id="vexStoryError" role="status"></p>
+    </section>
+</div>
+<div class="vex-story-viewer" id="vexStoryViewer" hidden>
+    <section class="vex-story-viewer-card" role="dialog" aria-modal="true" aria-label="Story">
+        <div class="vex-story-progress"><span id="vexStoryProgress"></span></div>
+        <header><div class="vex-story-viewer-user"><span id="vexStoryViewerAvatar"></span><div><strong id="vexStoryViewerName"></strong><small id="vexStoryViewerTime"></small></div></div><div class="vex-story-viewer-actions"><button type="button" id="vexShareStory" aria-label="Share story">↗</button><button type="button" id="vexEditStory" aria-label="Edit your story" hidden>✎</button><button type="button" id="vexDeleteStory" aria-label="Delete your story" hidden>⌫</button><button type="button" data-close-viewer aria-label="Close story">×</button></div></header>
+        <div class="vex-story-viewer-content" id="vexStoryViewerContent"></div>
+        <button class="vex-story-next" id="vexStoryNext" type="button" aria-label="Next story">›</button>
+    </section>
+</div>
+
+<!-- =========================================================
+     CREATE POST MODAL
+========================================================= -->
 
 <div
-    id="searchModal"
-    style="
-        display:none;
-        position:fixed;
-        inset:0;
-        background:rgba(0,0,0,0.45);
-        z-index:9999;
-        align-items:flex-start;
-        justify-content:center;
-        padding-top:90px;
-    "
+    class="post-modal"
+    id="postModal"
 >
 
-```
-<div
-    style="
-        width:420px;
-        max-width:calc(100% - 30px);
-        background:white;
-        border-radius:18px;
-        padding:24px;
-        box-shadow:0 20px 60px rgba(0,0,0,0.2);
-    "
->
-
-    <div
-        style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:18px;
-        "
-    >
-
-        <h2 style="margin:0;">
-            Search Vexora
-        </h2>
+    <div class="post-modal-box">
 
 
         <button
-            id="closeSearchModal"
+            class="close-post-modal"
+            id="closePostModal"
             type="button"
-            style="
-                border:none;
-                background:none;
-                font-size:28px;
-                cursor:pointer;
-            "
+            aria-label="Close"
         >
             ×
         </button>
 
-    </div>
+
+        <h2>
+            Create a post
+        </h2>
 
 
-    <input
-        type="text"
-        id="searchInput"
-        placeholder="Search username..."
-        autocomplete="off"
-        style="
-            width:100%;
-            box-sizing:border-box;
-            padding:13px 15px;
-            border:1px solid #ddd;
-            border-radius:12px;
-            outline:none;
-            font-size:15px;
-            margin-bottom:15px;
-        "
-    >
+        <p class="post-modal-subtitle">
+
+            Share something with your Vexora community.
+
+        </p>
 
 
-    <div id="searchResults">
 
-        <div
-            style="
-                color:#888;
-                text-align:center;
-                padding:20px 0;
-            "
-        >
-            Type a username to search.
+        <div class="modal-user">
+
+            <div
+                class="avatar"
+                id="modalAvatar"
+            >
+                U
+            </div>
+
+
+            <div>
+
+                <strong id="modalUsername">
+                    User
+                </strong>
+
+                <span>
+                    Public
+                </span>
+
+            </div>
+
         </div>
 
+
+
+        <textarea
+            id="postText"
+            placeholder="What's on your mind?"
+            maxlength="500"
+        ></textarea>
+
+
+
+        <!-- IMAGE INPUT -->
+
+        <input
+            type="file"
+            id="postImageInput"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            hidden
+        >
+
+
+        <div
+            class="post-image-upload"
+            id="postImageUpload"
+        >
+
+            <button
+                type="button"
+                class="post-image-button"
+                id="choosePostImage"
+            >
+
+                📷 Add photo
+
+            </button>
+
+
+            <span class="post-image-info">
+
+                JPG, PNG, WEBP or GIF
+
+            </span>
+
+        </div>
+
+
+
+        <!-- IMAGE PREVIEW -->
+
+        <div
+            class="post-image-preview"
+            id="postImagePreview"
+            style="display:none;"
+        >
+
+            <img
+                id="postImagePreviewImg"
+                src=""
+                alt="Selected image preview"
+            >
+
+
+            <button
+                type="button"
+                class="remove-post-image"
+                id="removePostImage"
+            >
+
+                × Remove
+
+            </button>
+
+        </div>
+
+
+
+        <!-- VIDEO INPUT -->
+
+        <input
+            type="file"
+            id="postVideoInput"
+            accept="video/mp4,video/webm,video/ogg"
+            hidden
+        >
+
+
+        <div
+            class="post-video-upload"
+            id="postVideoUpload"
+        >
+
+            <button
+                type="button"
+                class="post-video-button"
+                id="choosePostVideo"
+            >
+
+                🎬 Add video
+
+            </button>
+
+
+            <span class="post-video-info">
+
+                MP4, WEBM or OGG · Max 20 MB
+
+            </span>
+
+        </div>
+
+
+
+        <!-- VIDEO PREVIEW -->
+
+        <div
+            class="post-video-preview"
+            id="postVideoPreview"
+            style="display:none;"
+        >
+
+            <video
+                id="postVideoPreviewVideo"
+                controls
+                playsinline
+                preload="metadata"
+            ></video>
+
+
+            <button
+                type="button"
+                class="remove-post-video"
+                id="removePostVideo"
+            >
+
+                × Remove
+
+            </button>
+
+        </div>
+
+
+
+        <div class="post-modal-bottom">
+
+            <span id="characterCount">
+                0 / 500
+            </span>
+
+
+            <button
+                id="publishPost"
+                type="button"
+            >
+
+                Publish
+
+            </button>
+
+        </div>
+
+
     </div>
 
 </div>
-```
+
+
+
+<!-- =========================================================
+     SEARCH MODAL
+========================================================= -->
+
+<div
+    id="searchModal"
+    class="search-modal"
+    style="display:none;"
+>
+
+    <div class="search-modal-box">
+
+
+        <div class="search-modal-header">
+
+            <h2>
+                Search Vexora
+            </h2>
+
+
+            <button
+                id="closeSearchModal"
+                type="button"
+                aria-label="Close search"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search username..."
+            autocomplete="off"
+        >
+
+
+        <div id="searchResults">
+
+            <div class="search-empty">
+                Type a username to search.
+            </div>
+
+        </div>
+
+
+    </div>
 
 </div>
 
-<script src="dashboard.js" defer></script>
 
-<!-- =========================
+
+<!-- =========================================================
+     DASHBOARD JAVASCRIPT
+========================================================= -->
+
+    <script src="glass-effects.js" defer></script>
+    <script src="navigation.js" defer></script>
+<script src="dashboard.js" defer></script>
+<script src="stories.js" defer></script>
+
+
+
+<!-- =========================================================
      USER DATA + NAVIGATION
-========================= -->
+========================================================= -->
 
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =====================================================
+       USER
+    ====================================================== */
 
     const savedUser =
         localStorage.getItem("vexoraUser");
@@ -1045,6 +1009,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let user;
 
+
     try {
 
         user =
@@ -1052,9 +1017,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     } catch (error) {
 
+        console.error(
+            "Invalid Vexora user data:",
+            error
+        );
+
+
         localStorage.removeItem(
             "vexoraUser"
         );
+
 
         window.location.href =
             "index.html";
@@ -1064,11 +1036,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    if (!user || !user.id || !user.username) {
+    if (
+        !user ||
+        !user.id
+    ) {
 
         localStorage.removeItem(
             "vexoraUser"
         );
+
 
         window.location.href =
             "index.html";
@@ -1076,16 +1052,27 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
 
     }
+
+    user.username = user.username || "User";
 
 
     const username =
         user.username || "User";
 
 
+    const avatar =
+        user.avatar || "";
+
+
+
+    /* =====================================================
+       AVATAR HELPER
+    ====================================================== */
+
     function setAvatar(
         element,
-        avatar,
-        username
+        avatarUrl,
+        usernameValue
     ) {
 
         if (!element) {
@@ -1093,19 +1080,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
 
-        if (avatar) {
+        if (avatarUrl) {
 
-            element.textContent =
-                "";
+            element.textContent = "";
+
 
             element.style.backgroundImage =
-                `url("${avatar}")`;
+                `url("${avatarUrl}")`;
+
 
             element.style.backgroundSize =
                 "cover";
 
+
             element.style.backgroundPosition =
                 "center";
+
 
             element.style.backgroundRepeat =
                 "no-repeat";
@@ -1115,17 +1105,21 @@ document.addEventListener("DOMContentLoaded", function () {
             element.style.backgroundImage =
                 "";
 
+
             element.style.backgroundSize =
                 "";
+
 
             element.style.backgroundPosition =
                 "";
 
+
             element.style.backgroundRepeat =
                 "";
 
+
             element.textContent =
-                (username || "U")
+                (usernameValue || "U")
                     .charAt(0)
                     .toUpperCase();
 
@@ -1134,100 +1128,135 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+
+    /* =====================================================
+       USER ELEMENTS
+    ====================================================== */
+
     const topUsername =
-        document.getElementById("topUsername");
+        document.getElementById(
+            "topUsername"
+        );
 
 
     const topAvatar =
-        document.getElementById("topAvatar");
+        document.getElementById(
+            "topAvatar"
+        );
 
 
     const currentUsername =
-        document.getElementById("currentUsername");
+        document.getElementById(
+            "currentUsername"
+        );
 
 
     const currentUsernameTag =
-        document.getElementById("currentUsernameTag");
+        document.getElementById(
+            "currentUsernameTag"
+        );
 
 
     const currentAvatar =
-        document.getElementById("currentAvatar");
+        document.getElementById(
+            "currentAvatar"
+        );
 
 
     const createPostAvatar =
-        document.getElementById("createPostAvatar");
+        document.getElementById(
+            "createPostAvatar"
+        );
 
 
     const modalAvatar =
-        document.getElementById("modalAvatar");
+        document.getElementById(
+            "modalAvatar"
+        );
 
 
     const modalUsername =
-        document.getElementById("modalUsername");
+        document.getElementById(
+            "modalUsername"
+        );
+
 
 
     if (topUsername) {
+
         topUsername.textContent =
             username;
+
     }
 
 
     setAvatar(
         topAvatar,
-        user.avatar || "",
+        avatar,
         username
     );
 
 
     if (currentUsername) {
+
         currentUsername.textContent =
             username;
+
     }
 
 
     if (currentUsernameTag) {
+
         currentUsernameTag.textContent =
             username;
+
     }
 
 
     setAvatar(
         currentAvatar,
-        user.avatar || "",
+        avatar,
         username
     );
 
 
     setAvatar(
         createPostAvatar,
-        user.avatar || "",
+        avatar,
         username
     );
 
 
     setAvatar(
         modalAvatar,
-        user.avatar || "",
+        avatar,
         username
     );
 
 
     if (modalUsername) {
+
         modalUsername.textContent =
             username;
+
     }
 
 
-    /* =========================
+
+    /* =====================================================
        PROFILE NAVIGATION
-    ========================== */
+    ====================================================== */
 
     const topProfileButton =
-        document.getElementById("topProfileButton");
+        document.getElementById(
+            "topProfileButton"
+        );
 
 
     const viewProfileButton =
-        document.getElementById("viewProfileButton");
+        document.getElementById(
+            "viewProfileButton"
+        );
 
 
     if (topProfileButton) {
@@ -1260,12 +1289,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================
+
+    /* =====================================================
        LOGOUT
-    ========================== */
+    ====================================================== */
 
     const logoutButton =
-        document.getElementById("logoutButton");
+        document.getElementById(
+            "logoutButton"
+        );
 
 
     if (logoutButton) {
@@ -1284,32 +1316,52 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =========================
+
+    /* =====================================================
        SEARCH
-    ========================== */
+    ====================================================== */
 
     const searchModal =
-        document.getElementById("searchModal");
+        document.getElementById(
+            "searchModal"
+        );
 
 
     const searchInput =
-        document.getElementById("searchInput");
+        document.getElementById(
+            "searchInput"
+        );
 
 
     const searchResults =
-        document.getElementById("searchResults");
+        document.getElementById(
+            "searchResults"
+        );
 
 
     const searchNavButton =
-        document.getElementById("searchNavButton");
+        document.getElementById(
+            "searchNavButton"
+        );
 
 
     const mobileSearchButton =
-        document.getElementById("mobileSearchButton");
+        document.getElementById(
+            "mobileSearchButton"
+        );
+
+
+    const mobileSearchNavButton =
+        document.getElementById(
+            "mobileSearchNavButton"
+        );
 
 
     const closeSearchModal =
-        document.getElementById("closeSearchModal");
+        document.getElementById(
+            "closeSearchModal"
+        );
+
 
 
     function openSearch() {
@@ -1325,7 +1377,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (searchInput) {
 
-            searchInput.value = "";
+            searchInput.value =
+                "";
+
 
             searchInput.focus();
 
@@ -1335,13 +1389,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (searchResults) {
 
             searchResults.innerHTML = `
-                <div
-                    style="
-                        color:#888;
-                        text-align:center;
-                        padding:20px 0;
-                    "
-                >
+                <div class="search-empty">
                     Type a username to search.
                 </div>
             `;
@@ -1349,6 +1397,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     }
+
 
 
     function closeSearch() {
@@ -1364,6 +1413,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+
     if (searchNavButton) {
 
         searchNavButton.addEventListener(
@@ -1372,12 +1422,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 event.preventDefault();
 
-                openSearch();
+                window.location.href = "search.html";
 
             }
         );
 
     }
+
 
 
     if (mobileSearchButton) {
@@ -1389,10 +1440,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 openSearch();
 
             }
-
         );
 
     }
+
+
+
+    if (mobileSearchNavButton) {
+
+        mobileSearchNavButton.addEventListener(
+            "click",
+            function () {
+
+                openSearch();
+
+            }
+        );
+
+    }
+
 
 
     if (closeSearchModal) {
@@ -1404,10 +1470,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 closeSearch();
 
             }
-
         );
 
     }
+
 
 
     if (searchModal) {
@@ -1416,18 +1482,149 @@ document.addEventListener("DOMContentLoaded", function () {
             "click",
             function (event) {
 
-                if (event.target === searchModal) {
+                if (
+                    event.target ===
+                    searchModal
+                ) {
 
                     closeSearch();
 
                 }
 
             }
-
         );
 
     }
 
+
+
+    /* =====================================================
+       MOBILE CREATE BUTTON
+    ====================================================== */
+
+    const mobileCreateButton =
+        document.getElementById(
+            "mobileCreateButton"
+        );
+
+
+    const openPostModal =
+        document.getElementById(
+            "openPostModal"
+        );
+
+
+    if (mobileCreateButton) {
+
+        mobileCreateButton.addEventListener(
+            "click",
+            function () {
+
+                if (openPostModal) {
+
+                    openPostModal.click();
+
+                    return;
+
+                }
+
+
+                const desktopCreate =
+                    document.getElementById(
+                        "openPostModal2"
+                    );
+
+
+                if (desktopCreate) {
+
+                    desktopCreate.click();
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       MOBILE NOTIFICATIONS
+    ====================================================== */
+
+    const mobileNotificationsButton =
+        document.getElementById(
+            "mobileNotificationsButton"
+        );
+
+
+    const notificationsNavButton =
+        document.getElementById(
+            "notificationsNavButton"
+        );
+
+
+    if (
+        mobileNotificationsButton &&
+        notificationsNavButton
+    ) {
+
+        mobileNotificationsButton.addEventListener(
+            "click",
+            function () {
+
+                notificationsNavButton.click();
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       MOBILE ACTIVE NAVIGATION
+    ====================================================== */
+
+    const mobileNavItems =
+        document.querySelectorAll(
+            ".mobile-nav-item"
+        );
+
+
+    mobileNavItems.forEach(
+        function (item) {
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    mobileNavItems.forEach(
+                        function (navItem) {
+
+                            navItem.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    item.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+
+    /* =====================================================
+       SEARCH INPUT
+    ====================================================== */
 
     let searchTimeout;
 
@@ -1438,7 +1635,9 @@ document.addEventListener("DOMContentLoaded", function () {
             "input",
             function () {
 
-                clearTimeout(searchTimeout);
+                clearTimeout(
+                    searchTimeout
+                );
 
 
                 const query =
@@ -1447,34 +1646,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (!query) {
 
-                    searchResults.innerHTML = `
-                        <div
-                            style="
-                                color:#888;
-                                text-align:center;
-                                padding:20px 0;
-                            "
-                        >
-                            Type a username to search.
-                        </div>
-                    `;
+                    if (searchResults) {
+
+                        searchResults.innerHTML = `
+                            <div class="search-empty">
+                                Type a username to search.
+                            </div>
+                        `;
+
+                    }
 
                     return;
 
                 }
 
 
-                searchResults.innerHTML = `
-                    <div
-                        style="
-                            color:#888;
-                            text-align:center;
-                            padding:20px 0;
-                        "
-                    >
-                        Searching...
-                    </div>
-                `;
+
+                if (searchResults) {
+
+                    searchResults.innerHTML = `
+                        <div class="search-empty">
+                            Searching...
+                        </div>
+                    `;
+
+                }
+
 
 
                 searchTimeout =
@@ -1486,7 +1683,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 const response =
                                     await fetch(
                                         "/api/users?username=" +
-                                        encodeURIComponent(query)
+                                        encodeURIComponent(
+                                            query
+                                        )
                                     );
 
 
@@ -1504,48 +1703,71 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
 
 
+
                                 let users = [];
 
 
-                                if (Array.isArray(data)) {
+
+                                if (
+                                    Array.isArray(
+                                        data
+                                    )
+                                ) {
 
                                     users = data;
 
                                 } else if (
-                                    Array.isArray(data.users)
+                                    Array.isArray(
+                                        data.users
+                                    )
                                 ) {
 
-                                    users = data.users;
+                                    users =
+                                        data.users;
 
-                                } else if (data.user) {
+                                } else if (
+                                    data.user
+                                ) {
 
-                                    users = [data.user];
+                                    users = [
+                                        data.user
+                                    ];
 
                                 }
 
 
-                                if (users.length === 0) {
 
-                                    searchResults.innerHTML = `
-                                        <div
-                                            style="
-                                                color:#888;
-                                                text-align:center;
-                                                padding:20px 0;
-                                            "
-                                        >
-                                            No users found.
-                                        </div>
-                                    `;
+                                if (
+                                    users.length === 0
+                                ) {
+
+                                    if (searchResults) {
+
+                                        searchResults.innerHTML = `
+                                            <div class="search-empty">
+                                                No users found.
+                                            </div>
+                                        `;
+
+                                    }
 
                                     return;
 
                                 }
 
 
+
+                                if (!searchResults) {
+                                    return;
+                                }
+
+
+
                                 searchResults.innerHTML =
                                     users.map(
-                                        function (foundUser) {
+                                        function (
+                                            foundUser
+                                        ) {
 
                                             const foundUsername =
                                                 foundUser.username ||
@@ -1562,43 +1784,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 foundUser.id;
 
 
+
                                             return `
                                                 <button
                                                     type="button"
                                                     class="vexora-search-result"
                                                     data-user-id="${foundId}"
-                                                    style="
-                                                        width:100%;
-                                                        display:flex;
-                                                        align-items:center;
-                                                        gap:12px;
-                                                        padding:11px;
-                                                        border:none;
-                                                        background:white;
-                                                        border-radius:12px;
-                                                        cursor:pointer;
-                                                        text-align:left;
-                                                        margin-bottom:5px;
-                                                    "
                                                 >
 
                                                     <div
                                                         class="vexora-search-avatar"
-                                                        style="
-                                                            width:42px;
-                                                            height:42px;
-                                                            border-radius:50%;
-                                                            display:flex;
-                                                            align-items:center;
-                                                            justify-content:center;
-                                                            background:#eee;
-                                                            font-weight:700;
-                                                            font-size:16px;
-                                                            flex-shrink:0;
-                                                            background-size:cover;
-                                                            background-position:center;
-                                                            background-repeat:no-repeat;
-                                                        "
                                                     >
                                                         ${letter}
                                                     </div>
@@ -1606,22 +1801,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                                     <div>
 
-                                                        <strong
-                                                            style="
-                                                                display:block;
-                                                                color:#111;
-                                                            "
-                                                        >
+                                                        <strong>
                                                             ${foundUsername}
                                                         </strong>
 
 
-                                                        <span
-                                                            style="
-                                                                color:#888;
-                                                                font-size:13px;
-                                                            "
-                                                        >
+                                                        <span>
                                                             @${foundUsername}
                                                         </span>
 
@@ -1634,14 +1819,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                     ).join("");
 
 
-                                // SEARCH AVATARS
 
                                 document
                                     .querySelectorAll(
                                         ".vexora-search-result"
                                     )
                                     .forEach(
-                                        function (button, index) {
+                                        function (
+                                            button,
+                                            index
+                                        ) {
 
                                             const foundUser =
                                                 users[index];
@@ -1653,6 +1840,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 );
 
 
+
                                             if (
                                                 avatar &&
                                                 foundUser &&
@@ -1662,21 +1850,25 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 avatar.textContent =
                                                     "";
 
+
                                                 avatar.style.backgroundImage =
                                                     `url("${foundUser.avatar}")`;
 
+
+                                                avatar.style.backgroundSize =
+                                                    "cover";
+
+
+                                                avatar.style.backgroundPosition =
+                                                    "center";
+
+
+                                                avatar.style.backgroundRepeat =
+                                                    "no-repeat";
+
                                             }
 
-                                        }
-                                    );
 
-
-                                document
-                                    .querySelectorAll(
-                                        ".vexora-search-result"
-                                    )
-                                    .forEach(
-                                        function (button) {
 
                                             button.addEventListener(
                                                 "click",
@@ -1689,6 +1881,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     if (!userId) {
                                                         return;
                                                     }
+
 
 
                                                     window.location.href =
@@ -1704,6 +1897,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     );
 
 
+
                             } catch (error) {
 
                                 console.error(
@@ -1712,17 +1906,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                 );
 
 
-                                searchResults.innerHTML = `
-                                    <div
-                                        style="
-                                            color:#d33;
-                                            text-align:center;
-                                            padding:20px 0;
-                                        "
-                                    >
-                                        Search failed. Try again.
-                                    </div>
-                                `;
+                                if (searchResults) {
+
+                                    searchResults.innerHTML = `
+                                        <div class="search-error">
+                                            Search failed.
+                                            Try again.
+                                        </div>
+                                    `;
+
+                                }
 
                             }
 
@@ -1735,10 +1928,556 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+
+    /* =====================================================
+       ESC KEY
+    ====================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                searchModal &&
+                searchModal.style.display !== "none"
+            ) {
+
+                closeSearch();
+
+            }
+
+        }
+    );
+
+
+
+    /* =====================================================
+       PHOTO BUTTON
+    ====================================================== */
+
+    const openPhotoModal =
+        document.getElementById(
+            "openPhotoModal"
+        );
+
+
+    const choosePostImage =
+        document.getElementById(
+            "choosePostImage"
+        );
+
+
+    if (openPhotoModal) {
+
+        openPhotoModal.addEventListener(
+            "click",
+            function () {
+
+                if (openPostModal) {
+
+                    openPostModal.click();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (choosePostImage) {
+
+        choosePostImage.addEventListener(
+            "click",
+            function () {
+
+                const imageInput =
+                    document.getElementById(
+                        "postImageInput"
+                    );
+
+
+                if (imageInput) {
+
+                    imageInput.click();
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       VIDEO BUTTON
+    ====================================================== */
+
+    const choosePostVideo =
+        document.getElementById(
+            "choosePostVideo"
+        );
+
+
+    if (choosePostVideo) {
+
+        choosePostVideo.addEventListener(
+            "click",
+            function () {
+
+                const videoInput =
+                    document.getElementById(
+                        "postVideoInput"
+                    );
+
+
+                if (videoInput) {
+
+                    videoInput.click();
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       BASIC FILE PREVIEW SAFETY
+    ====================================================== */
+
+    const postImageInput =
+        document.getElementById(
+            "postImageInput"
+        );
+
+
+    const postImagePreview =
+        document.getElementById(
+            "postImagePreview"
+        );
+
+
+    const postImagePreviewImg =
+        document.getElementById(
+            "postImagePreviewImg"
+        );
+
+
+    const removePostImage =
+        document.getElementById(
+            "removePostImage"
+        );
+
+
+
+    if (postImageInput) {
+
+        postImageInput.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    postImageInput.files &&
+                    postImageInput.files[0];
+
+
+                if (!file) {
+                    return;
+                }
+
+
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    postImageInput.value =
+                        "";
+
+                    return;
+
+                }
+
+
+                const imageUrl =
+                    URL.createObjectURL(
+                        file
+                    );
+
+
+                if (postImagePreviewImg) {
+
+                    postImagePreviewImg.src =
+                        imageUrl;
+
+                }
+
+
+                if (postImagePreview) {
+
+                    postImagePreview.style.display =
+                        "block";
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    if (removePostImage) {
+
+        removePostImage.addEventListener(
+            "click",
+            function () {
+
+                if (postImageInput) {
+
+                    postImageInput.value =
+                        "";
+
+                }
+
+
+                if (postImagePreviewImg) {
+
+                    const oldSrc =
+                        postImagePreviewImg.src;
+
+
+                    if (
+                        oldSrc &&
+                        oldSrc.startsWith(
+                            "blob:"
+                        )
+                    ) {
+
+                        URL.revokeObjectURL(
+                            oldSrc
+                        );
+
+                    }
+
+
+                    postImagePreviewImg.src =
+                        "";
+
+                }
+
+
+                if (postImagePreview) {
+
+                    postImagePreview.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       VIDEO PREVIEW
+    ====================================================== */
+
+    const postVideoInput =
+        document.getElementById(
+            "postVideoInput"
+        );
+
+
+    const postVideoPreview =
+        document.getElementById(
+            "postVideoPreview"
+        );
+
+
+    const postVideoPreviewVideo =
+        document.getElementById(
+            "postVideoPreviewVideo"
+        );
+
+
+    const removePostVideo =
+        document.getElementById(
+            "removePostVideo"
+        );
+
+
+
+    if (postVideoInput) {
+
+        postVideoInput.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    postVideoInput.files &&
+                    postVideoInput.files[0];
+
+
+                if (!file) {
+                    return;
+                }
+
+
+                if (
+                    !file.type.startsWith(
+                        "video/"
+                    )
+                ) {
+
+                    postVideoInput.value =
+                        "";
+
+                    return;
+
+                }
+
+
+                if (
+                    file.size >
+                    20 * 1024 * 1024
+                ) {
+
+                    alert(
+                        "Video must be smaller than 20 MB."
+                    );
+
+
+                    postVideoInput.value =
+                        "";
+
+                    return;
+
+                }
+
+
+                const videoUrl =
+                    URL.createObjectURL(
+                        file
+                    );
+
+
+                if (postVideoPreviewVideo) {
+
+                    postVideoPreviewVideo.src =
+                        videoUrl;
+
+                }
+
+
+                if (postVideoPreview) {
+
+                    postVideoPreview.style.display =
+                        "block";
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    if (removePostVideo) {
+
+        removePostVideo.addEventListener(
+            "click",
+            function () {
+
+                if (postVideoInput) {
+
+                    postVideoInput.value =
+                        "";
+
+                }
+
+
+                if (postVideoPreviewVideo) {
+
+                    const oldSrc =
+                        postVideoPreviewVideo.src;
+
+
+                    if (
+                        oldSrc &&
+                        oldSrc.startsWith(
+                            "blob:"
+                        )
+                    ) {
+
+                        URL.revokeObjectURL(
+                            oldSrc
+                        );
+
+                    }
+
+
+                    postVideoPreviewVideo.pause();
+
+
+                    postVideoPreviewVideo.removeAttribute(
+                        "src"
+                    );
+
+
+                    postVideoPreviewVideo.load();
+
+                }
+
+
+                if (postVideoPreview) {
+
+                    postVideoPreview.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       CHARACTER COUNTER
+    ====================================================== */
+
+    const postText =
+        document.getElementById(
+            "postText"
+        );
+
+
+    const characterCount =
+        document.getElementById(
+            "characterCount"
+        );
+
+
+    if (
+        postText &&
+        characterCount
+    ) {
+
+        postText.addEventListener(
+            "input",
+            function () {
+
+                characterCount.textContent =
+                    `${postText.value.length} / 500`;
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       NOTIFICATION BADGES
+    ====================================================== */
+
+    const notificationBadge =
+        document.getElementById(
+            "notificationBadge"
+        );
+
+
+    const mobileNotificationBadge =
+        document.getElementById(
+            "mobileNotificationBadge"
+        );
+
+
+
+    function updateNotificationBadges(
+        count
+    ) {
+
+        const safeCount =
+            Math.max(
+                0,
+                Number(count) || 0
+            );
+
+
+        [
+            notificationBadge,
+            mobileNotificationBadge
+        ].forEach(
+            function (badge) {
+
+                if (!badge) {
+                    return;
+                }
+
+
+                if (safeCount > 0) {
+
+                    badge.textContent =
+                        safeCount > 99
+                            ? "99+"
+                            : String(
+                                safeCount
+                            );
+
+
+                    badge.style.display =
+                        "inline-flex";
+
+                } else {
+
+                    badge.textContent =
+                        "0";
+
+
+                    badge.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    updateNotificationBadges(0);
+
+
+
+    /* =====================================================
+       EXPOSE CURRENT USER FOR dashboard.js
+    ====================================================== */
+
+    window.vexoraCurrentUser =
+        user;
+
+
+    window.vexoraUpdateNotificationBadges =
+        updateNotificationBadges;
+
+
 });
 
 </script>
 
-</body>
 
+</body>
 </html>
