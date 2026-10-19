@@ -1,0 +1,112 @@
+:root { --n-bg:#080b10; --n-panel:rgba(18,23,31,.8); --n-line:rgba(255,255,255,.09); --n-text:#f3f6fb; --n-muted:#8993a3; --n-quiet:#5d6878; --n-gradient:linear-gradient(135deg,#698cff,#9a70f2); --n-ease:cubic-bezier(.2,.8,.2,1); }
+body { position:relative; overflow-x:hidden; color:var(--n-text); font-family:"Plus Jakarta Sans",sans-serif; background:radial-gradient(circle at 80% -8%,rgba(124,156,255,.2),transparent 32rem),radial-gradient(circle at 5% 90%,rgba(178,140,255,.1),transparent 28rem),var(--n-bg); }
+body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:linear-gradient(115deg,transparent 20%,rgba(124,156,255,.045) 50%,transparent 80%); background-size:220% 100%; animation:notificationAtmosphere 14s ease-in-out infinite alternate; }
+.notifications-main { min-height:100vh; }
+.notifications-topbar { width:min(980px,100%); margin:0 auto; }
+.notifications-topbar #markAll { border:1px solid rgba(124,156,255,.26); border-radius:12px; padding:10px 14px; background:rgba(124,156,255,.1); color:#bdd0ff; cursor:pointer; font-size:10px; font-weight:800; transition:.28s var(--n-ease); }
+.notifications-topbar #markAll:hover { transform:translateY(-2px); background:rgba(124,156,255,.2); box-shadow:0 12px 28px rgba(92,120,220,.2); }
+.notification-board { position:relative; width:min(980px,100%); min-height:540px; margin:0 auto; padding:18px; border:1px solid var(--n-line); border-radius:28px; background:var(--n-panel); box-shadow:0 30px 100px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.05); backdrop-filter:blur(26px) saturate(130%); -webkit-backdrop-filter:blur(26px) saturate(130%); animation:notificationBoardIn .7s var(--n-ease) both; overflow:hidden; }
+.notification-board::before { content:""; position:absolute; top:-100px; right:-80px; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(124,156,255,.16),transparent 70%); filter:blur(10px); animation:notificationOrb 8s ease-in-out infinite alternate; pointer-events:none; }
+.notification-toolbar { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; padding:7px 9px 16px; }
+.notification-toolbar p { margin:0; color:var(--n-quiet); font-size:10px; }
+.notification-toolbar strong { font-size:12px; }
+.notification-page-list { position:relative; z-index:1; display:grid; gap:9px; }
+.notification-page-item { width:100%; display:flex; align-items:center; gap:13px; padding:14px; border:1px solid transparent; border-radius:18px; background:rgba(255,255,255,.035); color:var(--n-text); text-align:left; cursor:pointer; animation:notificationItemIn .48s var(--n-ease) both; transition:.3s var(--n-ease); }
+.notification-page-item:hover { border-color:rgba(124,156,255,.3); background:rgba(124,156,255,.1); transform:translateY(-3px) translateX(2px); box-shadow:0 16px 36px rgba(0,0,0,.18); }
+.notification-page-item.unread { border-color:rgba(124,156,255,.2); background:linear-gradient(100deg,rgba(124,156,255,.12),rgba(178,140,255,.05)); }
+.notification-page-item > span:last-child { display:flex; flex-direction:column; gap:5px; }
+.notification-page-item strong { font-size:11px; line-height:1.45; }
+.notification-page-item small { color:var(--n-quiet); font-size:9px; }
+.notification-page-icon { display:grid; place-items:center; width:43px; height:43px; flex:0 0 43px; border:1px solid rgba(255,255,255,.12); border-radius:15px; background:var(--n-gradient); color:#fff; font-size:18px; box-shadow:0 10px 24px rgba(105,140,255,.18); animation:notificationIconFloat 3.2s ease-in-out infinite; }
+.notification-empty { min-height:390px; display:grid; place-items:center; text-align:center; color:var(--n-quiet); font-size:11px; }
+.notification-empty-card { display:flex; flex-direction:column; align-items:center; gap:9px; }
+.notification-empty-icon { display:grid; place-items:center; width:68px; height:68px; border:1px solid rgba(124,156,255,.24); border-radius:23px; background:rgba(124,156,255,.1); color:#b8c9ff; font-size:27px; animation:notificationIconFloat 4s ease-in-out infinite; }
+@keyframes notificationAtmosphere { from{background-position:0 0;transform:scale(1)} to{background-position:100% 0;transform:scale(1.04)} }
+@keyframes notificationBoardIn { from{opacity:0;transform:translateY(16px) scale(.985)} to{opacity:1;transform:none} }
+@keyframes notificationOrb { to{transform:translate(-25px,18px) scale(1.16);opacity:.7} }
+@keyframes notificationItemIn { from{opacity:0;transform:translateY(9px)} to{opacity:1;transform:none} }
+@keyframes notificationIconFloat { 50%{transform:translateY(-4px) rotate(2deg)} }
+@media(max-width:850px){.notifications-main{margin-left:78px!important}.notifications-topbar,.notification-board{width:calc(100% - 10px)} }
+@media(max-width:700px){.notifications-main{margin:0!important;padding:0 10px 90px!important}.sidebar{display:none!important}.notifications-topbar{height:82px!important}.notification-board{min-height:calc(100vh - 110px);padding:11px;border-radius:22px}.notification-toolbar{padding:6px 5px 13px}.notifications-topbar #markAll{padding:8px 10px;font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Shared Vexora glass style, with calmer spacing for the activity feed. */
+.notifications-topbar #markAll {
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 13px;
+    font-size: 11px;
+}
+.notification-board {
+    width: min(920px, 100%);
+    padding: 20px;
+    border-radius: 26px;
+}
+.notification-toolbar {
+    padding: 7px 8px 18px;
+}
+.notification-toolbar strong { font-size: 14px; letter-spacing: -.025em; }
+.notification-toolbar p { margin-top: 5px; font-size: 11px; }
+.notification-page-list { gap: 10px; }
+.notification-page-list > .search-empty {
+    grid-column: 1 / -1;
+    padding: 56px 18px;
+    border: 1px dashed rgba(255, 255, 255, .1);
+    border-radius: 18px;
+    color: #9ba7b9;
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+.notification-page-item {
+    position: relative;
+    min-height: 76px;
+    gap: 15px;
+    padding: 15px 17px;
+    border-color: rgba(255, 255, 255, .055);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .035);
+    box-shadow: inset 0 1px rgba(255, 255, 255, .025);
+}
+.notification-page-item > span:last-child { min-width: 0; gap: 6px; }
+.notification-page-item strong { font-size: 13px; line-height: 1.45; }
+.notification-page-item small { font-size: 10px; }
+.notification-page-item.unread {
+    border-color: rgba(124, 156, 255, .24);
+    background: linear-gradient(105deg, rgba(124, 156, 255, .13), rgba(178, 140, 255, .055));
+}
+.notification-page-item.unread::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    right: 17px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #92aaff;
+    box-shadow: 0 0 14px rgba(124, 156, 255, .7);
+}
+.notification-page-icon {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+    border: 1px solid rgba(255, 255, 255, .15);
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(105, 140, 255, .17), inset 0 1px rgba(255,255,255,.16);
+}
+.notification-empty-card { gap: 12px; }
+.notification-empty-card strong { color: #cbd3e1; font-size: 14px; }
+.notification-empty-card > span { max-width: 270px; line-height: 1.6; }
+
+@media(max-width:700px) {
+    .notifications-topbar { height: auto !important; min-height: 82px; gap: 10px; }
+    .notifications-topbar #markAll { flex: 0 0 auto; min-height: 40px; padding: 0 11px; font-size: 10px; }
+    .notification-board { width: 100%; min-height: calc(100vh - 124px); margin: 0 auto; padding: 12px; border-radius: 22px; }
+    .notification-toolbar { padding: 7px 4px 14px; }
+    .notification-page-list { gap: 8px; }
+    .notification-page-item { min-height: 72px; gap: 12px; padding: 12px; border-radius: 16px; }
+    .notification-page-item strong { padding-right: 7px; font-size: 12px; }
+    .notification-page-item small { font-size: 10px; }
+    .notification-page-item.unread::after { top: 14px; right: 13px; width: 6px; height: 6px; }
+    .notification-page-icon { width: 42px; height: 42px; flex-basis: 42px; border-radius: 14px; }
+}
